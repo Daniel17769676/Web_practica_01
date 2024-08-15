@@ -11,3 +11,15 @@ class Usuario(models.Model):
     def __str__(self):
         return self.usuario
     
+from django.db import models
+
+class Reserva(models.Model):
+    rut = models.CharField(max_length=12)
+    nombre = models.CharField(max_length=100)
+    horario = models.DateTimeField()
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.nombre} - {self.horario}"
+
+

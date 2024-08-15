@@ -24,4 +24,7 @@ urlpatterns = [
     path('Registro/', views.Registro, name='registro'), #indicamos que la página de registro es la página Registro
     path('Login/', views.Login, name='login'), #indicamos que la página de login es la página Login
     path('nuevo_usuario/', views.nuevo_usuario, name='nuevo_usuario'), #indicamos que la página de nuevo_usuario es la página nuevo_usuario
+    path('reserva_form/', views.reserva_view, name='reservas'),
+    path('reserva/confirmacion/', views.reserva_confirmacion_view, name='reserva_confirmacion'),
+    
 ]

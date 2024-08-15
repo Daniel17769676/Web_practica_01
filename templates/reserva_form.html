@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reserva de Masajes</title>
+</head>
+<body>
+    <h1>Reserva tu Sesión de Masajes</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Reservar</button>        
+    </form>
+
+    <a href="{% url 'portada' %}"><button>Portada</button></a>
+
+</body>
+</html>
