@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from mi_web import views
 
+
 urlpatterns = [
     path('', views.Portada, name='portada'), #indicamos que la página de inicio es la página Portada con los signos de comillas vacíos ''
     path('admin/', admin.site.urls), 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +11,29 @@
     <center>
         <!--Pagina de Login para rescatar datos de BBDD-->
         <H1>Pagina de Login</H1>
-        <form action="submit" method="post"><!--aqui deberia ir el metodo GET?-->
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
             <label for="usuario">Usuario:</label>
             <input type="text" name="usuario" id="nombre" required placeholder="Ingrese un usuario">
             <br>
-            <br>            
+            <br>
             <label for="password">Contraseña:</label>
             <input type="password" name="password" id="password" required>
             <br>
             <br>
-            <input type="submit" value="INGRESAR_sin accion">
+            <input type="submit" value="INGRESAR">
             <br>
-            <br>            
-        </form>       
+            <br>
+        </form>
         <br>
         <br>
         <a href="{% url 'portada' %}"><button>Portada</button></a>
@@ -30,4 +41,5 @@
 
 
 </body>
+
 </html>

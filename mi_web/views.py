@@ -5,10 +5,10 @@ from .models import Reserva
 from ics import Calendar, Event
 from django.core.mail import EmailMessage
 import datetime
-
-
 from .models import Usuario  #importamos la clase usuario de models.py  
 from .models import Reserva 
+from django.contrib.auth import authenticate, login as auth_login
+
 
 # Creamos la vista home, que sirve para mostrar la página de inicio
 def Portada(request):  
@@ -18,7 +18,20 @@ def Registro(request):
     return render(request, 'Registro.html')
 
 def Login(request):
+    if request.method == 'POST':
+        usuario = request.POST['usuario']
+        password = request.POST['password']
+        user = authenticate(request, username=usuario, password=password)#autenticamos el usuario
+        if user is not None:#si el usuario es diferente de nulo
+            auth_login(request, user)#iniciamos sesión
+            return redirect('reservas')  # Redirigimos a la página de reservas
+        else:
+            messages.error(request, 'Usuario o contraseña incorrectos')#mensaje de error
+    # Manejo del caso GET y POST fallidos
     return render(request, 'Login.html')
+        
+               
+
 
 def nuevo_usuario(request):
     if request.method == 'POST':
@@ -26,7 +39,7 @@ def nuevo_usuario(request):
         nombre = request.POST['nombre']
         email = request.POST['email']
         password = request.POST['password']
-        nuevo_usuario = Usuario(usuario=usuario, nombre=nombre, email=email, password=password)
+        nuevo_usuario = Usuario(user=usuario, nombre=nombre, email=email, password=password)
         nuevo_usuario.save()
 
         messages.success(request, 'Usuario registrado correctamente, redirigiendo al LOGIN')
