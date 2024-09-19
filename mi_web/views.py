@@ -8,6 +8,8 @@ import datetime
 from .models import Usuario  #importamos la clase usuario de models.py  
 from .models import Reserva 
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+
 
 
 # Creamos la vista home, que sirve para mostrar la página de inicio
@@ -21,31 +23,45 @@ def Login(request):
     if request.method == 'POST':
         usuario = request.POST['usuario']
         password = request.POST['password']
-        user = authenticate(request, username=usuario, password=password)#autenticamos el usuario
-        if user is not None:#si el usuario es diferente de nulo
-            auth_login(request, user)#iniciamos sesión
-            return redirect('reservas')  # Redirigimos a la página de reservas
-        else:
-            messages.error(request, 'Usuario o contraseña incorrectos')#mensaje de error
-    # Manejo del caso GET y POST fallidos
+
+        # Verificar si el usuario existe
+        try:
+            usuario = Usuario.objects.get(user=usuario, password=password)
+            messages.success(request, f'Bienvenido {usuario.nombre}')
+            return redirect('reservas')
+        
+        except Usuario.DoesNotExist:
+            messages.error(request, 'Usuario o contraseña incorrectos.')
+
+    #Si el usuario no existe, se redirige al login
     return render(request, 'Login.html')
+
+       
         
                
-
-
 def nuevo_usuario(request):
     if request.method == 'POST':
         usuario = request.POST['usuario']
         nombre = request.POST['nombre']
         email = request.POST['email']
         password = request.POST['password']
-        nuevo_usuario = Usuario(user=usuario, nombre=nombre, email=email, password=password)
-        nuevo_usuario.save()
 
+
+        # Imprime los datos capturados para depuración
+        print(f"Creando usuario: {usuario}, {email}")  # Esto muestra los valores capturados
+
+        # Verificar si el nombre de usuario ya existe
+        if Usuario.objects.filter(user=usuario).exists():
+            messages.error(request, 'El usuario ya existe.')
+            return render(request, 'Registro.html')
+
+        # Crear el usuario
+        nuevo_usuario = Usuario(user=usuario, nombre=nombre, email=email, password=password)
+        nuevo_usuario.save() # Guardar el usuario en la base de datos
+     
         messages.success(request, 'Usuario registrado correctamente, redirigiendo al LOGIN')
         return redirect('login')
     else:
-        messages.error(request, 'Error al registrar el usuario')
         return render(request, 'Registro.html')
     
 def reserva_view(request):
