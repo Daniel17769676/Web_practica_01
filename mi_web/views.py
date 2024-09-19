@@ -1,15 +1,9 @@
 from django.shortcuts import render, redirect #importamos la función render
 from django.contrib import messages
-from .forms import ReservaForm
-from .models import Reserva
 from ics import Calendar, Event
 from django.core.mail import EmailMessage
 import datetime
-from .models import Usuario  #importamos la clase usuario de models.py  
-from .models import Reserva 
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth.models import User
-
+from .models import Usuario, Reserva
 
 
 # Creamos la vista home, que sirve para mostrar la página de inicio
@@ -35,10 +29,7 @@ def Login(request):
 
     #Si el usuario no existe, se redirige al login
     return render(request, 'Login.html')
-
-       
-        
-               
+              
 def nuevo_usuario(request):
     if request.method == 'POST':
         usuario = request.POST['usuario']
@@ -66,14 +57,21 @@ def nuevo_usuario(request):
     
 def reserva_view(request):
     if request.method == 'POST':
-        form = ReservaForm(request.POST)
-        if form.is_valid():
-            reserva = form.save()
-            enviar_correo_reserva(reserva)  # Función para enviar el correo
-            return redirect('reservas')
+        nombre = request.POST['nombre']
+        rut = request.POST['rut']
+        cargo = request.POST['cargo']
+        email = request.POST['email']
+        fecha = request.POST['fecha']
+        hora = request.POST['hora']
+        
+        reserva = Reserva(nombre=nombre, rut=rut, cargo=cargo, email=email, fecha=fecha, hora=hora)
+        reserva.save()
+
+        messages.success(request, 'Reserva realizada correctamente.')
+        return redirect('reserva_confirmacion')
     else:
-        form = ReservaForm()
-    return render(request, 'reserva_form.html', {'form': form})
+        messages.error(request, 'Error al realizar la reserva.')           
+        return render(request, 'reserva_form.html')
 
 def reserva_confirmacion_view(request):
     return render(request, 'reserva_confirmacion.html')
@@ -82,7 +80,7 @@ def enviar_correo_reserva(reserva):
     c = Calendar()
     e = Event()
     e.name = "Sesión de Masajes"
-    e.begin = reserva.horario
+    e.begin = reserva.hora
     e.duration = datetime.timedelta(minutes=15)
     e.description = f"Reserva de masaje para {reserva.nombre}."
     c.events.add(e)
@@ -92,7 +90,7 @@ def enviar_correo_reserva(reserva):
     
     email = EmailMessage(
         'Confirmación de Reserva de Masajes',
-        f'Hola {reserva.nombre}, tu reserva ha sido confirmada para el {reserva.horario}.',
+        f'Hola {reserva.nombre}, tu reserva ha sido confirmada para el {reserva.fecha}.',
         'from@example.com',
         [reserva.email],
     )

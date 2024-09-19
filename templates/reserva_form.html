@@ -4,14 +4,28 @@
     <title>Reserva de Masajes</title>
 </head>
 <body>
+    <Center>
     <h1>Reserva tu Sesión de Masajes</h1>
+
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Reservar</button>        
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" id="nombre" required placeholder="Ingrese su nombre">
+        <label for="rut">Rut:</label>
+        <input type="text" name="rut" id="rut" required placeholder="Ingrese su rut">
+        <label for ="Cargo">Cargo:</label>
+        <input type="text" name="cargo" id="cargo" required placeholder="Ingrese su cargo">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+        <label for="fecha">Fecha:</label>
+        <input type="date" name="fecha" id="fecha" required>
+        <label for="hora">Hora:</label>
+        <input type="time" name="hora" id="hora" required>                
     </form>
 
-    <a href="{% url 'portada' %}"><button>Portada</button></a>
+    <button type="submit">Reservar</button>
 
+    <a href="{% url 'portada' %}"><button>Portada</button></a>
+    </Center>
 </body>
 </html>
