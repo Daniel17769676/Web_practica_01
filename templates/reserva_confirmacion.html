@@ -4,7 +4,22 @@
     <title>Reserva Confirmada</title>
 </head>
 <body>
+    <center>
     <h1>Tu reserva ha sido confirmada</h1>
     <p>Revisa tu correo para más detalles.</p>
+    <br>
+    <a href="{% url 'portada' %}"><button>Portada</button></a>
+    </center>
+
+
+
+    <h2>Resumen de la reserva</h2>
+    <p> <strong>Nombre:</strong> {{ nombre }} </p>
+    <p> <strong>Rut:</strong> {{ rut }} </p>
+    <p> <strong>Cargo:</strong> {{ cargo }} </p>
+    <p> <strong>Email:</strong> {{ email }} </p>
+    <p> <strong>Fecha:</strong> {{ fecha }} </p>
+    <p> <strong>Hora:</strong> {{ hora }} </p>
+        
 </body>
 </html>
