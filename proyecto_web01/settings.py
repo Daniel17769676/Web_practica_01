@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+<<<<<<< HEAD
+=======
+import os
+>>>>>>> master
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +34,11 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> master
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -136,4 +145,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'daniel.cabrera.araya@gmail.com'
+<<<<<<< HEAD
 EMAIL_HOST_PASSWORD = 'rmaf dntp ykxk prhi'
+=======
+EMAIL_HOST_PASSWORD = 'rmaf dntp ykxk prhi'
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'mi_web/static'),  # Asegura que Django encuentre la carpeta static
+]
+>>>>>>> master
