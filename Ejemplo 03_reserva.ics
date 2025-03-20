@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:ics.py - http://git.io/lLljaA
+BEGIN:VEVENT
+DESCRIPTION:Reserva de masaje para Ejemplo 03.
+DURATION:PT15M
+DTSTART:20241205T222600Z
+SUMMARY:Sesion de Masajes
+UID:2daa29cd-112b-4813-be22-985aeca930f8@2daa.org
+END:VEVENT
+END:VCALENDAR

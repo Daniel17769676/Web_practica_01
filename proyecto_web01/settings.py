@@ -141,8 +141,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'daniel.cabrera.araya@gmail.com'
 EMAIL_HOST_PASSWORD = 'rmaf dntp ykxk prhi'
 
-EMAIL_HOST_PASSWORD = 'rmaf dntp ykxk prhi'
-
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
