@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<<<<<<< HEAD
-    <title>Reserva de Masajes</title>
-</head>
-<body>
-    <Center>
-    <h1>Reserva tu Sesión de Masajes</h1>
-
-=======
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'mi_web/styles.css' %}">
     <meta charset="UTF-8">
@@ -23,7 +15,6 @@
     <h1>Sistema de Reservas</h1>
 
     <!-- Formulario de Reservas -->
->>>>>>> master
     <form action="{% url 'reservas' %}" method="post">
         {% csrf_token %}
         <label for="nombre">Nombre:</label>
@@ -39,15 +30,7 @@
         <label for="hora">Hora:</label>
         <input type="time" name="hora" id="hora" required>
         <input type="submit" value="Reservar">        
-<<<<<<< HEAD
-    </form>
-
-           
-
-    
-=======
     </form>             
->>>>>>> master
 
     {% if messages %}
     <ul>
@@ -57,10 +40,6 @@
     </ul>
     {% endif %}   
 
-<<<<<<< HEAD
-    <a href="{% url 'portada' %}"><button>Portada</button></a>
-    </Center>
-=======
 
      <!-- Sección de horas disponibles -->
         <h3>Horas Disponibles</h3>
@@ -78,6 +57,5 @@
     
 
 
->>>>>>> master
 </body>
 </html>
