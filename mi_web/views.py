@@ -2,13 +2,8 @@ from django.shortcuts import render, redirect #importamos la función render
 from django.contrib import messages
 from ics import Calendar, Event
 from django.core.mail import EmailMessage
-<<<<<<< HEAD
-import datetime
-from .models import Reserva
-=======
 from .models import Reserva
 from datetime import datetime, timedelta
->>>>>>> master
 
 
 # Creamos la vista home, que sirve para mostrar la página de inicio
@@ -62,17 +57,10 @@ def enviar_correo_reserva(reserva):
     # Crear el archivo .ics
     c = Calendar()
     e = Event()
-<<<<<<< HEAD
-    e.name = "Sesion de Masajes"
-    e.begin = f'{reserva.fecha} {reserva.hora}'  # Combina la fecha y la hora
-    e.duration = datetime.timedelta(minutes=15)
-    e.description = f"Reserva de masaje para {reserva.nombre}."
-=======
     e.name = "Agendamiento de Reserva"
     e.begin = f'{reserva.fecha} {reserva.hora}'  # Combina la fecha y la hora
     e.duration = timedelta(minutes=15)
     e.description = f"Reserva para {reserva.nombre}."
->>>>>>> master
     c.events.add(e)
     
      # Crear el archivo .ics
@@ -82,11 +70,7 @@ def enviar_correo_reserva(reserva):
 
     # Crear el correo electrónico
     email = EmailMessage(
-<<<<<<< HEAD
-        'Confirmación de Reserva de Masajes',
-=======
         'Confirmación de Reserva',
->>>>>>> master
         f'Hola {reserva.nombre}, tu reserva ha sido confirmada para el {reserva.fecha} a las {reserva.hora}.',
         'from@example.com',  # Cambiar por el correo del remitente real
         [reserva.email],      # Se envía al correo del cliente
@@ -96,9 +80,6 @@ def enviar_correo_reserva(reserva):
     email.attach_file(ics_filename)
     
     # Enviar el correo
-<<<<<<< HEAD
-    email.send()
-=======
     email.send()
 
 def reservas(request):
@@ -119,4 +100,3 @@ def reservas(request):
         horas_disponibles = [hora for hora in horas_disponibles if hora not in horas_ocupadas]
 
     return render(request, "mi_web/reservas.html", {"horas_disponibles": horas_disponibles})
->>>>>>> master
