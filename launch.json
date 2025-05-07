@@ -1,0 +1,8 @@
+{
+    "name": "Django Migrate",
+    "type": "python",
+    "request": "launch",
+    "program": "${workspaceFolder}/manage.py",
+    "args": ["migrate"],
+    "django": true
+  }

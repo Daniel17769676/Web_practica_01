@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad</title>
+    <!-- Aquí puedes incluir tus estilos CSS directamente o enlazar archivos CSS -->
+    <style>
+        .filtro {
+            margin: 20px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        .btn-usuario {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-oferente {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="filtro">
+        <form method="get">
+            <input type="date" name="fecha" value="{{ request.GET.fecha }}">
+            <button type="submit" class="btn btn-usuario">Filtrar</button>
+            <a href="?" class="btn btn-oferente">Limpiar</a>
+        </form>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Día</th>
+                <th>Horario</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for disp in disponibilidades %}
+            <tr>
+                <td>{{ disp.dia|date:"d/m/Y" }}</td>
+                <td>{{ disp.hora_inicio|time:"H:i" }} - {{ disp.hora_fin|time:"H:i" }}</td>
+                <td>
+                    <a href="{% url 'usuarios:reservar' %}?disponibilidad_id={{ disp.id }}" 
+                       class="btn btn-usuario">
+                       Reservar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

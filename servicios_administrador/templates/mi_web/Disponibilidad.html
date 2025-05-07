@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Disponibilidad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
+ 
+        button, .btn-volver {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-volver {
+            background-color: #f44336;
+            margin-top: 10px;
+        }
+  
+
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Crear Nueva Disponibilidad</h1>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="administrador">Administrador:</label>
+                <input type="text" id="administrador" name="administrador" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="dia">Día de la semana:</label>
+                <select id="dia" name="dia" required>
+                    <option value="">Seleccione un día...</option>
+                    <option value="lunes">Lunes</option>
+                    <option value="martes">Martes</option>
+                    <option value="miércoles">Miércoles</option>
+                    <option value="jueves">Jueves</option>
+                    <option value="viernes">Viernes</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="hora_inicio">Hora de inicio:</label>
+                <input type="time" id="hora_inicio" name="hora_inicio" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="hora_fin">Hora de fin:</label>
+                <input type="time" id="hora_fin" name="hora_fin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="servicio">Servicio:</label>
+                <input type="text" id="servicio" name="servicio" required>
+            </div>
+            
+            <button type="submit">Guardar Disponibilidad</button>
+        </form>
+    </div>
+
+    <div class="button-container" style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
+    </div>
+
+</body>
+</html>
