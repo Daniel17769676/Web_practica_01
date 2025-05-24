@@ -9,6 +9,7 @@ urlpatterns = [
     path('servicios/', include('servicios_administrador.urls')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),  # URL para la aplicación de usuarios
     path('disponibilidad/', views.disponibilidad_view, name='disponibilidad'),  # URL para la disponibilidad
+    
 
    
 ]
