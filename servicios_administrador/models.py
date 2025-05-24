@@ -38,6 +38,9 @@ class Disponibilidad(models.Model):
     def __str__(self):
         return f'{self.administrador} - {self.dia} ({self.hora_inicio}-{self.hora_fin}) {"✅" if self.disponible else "❌"}'
     
+
+
+# BORRAR TABLA LUEGO DE LAS MIGRACIONES    
 class Reserva(models.Model):
     administrador = models.ForeignKey('Administrador', on_delete=models.CASCADE)  # Relación con el administrador
     disponibilidad = models.ForeignKey('Disponibilidad', on_delete=models.CASCADE)  # Relación con disponibilidad

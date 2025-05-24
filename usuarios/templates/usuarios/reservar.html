@@ -14,28 +14,65 @@
         <form method="post">
             {% csrf_token %}
             
-            {% if form.non_field_errors %}
-                <div class="errorlist">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
+           <!-- Paso 1: Selección de servicio -->
+        <div class="form-section">
+            <h3>1. Selecciona el servicio</h3>
+            <select name="servicio" id="servicio-select" class="form-control" required>
+                <option value="">-- Seleccione un servicio --</option>
+                {% for servicio in servicios_disponibles %}
+                    <option value="{{ servicio }}">{{ servicio }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+        <!-- Paso 2: Selección de día -->
+        <div class="form-section">
+            <h3>2. Selecciona el día</h3>
+            <select name="dia" id="dia-select" class="form-control" required disabled>
+                <option value="">-- Primero seleccione un servicio --</option>
+            </select>
+        </div>
+
+        <!-- Paso 3: Selección de horario -->
+        <div class="form-section">
+            <h3>3. Selecciona el horario</h3>
+            <div id="horarios-container" style="display:none;">
+                <!-- Los horarios disponibles se cargarán aquí via AJAX -->
+            </div>
+        </div>
+
+
+        <!-- Paso 4: Datos personales (solo visible cuando se selecciona horario) -->
+        <div id="datos-personales" style="display:none;">
+            <h3>4. Tus datos</h3>
+            <div class="form-group">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" name="telefono" class="form-control" required>
+            </div>
+        </div>
             
-            {% for field in form %}
-                <div class="form-field">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <small class="help-text">{{ field.help_text }}</small>
-                    {% endif %}
-                </div>
-            {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+
             
             <button type="submit" class="btn-primary">Confirmar Reserva</button>
         </form>

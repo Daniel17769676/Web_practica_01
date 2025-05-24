@@ -147,5 +147,5 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Asegura que Django encuentre la carpeta static
-    os.path.join(BASE_DIR, 'usarios/static'),  # Asegura que Django encuentre la carpeta static de la app usuarios
+    
 ]
