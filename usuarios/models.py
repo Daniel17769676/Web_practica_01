@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ReservaUsuarios(models.Model):
     administrador = models.ForeignKey('servicios_administrador.Administrador', on_delete=models.CASCADE)  # Relación con el administrador
     disponibilidad = models.ForeignKey('servicios_administrador.Disponibilidad', on_delete=models.CASCADE)  # Relación con disponibilidad
@@ -12,3 +13,4 @@ class ReservaUsuarios(models.Model):
 
     def __str__(self):
         return f'Reserva para {self.nombre} - {self.disponibilidad.dia}'
+

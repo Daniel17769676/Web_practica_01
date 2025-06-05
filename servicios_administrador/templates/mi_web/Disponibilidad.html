@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Disponibilidad</title>
     <link rel="stylesheet" href="{% static 'servicios_administrador/styles.css' %}">
+    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
 </head>
 
 <body>
     <div class="form-container">
-        <h1>Crear Nueva Disponibilidad</h1>
-        <form method="post" action="{% url 'servicios_administrador:disponibilidad' %}">
+        <h1>Crear Nuevo Servicio</h1>
+        <form method="post" action="{% url 'servicios_administrador:disponibilidad' %}"><!-- esta linea es para enviar la informacion a la bbdd a traves de la la view -->
             {% csrf_token %}
             
             <div class="form-group">
@@ -48,7 +49,7 @@
                 <input type="text" id="servicio" name="servicio" required>
             </div>
             
-            <button type="submit">Guardar Disponibilidad</button>
+            <button type="submit">Guardar Servicio</button>
         </form>
     </div>
 

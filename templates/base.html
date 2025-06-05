@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <title>Portada</title>
+    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+    <title>Sistema de reservas</title>
   </head>
   <body>
     <!--BTN DARK MODE -->
@@ -77,10 +78,16 @@
     </label>
 
     <!-- Contenido específico de la portada -->
-    <h1>Bienvenido a mi página web</h1>
-    <h2>Web desde 0</h2>
-    <p>Aplicando contenido WEB</p>
+    
+    <h2>Bienvenido a nuestro sistema de reservas</h2>
+    <h3>Aquí puedes ofrecer tus servicios o reservar un servicio que necesites.</h3>
+    
+    <p>
+          Selecciona una de las opciones a continuación para comenzar.
+    </p>
 
+    <!-- Botones de acción -->
+     
     <div class="botones">
       <!-- BTN OFRECER SERVICIOS -->
       <a href="{% url 'disponibilidad' %}" class="animated-button">
@@ -109,7 +116,7 @@
       <br />
 
       <!-- BTN RESERVAR SERVICIOS -->
-      <a href="{% url 'usuarios:reservar' %}" class="animated-button">
+      <a href="{% url 'usuarios:mostrar_servicios' %}" class="animated-button">
         <svg
           viewBox="0 0 24 24"
           class="arr-2"

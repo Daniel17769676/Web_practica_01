@@ -8,3 +8,5 @@ def base(request):
 
 def disponibilidad_view(request):
     return render(request, 'mi_web/Disponibilidad.html')
+
+

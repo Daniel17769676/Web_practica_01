@@ -1,90 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realizar Reserva</title>
     <link rel="stylesheet" href="{% static 'usuarios/styles.css' %}">
+    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
 </head>
 
 <body>
     <div class="container">
         <h1>Realiza tu reserva</h1>
-        <form method="post">
+        <form method="post" action="{% url 'usuarios:mostrar_servicios' %}">
             {% csrf_token %}
-            
-           <!-- Paso 1: Selección de servicio -->
-        <div class="form-section">
-            <h3>1. Selecciona el servicio</h3>
-            <select name="servicio" id="servicio-select" class="form-control" required>
-                <option value="">-- Seleccione un servicio --</option>
-                {% for servicio in servicios_disponibles %}
-                    <option value="{{ servicio }}">{{ servicio }}</option>
-                {% endfor %}
-            </select>
-        </div>
 
+            <div class="container form">
+                <!-- Paso 1: Selección de servicio -->
+                <div class="form-section">
+                    <h3>1. Selecciona el servicio</h3>
+                    <select name="servicio" required>
+                        <option value="">-- Seleccione un servicio --</option>
+                        {% for servicio in servicios %}
+                        <option value="{{ servicio }}">
+                            {{ servicio }}
+                        </option>
+                        {% empty %}
+                        <option value="">No hay servicios disponibles</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <!-- Paso 2: Selección de día -->
-        <div class="form-section">
-            <h3>2. Selecciona el día</h3>
-            <select name="dia" id="dia-select" class="form-control" required disabled>
-                <option value="">-- Primero seleccione un servicio --</option>
-            </select>
-        </div>
+                <!-- Paso 2: Selección de día -->
+                <div class="form-section">
+                    <h3>2. Selecciona el día</h3>
+                    <select name="dia" id="dia-select" class="form-control" required>
+                        <option value="">-- Primero seleccione un servicio --</option>
+                    </select>
+                </div>
 
-        <!-- Paso 3: Selección de horario -->
-        <div class="form-section">
-            <h3>3. Selecciona el horario</h3>
-            <div id="horarios-container" style="display:none;">
-                <!-- Los horarios disponibles se cargarán aquí via AJAX -->
+                <!-- Paso 3: Selección de horario
+                POR CONSTRUIR TOMAR EN CUENTA METRICAS COMO HORARIO INICIO Y HORARIO FIN 
+                -->
+         
+
+                <!-- Paso 4: Datos del cliente -->
+                <div class="form-section">
+                    <h3>4. Datos del cliente</h3>
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" required>
+
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" name="telefono" id="telefono" class="form-control" required>
+
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+
+                    <label for="observaciones">Observaciones:</label>
+                    <textarea name="observaciones" id="observaciones" class="form-control"></textarea>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="btn-reservar">Reservar</button>
+                </div>
             </div>
-        </div>
-
-
-        <!-- Paso 4: Datos personales (solo visible cuando se selecciona horario) -->
-        <div id="datos-personales" style="display:none;">
-            <h3>4. Tus datos</h3>
-            <div class="form-group">
-                <label for="nombre">Nombre completo:</label>
-                <input type="text" name="nombre" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="telefono">Teléfono:</label>
-                <input type="tel" name="telefono" class="form-control" required>
-            </div>
-        </div>
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-            <button type="submit" class="btn-primary">Confirmar Reserva</button>
         </form>
+        <div class="button-container" style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
+        </div>
     </div>
-
-
-    <div class="button-container" style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
-    </div>
-
-
-
-
 </body>
+
 </html>

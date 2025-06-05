@@ -1,19 +1,43 @@
 from django.shortcuts import render, redirect
 from .models import ReservaUsuarios
+from servicios_administrador.models import Disponibilidad  # Importa el modelo Disponibilidad desde servicios_administrador
 
-def ReservaUsuarios(request):
+
+# Vista para mostrar los servicios disponibles (GET)
+def seleccionar_servicios_view (request):
+    #Obtenemos solo los valores unicos del campo 'servicio' del modelo Disponibilidad
+    servicios= Disponibilidad.objects.values_list('servicio', flat=True).distinct()
+    return render(request, 'usuarios/reservar.html', {'servicios': servicios})
+
+# Vista para procesar la reserva de usuarios (POST)
+def procesar_reserva_view(request):
     if request.method == 'POST':
-        print("DATOS RECIBIDOS:", request.POST)
-        # Guardar los datos del formulario en la base de datos
-        ReservaUsuarios.objects.create(
-            administrador_id=request.POST['administrador'],
-            disponibilidad_id=request.POST['disponibilidad'],
-            nombre=request.POST['nombre'],
-            email=request.POST['email'],
-            telefono=request.POST['telefono']
-        )
+        #obtener los datos del formulario
+        servicio = request.POST.get('servicio')
+        dia = request.POST.get('dia')
+        nombre = request.POST.get('nombre')
+        telefono = request.POST.get('telefono')
+        email = request.POST.get('email')
+        observaciones = request.POST.get('observaciones') 
 
-        return redirect('usuarios:reserva_confirmacion')  # Redirige a la plantilla de confirmación
+        # Guardar los datos del formulario en la base de datos  
+        reserva = Reserva(
+            servicio=servicio,
+            dia=dia,
+            horario=horario,
+            nombre_cliente=nombre,
+            telefono=telefono,
+            email=email,
+            observaciones=observaciones
+        )
+        reserva.save()
+
+        return redirect('usuarios:reserva_exito')  # Redirige a la plantilla de confirmación
     return render(request, 'usuarios/reservar.html') 
+
+
+def reserva_exito_view(request):
+    # Renderiza la plantilla de confirmación de reserva exitosa
+    return render(request, 'usuarios/reserva_exito.html')
 
 
