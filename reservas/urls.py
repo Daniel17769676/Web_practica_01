@@ -1,5 +1,6 @@
 from django.urls import path
 from. import views
+from .views import get_dias_por_servicio_view
 
 app_name = 'reservas'  # Namespace
 
@@ -12,5 +13,9 @@ path('reservar/procesar/', views.procesar_reserva_view, name='reservar_procesar'
 
 #Redirige a la vista de confirmación de reserva exitosa
 path('reserva_exito/', views.reserva_exito_view, name='reserva_exito'),
+
+#Vista para obtener los dias disponibles por servicio (GET)
+path('get_dias_por_servicio/', get_dias_por_servicio_view, name='get_dias_por_servicio'),
+
 
 ]
