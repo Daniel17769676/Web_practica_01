@@ -1,13 +1,19 @@
 from django.shortcuts import render, redirect
 from .models import ReservaUsuarios
-from servicios_administrador.models import Disponibilidad  # Importa el modelo Disponibilidad desde servicios_administrador
+from servicios_administrador.models import Disponibilidad, ServicioDia  # Importa el modelo Disponibilidad desde servicios_administrador
 
 
 # Vista para mostrar los servicios disponibles (GET)
 def seleccionar_servicios_view (request):
     #Obtenemos solo los valores unicos del campo 'servicio' del modelo Disponibilidad
     servicios= Disponibilidad.objects.values_list('servicio', flat=True).distinct()
-    return render(request, 'usuarios/reservar.html', {'servicios': servicios})
+    #Obtenemos los dias unicos del modelo ServicioDia desde la BBDD
+    dias= ServicioDia.objects.values_list('dia', flat=True).distinct()
+    return render(request, 'usuarios/reservar.html', {'servicios': servicios, 'dias': dias})
+
+    
+    
+
 
 # Vista para procesar la reserva de usuarios (POST)
 def procesar_reserva_view(request):

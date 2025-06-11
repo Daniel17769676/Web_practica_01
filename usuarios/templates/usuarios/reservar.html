@@ -35,8 +35,15 @@
                 <!-- Paso 2: Selección de día -->
                 <div class="form-section">
                     <h3>2. Selecciona el día</h3>
-                    <select name="dia" id="dia-select" class="form-control" required>
+                    <select name="dia" required>
                         <option value="">-- Primero seleccione un servicio --</option>
+                        {% for dia in dias %}
+                        <option value="{{ dia|title }}"> <!-- Usamos el filtro title para capitalizar -->
+                            {{ dia }}
+                        </option>
+                        {% empty %}
+                        <option value="">No hay días disponibles</option>
+                        {% endfor %}
                     </select>
                 </div>
 
