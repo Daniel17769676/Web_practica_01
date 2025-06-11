@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # URL para el panel de administración
     path('', views.base, name='base'),  # URL para la página de inicio
     path('servicios/', include('servicios.urls')),
-    path('usuarios/', include('usuarios.urls', namespace='usuarios')),  # URL para la aplicación de usuarios
+    path('reservas/', include('reservas.urls', namespace='reservas')),  # URL para la aplicación de usuarios
     path('disponibilidad/', views.disponibilidad_view, name='disponibilidad'),  # URL para la disponibilidad
     
   

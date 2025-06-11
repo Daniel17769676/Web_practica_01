@@ -9,13 +9,10 @@ def seleccionar_servicios_view (request):
     servicios= Disponibilidad.objects.values_list('servicio', flat=True).distinct()
     #Obtenemos los dias unicos del modelo ServicioDia desde la BBDD
     dias= ServicioDia.objects.values_list('dia', flat=True).distinct()
-    return render(request, 'usuarios/reservar.html', {'servicios': servicios, 'dias': dias})
+    return render(request, 'reservas/reservar.html', {'servicios': servicios, 'dias': dias})
 
-    
-    
-
-
-# Vista para procesar la reserva de usuarios (POST)
+        
+# Vista para procesar la reserva (POST)
 def procesar_reserva_view(request):
     if request.method == 'POST':
         #obtener los datos del formulario
@@ -38,12 +35,12 @@ def procesar_reserva_view(request):
         )
         reserva.save()
 
-        return redirect('usuarios:reserva_exito')  # Redirige a la plantilla de confirmación
-    return render(request, 'usuarios/reservar.html') 
+        return redirect('reservas:reserva_exito')  # Redirige a la plantilla de confirmación
+    return render(request, 'reservas/reservar.html') 
 
 
 def reserva_exito_view(request):
     # Renderiza la plantilla de confirmación de reserva exitosa
-    return render(request, 'usuarios/reserva_exito.html')
+    return render(request, 'reservas/reserva_exito.html')
 
 

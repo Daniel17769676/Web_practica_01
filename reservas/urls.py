@@ -1,7 +1,7 @@
 from django.urls import path
 from. import views
 
-app_name = 'usuarios'  # Namespace
+app_name = 'reservas'  # Namespace
 
 urlpatterns = [
 #Muestra el formularios con los servicios disponibles desde la base de datos (GET)

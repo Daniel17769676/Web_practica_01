@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <h1>Realiza tu reserva</h1>
-        <form method="post" action="{% url 'usuarios:mostrar_servicios' %}">
+        <form method="post" action="{% url 'reservas:mostrar_servicios' %}">
             {% csrf_token %}
 
             <div class="container form">
