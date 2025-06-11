@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('servicios_administrador', '0003_remove_disponibilidad_dia'),
+        ('servicios', '0003_remove_disponibilidad_dia'),
     ]
 
     operations = [

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import ReservaUsuarios
-from servicios_administrador.models import Disponibilidad, ServicioDia  # Importa el modelo Disponibilidad desde servicios_administrador
+from servicios.models import Disponibilidad, ServicioDia  # Importa el modelo Disponibilidad desde servicios
 
 
 # Vista para mostrar los servicios disponibles (GET)

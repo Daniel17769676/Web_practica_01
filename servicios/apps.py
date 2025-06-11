@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class MiWebConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'servicios_administrador'
+    name = 'servicios'

@@ -6,14 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Disponibilidad</title>
-    <link rel="stylesheet" href="{% static 'servicios_administrador/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'servicios/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
 </head>
 
 <body>
     <div class="form-container">
         <h1>Crear Nuevo Servicio</h1>
-        <form method="post" action="{% url 'servicios_administrador:disponibilidad' %}">
+        <form method="post" action="{% url 'servicios:disponibilidad' %}">
             <!-- esta linea es para enviar la informacion a la bbdd a traves de la la view -->
             {% csrf_token %}
 

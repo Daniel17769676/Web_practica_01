@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('servicios_administrador', '0001_initial'),
+        ('servicios', '0001_initial'),
     ]
 
     operations = [
@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('nombre', models.CharField(max_length=100)),
                 ('email', models.EmailField(max_length=254)),
                 ('telefono', models.CharField(max_length=15)),
-                ('administrador', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios_administrador.administrador')),
-                ('disponibilidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios_administrador.disponibilidad')),
+                ('administrador', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios.administrador')),
+                ('disponibilidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios.disponibilidad')),
             ],
             options={
                 'db_table': 'RESERVA_USUARIOS',

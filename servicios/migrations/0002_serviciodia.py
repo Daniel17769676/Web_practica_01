@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('servicios_administrador', '0001_initial'),
+        ('servicios', '0001_initial'),
     ]
 
     operations = [
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('dia', models.CharField(choices=[('lunes', 'Lunes'), ('martes', 'Martes'), ('miércoles', 'Miércoles'), ('jueves', 'Jueves'), ('viernes', 'Viernes'), ('sábado', 'Sábado'), ('domingo', 'Domingo')], max_length=9)),
-                ('disponibilidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dias', to='servicios_administrador.disponibilidad')),
+                ('disponibilidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dias', to='servicios.disponibilidad')),
             ],
             options={
                 'verbose_name': 'Día del servicio',

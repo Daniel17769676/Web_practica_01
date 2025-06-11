@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from servicios_administrador.models import Disponibilidad, Reserva
+from servicios.models import Disponibilidad, Reserva
 
 class ReservaForm(ModelForm):
     class Meta:

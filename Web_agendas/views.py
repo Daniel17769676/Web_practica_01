@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from servicios_administrador.models import Disponibilidad
+from servicios.models import Disponibilidad
 
 
 # Creamos la vista home, que sirve para mostrar la página de inicio
