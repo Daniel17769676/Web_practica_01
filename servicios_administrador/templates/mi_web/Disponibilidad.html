@@ -1,54 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Disponibilidad</title>
-    <link rel="stylesheet" href="{% static 'servicios_administrador/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'servicios_administrador/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
 </head>
 
 <body>
     <div class="form-container">
         <h1>Crear Nuevo Servicio</h1>
-        <form method="post" action="{% url 'servicios_administrador:disponibilidad' %}"><!-- esta linea es para enviar la informacion a la bbdd a traves de la la view -->
+        <form method="post" action="{% url 'servicios_administrador:disponibilidad' %}">
+            <!-- esta linea es para enviar la informacion a la bbdd a traves de la la view -->
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label for="administrador">Administrador:</label>
                 <input type="text" id="administrador" name="administrador" required>
             </div>
-            
-            <div class="form-group">
-                <label for="dia">Día de la semana:</label>
-                <select id="dia" name="dia" required>
-                    <option value="">Seleccione un día...</option>
-                    <option value="lunes">Lunes</option>
-                    <option value="martes">Martes</option>
-                    <option value="miércoles">Miércoles</option>
-                    <option value="jueves">Jueves</option>
-                    <option value="viernes">Viernes</option>
-                    <option value="sábado">Sábado</option>
-                    <option value="domingo">Domingo</option>
-                </select>
+
+            <!-- Dias de la semana-->
+            <div>
+                <label>Días Semana:</label>
             </div>
-            
+            <div class="days-btn-container">
+                <input class="day-btn" id="monday" name="dias_semana" type="checkbox" value="lunes" />
+                <label class="day-label" for="monday">Lun</label>
+
+                <input class="day-btn" id="tuesday" name="dias_semana" type="checkbox" value="martes" />
+                <label class="day-label" for="tuesday">Mar</label>
+
+                <input class="day-btn" id="wednesday" name="dias_semana" type="checkbox" value="miércoles" />
+                <label class="day-label" for="wednesday">Mie</label>
+
+                <input class="day-btn" id="thursday" name="dias_semana" type="checkbox" value="jueves" />
+                <label class="day-label" for="thursday">Jue</label>
+
+                <input class="day-btn" id="friday" name="dias_semana" type="checkbox" value="viernes" />
+                <label class="day-label" for="friday">Vie</label>
+
+                <input class="day-btn" id="saturday" name="dias_semana" type="checkbox" value="sábado" />
+                <label class="day-label" for="saturday">Sab</label>
+
+                <input class="day-btn" id="sunday" name="dias_semana" type="checkbox" value="domingo" />
+                <label class="day-label" for="sunday">Dom</label>
+            </div>
+            <br>
+
+
             <div class="form-group">
                 <label for="hora_inicio">Hora de inicio:</label>
                 <input type="time" id="hora_inicio" name="hora_inicio" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="hora_fin">Hora de fin:</label>
                 <input type="time" id="hora_fin" name="hora_fin" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="servicio">Servicio:</label>
                 <input type="text" id="servicio" name="servicio" required>
             </div>
-            
+
             <button type="submit">Guardar Servicio</button>
         </form>
     </div>
@@ -58,4 +75,5 @@
     </div>
 
 </body>
+
 </html>
