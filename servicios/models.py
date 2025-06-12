@@ -24,19 +24,44 @@ class Disponibilidad(models.Model):
         ('sábado', 'Sábado'),
         ('domingo', 'Domingo'),
     ]
+    INTERVALO_CHOICES = [
+        (15, '15 minutos'),
+        (30, '30 minutos'),
+        (60, '1 hora'),
+    ]
+
     administrador = models.CharField(max_length=100)
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
     servicio = models.CharField(max_length=100)
     disponible = models.BooleanField(default=True, verbose_name="Disponible para reserva")
+    intervalo = models.PositiveSmallIntegerField(
+        choices=INTERVALO_CHOICES, 
+        default=30, 
+        verbose_name="Duracion de cada turno"
+    )
+
+    es_franja_maestra = models.BooleanField(
+        default=False,
+        verbose_name="¿Es una franja horaria maestra?"
+    )
+    franja_padre = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='sub_franjas',
+        verbose_name="Franja original"
+    )
 
     class Meta:
         db_table = 'DISPONIBILIDAD'
+    verbose_name_plural = 'Disponibilidades'
     
     def __str__(self):
-        # Obtiene los días relacionados y los une en un string
         dias = ", ".join([dia.get_dia_display() for dia in self.dias.all()])
-        return f'{self.administrador} - {dias} ({self.hora_inicio}-{self.hora_fin}) {"✅" if self.disponible else "❌"}'
+        intervalo = f"({self.intervalo} min)" if not self.es_franja_maestra else ""
+        return f'{self.administrador} - {dias} ({self.hora_inicio}-{self.hora_fin}) {intervalo} {"✅" if self.disponible else "❌"}'
     
 class ServicioDia(models.Model):
     OPCIONES_DIAS= [

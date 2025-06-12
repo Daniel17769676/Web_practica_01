@@ -14,9 +14,11 @@
     <div class="form-container">
         <h1>Crear Nuevo Servicio</h1>
         <form method="post" action="{% url 'servicios:disponibilidad' %}">
-            <!-- esta linea es para enviar la informacion a la bbdd a traves de la la view -->
-            {% csrf_token %}
+            <!-- esta linea es para enviar la informacion a la bbdd a traves de la la view con el metodo POST -->
 
+            {% csrf_token %}
+            
+            <!-- Nombre del encargado del servicio-->
             <div class="form-group">
                 <label for="administrador">Administrador:</label>
                 <input type="text" id="administrador" name="administrador" required>
@@ -50,17 +52,29 @@
             </div>
             <br>
 
-
+            <!-- Detalle Hora Inicio-->
             <div class="form-group">
                 <label for="hora_inicio">Hora de inicio:</label>
                 <input type="time" id="hora_inicio" name="hora_inicio" required>
             </div>
 
+            <!-- Detalle Hora Fin-->
             <div class="form-group">
                 <label for="hora_fin">Hora de fin:</label>
                 <input type="time" id="hora_fin" name="hora_fin" required>
             </div>
 
+            <!-- seleccionar intervalo de tiempo -->
+            <div class="form-group">
+                <label for="intervalo">Duración de cada servicio:</label>
+                <select id="intervalo" name="intervalo" required>
+                    <option value="15">15 minutos</option>
+                    <option value="30" selected>30 minutos</option>
+                    <option value="60">60 minutos</option>
+                </select>
+            </div>
+
+            <!-- Detalle del Servicio-->
             <div class="form-group">
                 <label for="servicio">Servicio:</label>
                 <input type="text" id="servicio" name="servicio" required>
