@@ -1,95 +1,31 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="es">
-  <head>
-    {% load static %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
-    <title>Sistema de reservas</title>
-  </head>
-  <body>
-    <!--BTN DARK MODE -->
-    <label class="switch">
-      <input id="input" type="checkbox" checked="darkTheme" />
-      <div class="slider round">
-        <div class="sun-moon">
-          <svg id="moon-dot-1" class="moon-dot" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="moon-dot-2" class="moon-dot" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="moon-dot-3" class="moon-dot" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="light-ray-1" class="light-ray" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="light-ray-2" class="light-ray" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="light-ray-3" class="light-ray" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
 
-          <svg id="cloud-1" class="cloud-dark" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="cloud-2" class="cloud-dark" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="cloud-3" class="cloud-dark" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="cloud-4" class="cloud-light" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="cloud-5" class="cloud-light" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-          <svg id="cloud-6" class="cloud-light" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="50"></circle>
-          </svg>
-        </div>
-        <div class="stars">
-          <svg id="star-1" class="star" viewBox="0 0 20 20">
-            <path
-              d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"
-            ></path>
-          </svg>
-          <svg id="star-2" class="star" viewBox="0 0 20 20">
-            <path
-              d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"
-            ></path>
-          </svg>
-          <svg id="star-3" class="star" viewBox="0 0 20 20">
-            <path
-              d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"
-            ></path>
-          </svg>
-          <svg id="star-4" class="star" viewBox="0 0 20 20">
-            <path
-              d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"
-            ></path>
-          </svg>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservas Digital</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png">
+</head>
+
+<body>
+  <div class="holographic-container">
+    <div class="holographic-card">
+      <div class="holographic-header">
+        <h2 class="holographic-title">Sistema reservas <span class="digital">Digital</span></h2>
+        <div class="time-display">
+          <div class="time" id="live-time">--:--:--</div>
+          <div class="date" id="live-date">--- --, ----</div>
         </div>
       </div>
-    </label>
 
-    <!-- Contenido específico de la portada -->
-    
-    <h2>Bienvenido a nuestro sistema de reservas</h2>
-    <h3>Aquí puedes ofrecer tus servicios o reservar un servicio que necesites.</h3>
-    
-    <p>
-          Selecciona una de las opciones a continuación para comenzar.
-    </p>
 
-    <!-- Botones de acción -->
+       <!-- BOTONES DE ACCION -->
      
     <div class="botones">
-      <!-- BTN OFRECER SERVICIOS -->
+      <!-- btn ofrecer servicios-->
       <a href="{% url 'disponibilidad' %}" class="animated-button">
         <svg
           viewBox="0 0 24 24"
@@ -115,7 +51,7 @@
 
       <br />
 
-      <!-- BTN RESERVAR SERVICIOS -->
+      <!-- btn reservar servicios -->
       <a href="{% url 'reservas:mostrar_servicios' %}" class="animated-button">
         <svg
           viewBox="0 0 24 24"
@@ -140,17 +76,44 @@
       </a>
     </div>
 
+      <!-- ANIMACION DE CONEXIONES Y TARJETAS -->
+      <div class="connection-lines">
+        <svg viewBox="0 0 500 200" class="circuit">
+          <path class="circuit-path" d="M50,100 Q250,200 450,100" stroke="#4CAF50" fill="none" />
+          <circle class="pulse-dot" cx="50" cy="100" r="4" fill="#4CAF50" />
+          <circle class="pulse-dot" cx="250" cy="200" r="4" fill="#4CAF50" />
+          <circle class="pulse-dot" cx="450" cy="100" r="4" fill="#4CAF50" />
+        </svg>
+      </div>
 
-    <!-- ANIMACION -->
-
-    <div class="loadingspinner">
-      <div id="square1"></div>
-      <div id="square2"></div>
-      <div id="square3"></div>
-      <div id="square4"></div>
-      <div id="square5"></div>
+      <div class="card-stack">
+        <div class="card-3d" style="--i:1">
+          <div class="card-content">
+            <div class="card-icon">📅</div>
+            <h3>Gestión automatica</h3>
+            <p>Automatiza tus reservas</p>
+          </div>
+        </div>
+        <div class="card-3d" style="--i:2">
+          <div class="card-content">
+            <div class="card-icon">⏱️</div>
+            <h3>Ahorra tiempo</h3>
+            <p>Evita la programacion manual de servicios</p>
+          </div>
+        </div>
+        <div class="card-3d" style="--i:3">
+          <div class="card-content">
+            <div class="card-icon">🔗</div>
+            <h3>Integracion</h3>
+            <p>Guarda tus agendamientos en tu correo</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    
-  </body>
+  <script src="/static/js/PaginaDinamica.js"></script>
+
+</body>
+
 </html>
