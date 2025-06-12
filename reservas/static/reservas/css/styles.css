@@ -1,103 +1,330 @@
-/* CCS RESERVAR.HMTL*/
+/* ESTILOS BASE */
 body {
   font-family: Arial, sans-serif;
-  line-height: 1.6;
   margin: 0;
   padding: 20px;
+  line-height: 1.6;
   background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+
 h1 {
   color: #333;
   text-align: center;
+  margin-bottom: 30px;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* SECCIONES DEL FORMULARIO */
+.form-section {
   margin-bottom: 25px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
 }
-form p {
+
+.form-section h3 {
+  color: #4caf50;
+  margin-top: 0;
   margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
 }
+
+/* ELEMENTOS DEL FORMULARIO */
 label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  display: block;
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="time"],
+select,
+textarea {
   width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* BOTONES */
+.button-container {
+  text-align: center;
   margin-top: 20px;
-}
-.btn-primary:hover {
-  background-color: #0069d9;
-}
-.errorlist {
-  color: #dc3545;
-  margin-top: 5px;
-  padding-left: 0;
-  list-style: none;
 }
 
 button,
 .btn-volver {
-  background-color: #4caf50;
   color: white;
-  padding: 10px 15px;
+  padding: 12px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   text-decoration: none;
   display: inline-block;
-  text-align: center;
+  transition: background-color 0.3s;
 }
+
+button {
+  background-color: #4caf50;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
 .btn-volver {
   background-color: #f44336;
+}
+
+.btn-volver:hover {
+  background-color: #d32f2f;
+}
+
+.btn-reservar {
+  background-color: #4caf50;
+  width: 100%;
+  max-width: 200px;
+}
+
+.btn-reservar:hover {
+  background-color: #054207;
+}
+
+/* DÍAS DE LA SEMANA */
+.days-btn-container {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.day-btn {
+  display: none;
+}
+
+.day-label {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.day-btn:checked + .day-label {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+.day-label:hover {
+  background-color: #ddd;
+}
+
+/* HORARIOS DISPONIBLES */
+.time-slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-top: 10px;
 }
 
-/* CCS RESERVAR_EXITO.HMTL*/
+.time-slot {
+  padding: 8px 12px;
+  background-color: #e9f7ef;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f8f9fa;
-}
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.alert-success {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-  padding: 10px;
-  border-radius: 4px;
-}
-.btn-primary {
+.time-slot:hover {
+  background-color: #4caf50;
   color: white;
-  background-color: #007bff;
-  border-color: #007bff;
-  padding: 8px 16px;
-  text-decoration: none;
+}
+
+.time-slot.selected {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+/* MENSAJES */
+.time-slots-container p {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ESTILOS ESPECÍFICOS PARA CONFIRMACIÓN - NO INTERFIEREN CON LOS EXISTENTES */
+.confirmation-page {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.6;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.confirmation-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.confirmation-wrapper h1 {
+  color: #4caf50;
+  margin-bottom: 20px;
+}
+
+.confirmation-icon {
+  font-size: 60px;
+  color: #4caf50;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.confirmation-message {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.confirmation-details {
+  text-align: left;
+  margin: 25px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.confirmation-detail-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.confirmation-detail-label {
+  font-weight: bold;
+  width: 120px;
+  color: #333;
+}
+
+.confirmation-detail-value {
+  flex: 1;
+  min-width: 0;
+}
+
+.confirmation-status-row {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.confirmation-status {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.confirmation-footer {
+  color: #666;
+  font-style: italic;
+  margin: 20px 0;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.confirmation-btn {
+  color: white;
+  padding: 12px 20px;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
   display: inline-block;
-  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.confirmation-btn-primary {
+  background-color: #4caf50;
+}
+
+.confirmation-btn-primary:hover {
+  background-color: #45a049;
+}
+
+.confirmation-btn-secondary {
+  background-color: #2196f3;
+}
+
+.confirmation-btn-secondary:hover {
+  background-color: #0b7dda;
+}
+
+.confirmation-btn-print {
+  background-color: #ff9800;
+}
+
+.confirmation-btn-print:hover {
+  background-color: #e68a00;
+}
+
+@media (max-width: 600px) {
+  .confirmation-wrapper {
+    padding: 20px;
+  }
+
+  .confirmation-detail-row {
+    flex-direction: column;
+  }
+
+  .confirmation-detail-label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .confirmation-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .confirmation-buttons .confirmation-btn {
+    width: 100%;
+    margin: 5px 0;
+  }
 }

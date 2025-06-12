@@ -4,19 +4,63 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva Confirmada</title>
-    <link rel="stylesheet" href="{% static 'usuarios/css/styles.css' %}">
+    <title>Confirmación de Reserva</title>
+    <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+    <style>
+    
+    </style>
 </head>
 
-<body>
-    <div class="container mt-4">
-        <h1>¡Reserva confirmada!</h1>
-        <p class="alert alert-success">Tu reserva se ha realizado con éxito.</p>
-        <a href="{% url 'usuarios:reservar' %}" class="btn btn-primary">
-            Volver a reservas
-        </a>
+<body class="confirmation-page">
+    <div class="confirmation-wrapper">
+        <div class="confirmation-icon">✓</div>
+        <h1>¡Reserva realizada correctamente!</h1>
+        <p class="confirmation-message">Tu reserva ha sido registrada exitosamente. A continuación los detalles:</p>
+        
+        <div class="confirmation-details">
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Nombre:</span>
+                <span class="confirmation-detail-value">{{ reserva.nombre }}</span>
+            </div>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Servicio:</span>
+                <span class="confirmation-detail-value">{{ reserva.servicio }}</span>
+            </div>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Día:</span>
+                <span class="confirmation-detail-value">{{ reserva.get_dia_display }}</span>
+            </div>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Horario:</span>
+                <span class="confirmation-detail-value">{{ reserva.hora_inicio|time:"H:i" }} - {{ reserva.hora_fin|time:"H:i" }}</span>
+            </div>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Teléfono:</span>
+                <span class="confirmation-detail-value">{{ reserva.telefono }}</span>
+            </div>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Email:</span>
+                <span class="confirmation-detail-value">{{ reserva.email }}</span>
+            </div>
+            {% if reserva.observaciones %}
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Observaciones:</span>
+                <span class="confirmation-detail-value">{{ reserva.observaciones }}</span>
+            </div>
+            {% endif %}
+            <div class="confirmation-detail-row confirmation-status-row">
+                <span class="confirmation-detail-label">Estado:</span>
+                <span class="confirmation-detail-value confirmation-status">Confirmado</span>
+            </div>
+        </div>
+        
+        <p class="confirmation-footer">Recibirás un correo de confirmación con los detalles de tu reserva.</p>
+        
+        <div class="confirmation-buttons">
+            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-secondary">Volver al Inicio</a>
+            <button onclick="window.print()" class="confirmation-btn confirmation-btn-print">Imprimir Confirmación</button>
+        </div>
     </div>
-
 </body>
 </html>

@@ -7,45 +7,43 @@
     <title>Confirmación de Reserva</title>
     <link rel="stylesheet" href="{% static 'servicios/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
-</head>
+  </head>
 
-<body>
-    <div class="confirmation-container">
+<body class="confirmation-page">
+    <div class="confirmation-wrapper">
         <div class="confirmation-icon">✓</div>
-        <h1>¡Reserva Confirmada!</h1>
-        <p>Tu reserva ha sido registrada exitosamente. A continuación los detalles:</p>
+        <h1>¡Servicio creado correctamente!</h1>
+        <p class="confirmation-message">Tu servicio ha sido registrado exitosamente. A continuación los detalles:</p>
         
-        <div class="reservation-details">
-            <div class="detail-row">
-                <span class="detail-label">Administrador:</span>
-                <span>{{ disponibilidad.administrador }}</span>
+        <div class="confirmation-details">
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Administrador:</span>
+                <span class="confirmation-detail-value">{{ disponibilidad.administrador }}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Servicio:</span>
-                <span>{{ disponibilidad.servicio }}</span>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Servicio:</span>
+                <span class="confirmation-detail-value">{{ disponibilidad.servicio }}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Día:</span>
-                <span>{{ disponibilidad.get_dia_display }}</span>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Día:</span>
+                <span class="confirmation-detail-value">{{ disponibilidad.get_dia_display }}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Horario:</span>
-                <span>{{ disponibilidad.hora_inicio|time:"H:i" }} - {{ disponibilidad.hora_fin|time:"H:i" }}</span>
+            <div class="confirmation-detail-row">
+                <span class="confirmation-detail-label">Horario:</span>
+                <span class="confirmation-detail-value">{{ disponibilidad.hora_inicio|time:"H:i" }} - {{ disponibilidad.hora_fin|time:"H:i" }}</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Estado:</span>
-                <span>Confirmado</span>
+            <div class="confirmation-detail-row confirmation-status-row">
+                <span class="confirmation-detail-label">Estado:</span>
+                <span class="confirmation-detail-value confirmation-status">Confirmado</span>
             </div>
         </div>
         
-        <p>Recibirás un correo de confirmación con los detalles de tu reserva.</p>
+        <p class="confirmation-footer">Recibirás un correo de confirmación con los detalles de tu servicio.</p>
         
-        <div class="btn-container">
-            <a href="{% url 'base' %}" class="btn-volver">Volver al Inicio</a>
-            <button onclick="window.print()" class="btn-print">Imprimir Confirmación</button>
+        <div class="confirmation-buttons">
+            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">Volver al Inicio</a>
+            <button onclick="window.print()" class="confirmation-btn confirmation-btn-print">Imprimir Confirmación</button>
         </div>
     </div>
 </body>
-
-
 </html>

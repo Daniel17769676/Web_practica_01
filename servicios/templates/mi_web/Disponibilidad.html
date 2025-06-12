@@ -8,86 +8,97 @@
     <title>Crear Disponibilidad</title>
     <link rel="stylesheet" href="{% static 'servicios/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+    <style>
+
+    </style>
 </head>
 
-<body>
+<body class="form-page">
     <div class="form-container">
         <h1>Crear Nuevo Servicio</h1>
+        
+        <!-- FORMULARIO PRINCIPAL -->
         <form method="post" action="{% url 'servicios:disponibilidad' %}">
-            <!-- esta linea es para enviar la informacion a la bbdd a traves de la la view con el metodo POST -->
-
             {% csrf_token %}
             
-            <!-- Nombre del encargado del servicio-->
-            <div class="form-group">
-                <label for="administrador">Administrador:</label>
-                <input type="text" id="administrador" name="administrador" required>
+            <!-- Sección Administrador -->
+            <div class="form-section">
+                <h3>Información del Administrador</h3>
+                <div class="form-group">
+                    <label for="administrador">Administrador:</label>
+                    <input type="text" id="administrador" name="administrador" required>
+                </div>
             </div>
 
-            <!-- Dias de la semana-->
-            <div>
-                <label>Días Semana:</label>
-            </div>
-            <div class="days-btn-container">
-                <input class="day-btn" id="monday" name="dias_semana" type="checkbox" value="lunes" />
-                <label class="day-label" for="monday">Lun</label>
+            <!-- Sección de días -->
+            <div class="form-section">
+                <h3>Días de la Semana</h3>
+                <div class="days-btn-container">
+                    <input class="day-btn" id="monday" name="dias_semana" type="checkbox" value="lunes" />
+                    <label class="day-label" for="monday">Lun</label>
 
-                <input class="day-btn" id="tuesday" name="dias_semana" type="checkbox" value="martes" />
-                <label class="day-label" for="tuesday">Mar</label>
+                    <input class="day-btn" id="tuesday" name="dias_semana" type="checkbox" value="martes" />
+                    <label class="day-label" for="tuesday">Mar</label>
 
-                <input class="day-btn" id="wednesday" name="dias_semana" type="checkbox" value="miércoles" />
-                <label class="day-label" for="wednesday">Mie</label>
+                    <input class="day-btn" id="wednesday" name="dias_semana" type="checkbox" value="miércoles" />
+                    <label class="day-label" for="wednesday">Mie</label>
 
-                <input class="day-btn" id="thursday" name="dias_semana" type="checkbox" value="jueves" />
-                <label class="day-label" for="thursday">Jue</label>
+                    <input class="day-btn" id="thursday" name="dias_semana" type="checkbox" value="jueves" />
+                    <label class="day-label" for="thursday">Jue</label>
 
-                <input class="day-btn" id="friday" name="dias_semana" type="checkbox" value="viernes" />
-                <label class="day-label" for="friday">Vie</label>
+                    <input class="day-btn" id="friday" name="dias_semana" type="checkbox" value="viernes" />
+                    <label class="day-label" for="friday">Vie</label>
 
-                <input class="day-btn" id="saturday" name="dias_semana" type="checkbox" value="sábado" />
-                <label class="day-label" for="saturday">Sab</label>
+                    <input class="day-btn" id="saturday" name="dias_semana" type="checkbox" value="sábado" />
+                    <label class="day-label" for="saturday">Sab</label>
 
-                <input class="day-btn" id="sunday" name="dias_semana" type="checkbox" value="domingo" />
-                <label class="day-label" for="sunday">Dom</label>
-            </div>
-            <br>
-
-            <!-- Detalle Hora Inicio-->
-            <div class="form-group">
-                <label for="hora_inicio">Hora de inicio:</label>
-                <input type="time" id="hora_inicio" name="hora_inicio" required>
+                    <input class="day-btn" id="sunday" name="dias_semana" type="checkbox" value="domingo" />
+                    <label class="day-label" for="sunday">Dom</label>
+                </div>
             </div>
 
-            <!-- Detalle Hora Fin-->
-            <div class="form-group">
-                <label for="hora_fin">Hora de fin:</label>
-                <input type="time" id="hora_fin" name="hora_fin" required>
+            <!-- Horarios -->
+            <div class="form-section">
+                <h3>Horario de Disponibilidad</h3>
+                <div class="form-group">
+                    <label for="hora_inicio">Hora de inicio:</label>
+                    <input type="time" id="hora_inicio" name="hora_inicio" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="hora_fin">Hora de fin:</label>
+                    <input type="time" id="hora_fin" name="hora_fin" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="intervalo">Duración de cada servicio:</label>
+                    <select id="intervalo" name="intervalo" required>
+                        <option value="15">15 minutos</option>
+                        <option value="30" selected>30 minutos</option>
+                        <option value="60">60 minutos</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- seleccionar intervalo de tiempo -->
-            <div class="form-group">
-                <label for="intervalo">Duración de cada servicio:</label>
-                <select id="intervalo" name="intervalo" required>
-                    <option value="15">15 minutos</option>
-                    <option value="30" selected>30 minutos</option>
-                    <option value="60">60 minutos</option>
-                </select>
+            <!-- Detalles del servicio -->
+            <div class="form-section">
+                <h3>Detalles del Servicio</h3>
+                <div class="form-group">
+                    <label for="servicio">Servicio:</label>
+                    <input type="text" id="servicio" name="servicio" required>
+                </div>
             </div>
 
-            <!-- Detalle del Servicio-->
-            <div class="form-group">
-                <label for="servicio">Servicio:</label>
-                <input type="text" id="servicio" name="servicio" required>
+            <!-- Botón de enviar -->
+            <div class="button-container">
+                <button type="submit" class="btn-submit">Guardar Servicio</button>
             </div>
-
-            <button type="submit">Guardar Servicio</button>
         </form>
+        
+        <!-- Botón Volver (fuera del formulario pero dentro del mismo contenedor) -->
+        <div class="btn-volver-container">
+            <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
+        </div>
     </div>
-
-    <div class="button-container" style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
-    </div>
-
 </body>
-
 </html>
