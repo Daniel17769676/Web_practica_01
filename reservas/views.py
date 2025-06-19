@@ -5,8 +5,6 @@ from servicios.models import Disponibilidad, ServicioDia  # Importa el modelo Di
 from django.views.decorators.http import require_GET
 
 
-
-
 # Vista para mostrar los servicios disponibles (GET)
 def seleccionar_servicios_view (request):
     #Obtenemos solo los valores unicos del campo 'servicio' del modelo Disponibilidad

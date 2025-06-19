@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 # Crear tus modelos aquí. (Los modelos son tablas de la base de datos)
 
@@ -57,6 +59,26 @@ class Disponibilidad(models.Model):
     class Meta:
         db_table = 'DISPONIBILIDAD'
     verbose_name_plural = 'Disponibilidades'
+
+    def get_turnos(self):
+        """
+        Genera los turnos disponibles basados en hora_inicio, hora_fin e intervalo
+        Devuelve una lista de diccionarios con inicio y fin de cada turno
+        """
+        turnos = []
+        hora_actual = datetime.combine(timezone.now().date(), self.hora_inicio)
+        hora_fin = datetime.combine(timezone.now().date(), self.hora_fin)
+        intervalo = timedelta(minutes=self.intervalo)
+        
+        while hora_actual + intervalo <= hora_fin:
+            turno = {
+                'inicio': hora_actual.time(),
+                'fin': (hora_actual + intervalo).time()
+            }
+            turnos.append(turno)
+            hora_actual += intervalo
+        
+        return turnos
     
     def __str__(self):
         dias = ", ".join([dia.get_dia_display() for dia in self.dias.all()])

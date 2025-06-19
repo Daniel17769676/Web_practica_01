@@ -64,8 +64,9 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1.5rem;
+  white-space: nowrap; /* Evita que el texto se divida en múltiples líneas */
 }
 
 .holographic-title {
@@ -82,6 +83,8 @@ body {
   position: relative;
   margin: 0;
   line-height: 1.2;
+  white-space: nowrap;
+  margin-right: 1.5rem; /* Añade espacio entre el título y la hora */
 }
 
 .digital {
@@ -125,6 +128,8 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  flex-shrink: 0;
+
 }
 
 .time-display:hover {
@@ -341,9 +346,9 @@ body {
   }
 
   .holographic-header {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 2rem;
+    flex-direction: row; /* Mantén la dirección horizontal */
+    flex-wrap: wrap; /* Permite el wrap solo en móviles */
+    align-items: center; /* Centra verticalmente */
   }
 
   .holographic-title {
@@ -351,8 +356,8 @@ body {
   }
 
   .time-display {
-    text-align: left;
-    margin-top: 0.5rem;
+    margin-top: 0; /* Elimina el margen superior */
+    text-align: left; /* Alinea el texto a la izquierda */
   }
 
   .card-stack {
@@ -388,7 +393,6 @@ body {
   justify-content: center; /* Centra los botones */
   gap: 20px; /* Espacio entre los botones */
   margin-top: 100px; /* Añadir margen superior */
-
 }
 
 .animated-button {
