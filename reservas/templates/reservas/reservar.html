@@ -47,40 +47,15 @@
                         {% endfor %}
                     </select>
                 </div>
-        
-                        <!-- Paso 3: Selección de horario -->
+
+                <!-- En tu template reservar.html -->
                 <div class="form-section">
                     <h3>3. Selecciona el horario</h3>
-
-                    <!-- Mostrar días disponibles -->
-                    <div class="days-container">
-                        {% for dia in disponibilidad.dias.all %}
-                        <div class="day-option" data-day="{{ dia.dia }}">
-                            {{ dia.get_dia_display }}
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Contenedor para los turnos disponibles -->
                     <div class="time-slots-container" id="time-slots">
-                        {% if disponibilidad %}
-                            {% with inicio=disponibilidad.hora_inicio fin=disponibilidad.hora_fin intervalo=disponibilidad.intervalo %}
-                                {% for turno in disponibilidad.get_turnos %}
-                                <div class="time-slot">
-                                    <input type="radio" id="turno-{{ forloop.counter }}" name="turno_seleccionado"
-                                        value="{{ turno.inicio|time:'H:i' }}-{{ turno.fin|time:'H:i' }}">
-                                    <label for="turno-{{ forloop.counter }}">
-                                        {{ turno.inicio|time:'H:i' }} - {{ turno.fin|time:'H:i' }}
-                                    </label>
-                                </div>
-                                {% endfor %}
-                            {% endwith %}
-                        {% else %}
-                            <p>Selecciona primero un servicio para ver los horarios disponibles</p>
-                        {% endif %}
+                        <p class="info-message">Selecciona primero un servicio y un día</p>
                     </div>
                 </div>
-   
+                        
                 <!-- Paso 4: Datos del cliente -->
                 <div class="form-section">
                     <h3>4. Datos del cliente</h3>
@@ -108,7 +83,8 @@
     </div>
 
     <!--Los Script's de JS van en esta parte del HTML -->
-    <script src="{% static 'reservas/js/FiltroDias.js' %}"></script>
+    <script src="{% static 'reservas/js/CargaHoraria.js' %}"></script>
+  
 </body>
 
 </html>

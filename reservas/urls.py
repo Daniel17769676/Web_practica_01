@@ -17,5 +17,7 @@ path('reserva_exito/', views.reserva_exito_view, name='reserva_exito'),
 #Vista para obtener los dias disponibles por servicio (GET)
 path('get_dias_por_servicio/', get_dias_por_servicio_view, name='get_dias_por_servicio'),
 
+#Vista para obtener los horarios disponibles por servicio y día (GET)
+path('get_horarios/', views.get_horarios, name='get_horarios'),
 
 ]

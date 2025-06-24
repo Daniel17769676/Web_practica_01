@@ -146,30 +146,48 @@ button:hover {
 
 /* HORARIOS DISPONIBLES */
 .time-slots-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    min-height: 100px;
 }
 
 .time-slot {
-  padding: 8px 12px;
-  background-color: #e9f7ef;
-  border: 1px solid #4caf50;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
+    display: inline-block;
+    margin: 5px;
 }
 
-.time-slot:hover {
-  background-color: #4caf50;
-  color: white;
+.time-slot input[type="radio"] {
+    display: none;
 }
 
-.time-slot.selected {
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
+.time-slot label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.time-slot input[type="radio"]:checked + label {
+    background: #4CAF50;
+    color: white;
+}
+
+.info-message {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.error-message {
+    color: #f44336;
+    text-align: center;
+    padding: 20px;
 }
 
 /* MENSAJES */
