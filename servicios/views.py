@@ -9,8 +9,7 @@ def disponibilidad_view(request):
     #Para mostrar servicios disponibles (GET), EL GET es un método HTTP que se utiliza para solicitar datos de un recurso específico. En este caso, se utiliza para mostrar los servicios disponibles del administrador/oferente
     servicios_disponibles = Disponibilidad.objects.all() #Filtra las disponibilidades la base de datos.
     
-    if request.method == 'POST':
-      
+    if request.method == 'POST':      
                 
             # 1. Primero creamos la Disponibilidad con todos los campos
             disponibilidad=Disponibilidad.objects.create(
@@ -51,11 +50,21 @@ def disponibilidad_view(request):
 
             
 
-            return redirect('servicios:confirmacion') #Redirect es una función que redirige al usuario a otra URL después de que se haya procesado el formulario. En este caso, redirige a la plantilla 'Confirmacion.html' después de guardar la disponibilidad en la base de datos.
+            return redirect('servicios:confirmacion', disponibilidad_id=disponibilidad.id) #Redirect es una función que redirige al usuario a otra URL después de que se haya procesado el formulario. En este caso, redirige a la plantilla 'Confirmacion.html' después de guardar la disponibilidad en la base de datos.
    
     return render(request, 'mi_web/Disponibilidad.html' ,{servicios_disponibles: servicios_disponibles, #la variable 'servicios_disponibles' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista.
      'dias_opciones': ServicioDia.OPCIONES_DIAS}) # 'dias_opciones' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista. 'ServicioDia.OPCIONES_DIAS' es una lista de tuplas que contiene los días de la semana y sus nombres legibles para el usuario.)
 
 # Vista para confirmar datos guardados al ofrecer disponibilidad (ADMINISTRADOR)
-def confirmacion_view(request):
-    return render(request, 'mi_web/Confirmacion.html')
+def confirmacion_view(request, disponibilidad_id):
+    disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id)
+    print("Datos de disponibilidad:", disponibilidad.__dict__)  # Debug
+    dias = ServicioDia.objects.filter(disponibilidad=disponibilidad)
+    return render(request, 'mi_web/Confirmacion.html', {
+        'administrador': disponibilidad.administrador,
+        'servicio': disponibilidad.servicio,
+        'dias': [dia.get_dia_display() for dia in dias],  # Muestra el nombre del día (ej: "Lunes")
+        'horario': f"{disponibilidad.hora_inicio} - {disponibilidad.hora_fin}",
+        'estado': "Confirmado" if disponibilidad.disponible else "Pendiente",
+    })
+    
