@@ -57,9 +57,9 @@ def disponibilidad_view(request):
 
 # Vista para confirmar datos guardados al ofrecer disponibilidad (ADMINISTRADOR)
 def confirmacion_view(request, disponibilidad_id):
-    disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id)
+    disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id) # Obtiene la disponibilidad por su ID
     print("Datos de disponibilidad:", disponibilidad.__dict__)  # Debug
-    dias = ServicioDia.objects.filter(disponibilidad=disponibilidad)
+    dias = ServicioDia.objects.filter(disponibilidad=disponibilidad) # Obtiene los días asociados a la disponibilidad
     return render(request, 'mi_web/Confirmacion.html', {
         'administrador': disponibilidad.administrador,
         'servicio': disponibilidad.servicio,

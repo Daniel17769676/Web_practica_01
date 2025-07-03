@@ -159,6 +159,14 @@ def procesar_reserva_view(request):
     
 # Renderiza la plantilla de confirmación de reserva exitosa
 def reserva_exito_view(request):
-    return render(request, 'reservas/reserva_exito.html')
+    reserva = Reserva.objects.last()  # Obtiene la última reserva realizada
+    return render(request, 'reservas/reserva_exito.html', {
+        'cliente_nombre': reserva.cliente_nombre,
+        'dia_semana': reserva.dia_semana,
+        'hora_inicio': reserva.hora_inicio,
+        'cliente_telefono': reserva.cliente_telefono,
+        'cliente_email': reserva.cliente_email,
+
+    })
 
 
