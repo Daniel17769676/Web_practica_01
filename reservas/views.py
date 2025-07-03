@@ -4,7 +4,7 @@ from servicios.models import Disponibilidad, ServicioDia #Importa los modelos de
 from reservas.models import Servicio, Reserva #Importa los modelos de la app RESERVAS
 from django.views.decorators.http import require_GET
 from django.contrib import messages
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 
 
@@ -96,8 +96,8 @@ def procesar_reserva_view(request):
         # Obtener datos del formulario
         servicio_nombre = request.POST.get('servicio')
         print(f'Servicio recibido: {servicio_nombre}')  # Debugging
-        dia_str = request.POST.get('dia')
-        print(f'Día recibido: {dia_str}')  # Debugging
+        dia_semana = request.POST.get('dia')
+        print(f'Día recibido: {dia_semana}')  # Debugging
         horario = request.POST.get('horario')
         print(f'Horario recibido: {horario}')  # Debugging
         nombre_cliente = request.POST.get('nombre')
@@ -110,7 +110,7 @@ def procesar_reserva_view(request):
         print(f'Observaciones recibidas: {observaciones}')  # Debugging
 
         # Validar que todos los campos requeridos están presentes
-        if not all([servicio_nombre, dia_str, horario, nombre_cliente, telefono_cliente, email_cliente]):
+        if not all([servicio_nombre, dia_semana, horario, nombre_cliente, telefono_cliente, email_cliente]):
             messages.error(request, 'Todos los campos son obligatorios')
             return redirect('reservas:reservar')
 
@@ -119,15 +119,18 @@ def procesar_reserva_view(request):
         hora_inicio = time.fromisoformat(hora_inicio_str)
         hora_fin = time.fromisoformat(hora_fin_str)
 
-        # Procesar la fecha (asumiendo que 'dia' está en formato 'YYYY-MM-DD')
-        fecha = datetime.strptime(dia_str, '%Y-%m-%d').date()
+        # Validar que el día de la semana sea válido
+        DIAS_VALIDOS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+        if dia_semana.lower() not in DIAS_VALIDOS:
+            messages.error(request, 'Día de la semana no válido')
+            return redirect('reservas:reservar')
 
         # Obtener o crear el servicio
         servicio, created = Servicio.objects.get_or_create(
             nombre=servicio_nombre,
             defaults={
                 'descripcion': servicio_nombre,
-                'duracion': datetime.timedelta(hours=1),  # Ajusta según necesites
+                'duracion': timedelta(hours=1),  # Ajusta según necesites
                 'activo': True
             }
         )
@@ -135,7 +138,7 @@ def procesar_reserva_view(request):
         # Crear la reserva
         reserva = Reserva.objects.create(
             servicio=servicio,
-            fecha=fecha,
+            dia_semana=dia_semana.lower(),
             hora_inicio=hora_inicio,
             hora_fin=hora_fin,
             cliente_nombre=nombre_cliente,

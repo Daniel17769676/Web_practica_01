@@ -49,8 +49,21 @@ class Reserva(models.Model):
         ('completada', 'Completada'),
     ]  # Esta lista permite que se muestren los estados de la reserva en el panel de administracion
 
+
+    #Lista de días de la semana para que se almacene como texto
+    DIAS_SEMANA_CHOICES = [
+        ('lunes', 'Lunes'),
+        ('martes', 'Martes'),
+        ('miércoles', 'Miércoles'),
+        ('jueves', 'Jueves'),
+        ('viernes', 'Viernes'),
+        ('sábado', 'Sábado'),
+        ('domingo', 'Domingo'),
+    ]
+
     servicio = models.ForeignKey(Servicio, on_delete=models.PROTECT) #esto permite que se relacione la reserva con el servicio
-    fecha = models.DateField() #este campo permite que se guarde la fecha de la reserva
+    #fecha = models.DateField() #este campo permite que se guarde la fecha de la reserva
+    dia_semana = models.CharField(max_length=10, choices=DIAS_SEMANA_CHOICES, verbose_name='Dia de la semana') #este campo permite que se guarde el dia de la semana como texto
     hora_inicio = models.TimeField() #este campo permite que se guarde la hora de inicio de la reserva
     hora_fin = models.TimeField() #este campo permite que se guarde la hora de
     cliente_nombre = models.CharField(max_length=100) #este campo permite que se guarde el nombre del cliente
@@ -63,11 +76,11 @@ class Reserva(models.Model):
 
     
     def __str__(self):
-        return f"Reserva #{self.id}-{self.cliente_nombre} ({self.servicio.nombre} - {self.fecha})"
+        return f"Reserva #{self.id}-{self.cliente_nombre} ({self.servicio.nombre} - {self.dia_semana})"
     
     class Meta:
         verbose_name = 'Reserva' #Este campo permite que se muestre el nombre del modelo en singular en el panel de administracion
         verbose_name_plural = 'Reservas' #Este campo permite que se muestre el nombre del modelo en plural en el panel de administracion
-        ordering = ['-fecha', '-hora_inicio'] #esto permite que las reservas se ordenen por fecha y hora de inicio, de mas reciente a mas antiguo
+        ordering = ['dia_semana', 'hora_inicio'] #esto permite que las reservas se ordenen por fecha y hora de inicio, de mas reciente a mas antiguo
 
 
