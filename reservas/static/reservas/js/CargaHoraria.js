@@ -67,17 +67,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Mostrar horarios
-            timeSlotsContainer.innerHTML = '';
+            timeSlotsContainer.innerHTML = ''; // Limpiar contenedor            
             data.horarios.forEach((horario, index) => {
                 const div = document.createElement('div');
                 div.className = 'time-slot';
-                div.innerHTML = `
-                    <input type="radio" 
-                           id="turno-${index}" 
-                           name="turno_seleccionado" 
-                           value="${horario.replace(/\s+/g, '_')}">
-                    <label for="turno-${index}">${horario}</label>
-                `;
+
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.id = `turno-${index}`;
+                input.name = 'turno_seleccionado';
+                input.value = horario; // sin reemplazar espacios
+
+                const label = document.createElement('label');
+                label.htmlFor = `turno-${index}`;
+                label.textContent = horario;
+
+                // Evento que guarda en el input oculto
+                input.addEventListener('change', function () {
+                    const hiddenInput = document.getElementById('horario-seleccionado');
+                    hiddenInput.value = this.value;
+                    console.log('Horario guardado en input oculto:', hiddenInput.value); // debug
+                });
+
+                div.appendChild(input);
+                div.appendChild(label);
                 timeSlotsContainer.appendChild(div);
             });
 

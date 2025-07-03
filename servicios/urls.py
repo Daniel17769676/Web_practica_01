@@ -7,5 +7,6 @@ app_name = 'servicios'
 urlpatterns = [
   path('disponibilidad/', disponibilidad_view, name='disponibilidad'),
   path('confirmacion/<int:disponibilidad_id>/', views.confirmacion_view, name='confirmacion'),
+  
 
 ]
