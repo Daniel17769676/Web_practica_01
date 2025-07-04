@@ -41,9 +41,15 @@
         <p class="confirmation-footer">Recibirás un correo de confirmación con los detalles de tu servicio.</p>
         
         <div class="confirmation-buttons">
-            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">Volver al Inicio</a>
-            <button onclick="window.print()" class="confirmation-btn confirmation-btn-print">Imprimir Confirmación</button>
+            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">Volver al Inicio</a>            
+            <button onclick="window.print()" class="confirmation-btn confirmation-btn-print">Imprimir Confirmación</button>            
+            <a href="{% url 'disponibilidad' %}" class="confirmation-btn confirmation-btn-secondary">Generar otro Servicio</a>            
         </div>
+
+        <div class="confirmation-footer">
+            <p>Si tienes alguna duda, puedes contactarnos a través de nuestro correo electrónico o número de teléfono.</p>
+        </div>
+
     </div>
 </body>
 
