@@ -18,32 +18,32 @@
         <div class="confirmation-details">
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Nombre:</span>
-                <span class="confirmation-detail-value">{{ Reservas.cliente_nombre }}</span>
+                <span class="confirmation-detail-value">{{ cliente_nombre }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Servicio:</span>
-                <span class="confirmation-detail-value">{{ Reservas.servicio }}</span>
+                <span class="confirmation-detail-value">{{ servicio }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Día:</span>
-                <span class="confirmation-detail-value">{{ Reservas.dia_semana }}</span>
+                <span class="confirmation-detail-value">{{ dia_semana }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Horario:</span>
-                <span class="confirmation-detail-value">{{ Reservas.hora_inicio|time:"H:i" }} - {{ reserva.hora_fin|time:"H:i" }}</span>
+                <span class="confirmation-detail-value">{{ hora_inicio|time:"H:i" }} - {{ hora_fin|time:"H:i" }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Teléfono:</span>
-                <span class="confirmation-detail-value">{{ Reservas.cliente_telefono }}</span>
+                <span class="confirmation-detail-value">{{ cliente_telefono }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Email:</span>
-                <span class="confirmation-detail-value">{{ Reservas.cliente_email }}</span>
+                <span class="confirmation-detail-value">{{ cliente_email }}</span>
             </div>
             {% if reserva.observaciones %}
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Observaciones:</span>
-                <span class="confirmation-detail-value">{{ Reservas.observaciones }}</span>
+                <span class="confirmation-detail-value">{{ observaciones }}</span>
             </div>
             {% endif %}
             <div class="confirmation-detail-row confirmation-status-row">

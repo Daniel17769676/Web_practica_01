@@ -50,7 +50,7 @@ def disponibilidad_view(request):
 
             
 
-            return redirect('servicios:confirmacion', disponibilidad_id=disponibilidad.id) #Redirect es una función que redirige al usuario a otra URL después de que se haya procesado el formulario. En este caso, redirige a la plantilla 'Confirmacion.html' después de guardar la disponibilidad en la base de datos.
+            return redirect('servicios:confirmacion', disponibilidad_id=disponibilidad.id) #disponibilidad.id es el ID de la disponibilidad que acabamos de crear. Redirige a la vista de confirmación con el ID de la disponibilidad recién creada.
    
     return render(request, 'mi_web/Disponibilidad.html' ,{servicios_disponibles: servicios_disponibles, #la variable 'servicios_disponibles' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista.
      'dias_opciones': ServicioDia.OPCIONES_DIAS}) # 'dias_opciones' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista. 'ServicioDia.OPCIONES_DIAS' es una lista de tuplas que contiene los días de la semana y sus nombres legibles para el usuario.)

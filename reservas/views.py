@@ -149,7 +149,7 @@ def procesar_reserva_view(request):
         )
 
         # Redirigir a página de éxito
-        return redirect('reservas:reserva_exito')
+        return redirect('reservas:reserva_exito', reserva_id=reserva.id) #Reserva.id es el ID de la reserva que acabamos de crear. Redirige a la vista de confirmación con el ID de la reserva recién creada.
     
     except Exception as e:        
         print(f'Error al procesar la reserva: {str(e)}') 
@@ -158,12 +158,15 @@ def procesar_reserva_view(request):
     
     
 # Renderiza la plantilla de confirmación de reserva exitosa
-def reserva_exito_view(request):
-    reserva = Reserva.objects.last()  # Obtiene la última reserva realizada
+def reserva_exito_view(request, reserva_id):
+    reserva = Reserva.objects.get(id=reserva_id)  # Obtiene la reserva por su ID
+    print(f'Reserva obtenida: {reserva}')  # Debugging
     return render(request, 'reservas/reserva_exito.html', {
+        'servicio': reserva.servicio,
         'cliente_nombre': reserva.cliente_nombre,
         'dia_semana': reserva.dia_semana,
         'hora_inicio': reserva.hora_inicio,
+        'hora_fin': reserva.hora_fin,
         'cliente_telefono': reserva.cliente_telefono,
         'cliente_email': reserva.cliente_email,
 
