@@ -7,8 +7,16 @@
 
 ### 🚧 Estado Actual (v0.6) progress
 
-▰▰▰▰▱▱▱▱▱▱ 60% Completo
+▰▰▰▰▰▰▱▱▱▱ 70% Completo
 
+### 📌 To-Do
+
+- [x] 🛎️ Crear servicio (Oferente)  
+- [x] 🙋‍♂️ Tomar reserva (Cliente)  
+- [x] 🔒 Bloquear citas reservadas  
+- [ ] 📅 Notificaciones `.ICS` + Correo electrónico  
+- [ ] ❌ Cancelar reservas por el usuario  
+- [ ] 🛠️ Panel administrador  
 
 ---
 
@@ -32,7 +40,7 @@ Elimina la gestión manual de reservas (correos, planillas)
 
 - Para clientes:
   - 📝 Reserva en 3 pasos simples
-  - 🔔 Recibe recordatorios automáticos (a través de archivos '.ics'.)
+  - 🔔 Recibe recordatorios automáticos (a través de archivos `.ICS`.)
 
 ---
 
