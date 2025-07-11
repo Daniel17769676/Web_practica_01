@@ -5,6 +5,7 @@ from reservas.models import Servicio, Reserva #Importa los modelos de la app RES
 from django.views.decorators.http import require_GET
 from django.contrib import messages
 from datetime import datetime, time, timedelta
+from django.db.models import Q
 
 
 
@@ -36,6 +37,8 @@ def reservar_servicios_view(request):
 
     return render(request, 'reservas/reservar.html', {'servicios': servicios, 'dias': dias, 'horarios': []})
 
+
+# Vista para obtener los días disponibles por servicio (GET)
 @require_GET  # Asegura que solo se acepten peticiones GET
 def get_dias_por_servicio_view(request):
     servicio = request.GET.get('servicio')
@@ -62,7 +65,7 @@ def get_dias_por_servicio_view(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-
+#vista para obtener los horarios disponibles por servicio y día (GET)
 def get_horarios(request):
     servicio = request.GET.get('servicio', '').strip().lower()
     dia = request.GET.get('dia', '').strip().lower()
@@ -71,22 +74,47 @@ def get_horarios(request):
         return JsonResponse({'error': 'Faltan parámetros'}, status=400)
     
     try:
+        # 1. Obtener disponibilidades activas
         disponibilidades = Disponibilidad.objects.filter(
             servicio__iexact=servicio,
-            dias__dia__iexact=dia
+            dias__dia__iexact=dia,
+            disponible=True
         ).prefetch_related('dias')
-        
-        horarios = []
+
+        # 2. Obtener horarios reservados (aunque sabemos que está vacío)
+        reservados = Reserva.objects.filter(
+            servicio__nombre__iexact=servicio,
+            dia_semana__iexact=dia,
+            estado__in=['confirmada', 'pendiente']
+        ).values_list('hora_inicio', 'hora_fin')
+
+        # 3. Convertir horarios reservados a formato comparable
+        reservados_set = {
+            (hora_inicio.strftime('%H:%M'), hora_fin.strftime('%H:%M'))
+            for hora_inicio, hora_fin in reservados
+        }
+
+        # 4. Generar horarios disponibles
+        horarios_disponibles = []
         for disp in disponibilidades:
             for turno in disp.get_turnos():
-                horarios.append(
-                    f"{turno['inicio']} - {turno['fin']}"
-                )
-        
-        return JsonResponse({'horarios': horarios})
+                inicio = turno['inicio'].strftime('%H:%M')
+                fin = turno['fin'].strftime('%H:%M')
+                
+                if (inicio, fin) not in reservados_set:
+                    horarios_disponibles.append(f"{inicio} - {fin}")
+
+        return JsonResponse({
+            'horarios': horarios_disponibles,
+            'total_disponibles': len(horarios_disponibles),
+            'status': 'success'
+        })
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({
+            'error': f"Error al procesar horarios: {str(e)}",
+            'status': 'error'
+        }, status=500)
     
 
         
@@ -94,20 +122,14 @@ def get_horarios(request):
 def procesar_reserva_view(request):  
     try:
         # Obtener datos del formulario
-        servicio_nombre = request.POST.get('servicio')
-        print(f'Servicio recibido: {servicio_nombre}')  # Debugging
-        dia_semana = request.POST.get('dia')
-        print(f'Día recibido: {dia_semana}')  # Debugging
-        horario = request.POST.get('horario')
-        print(f'Horario recibido: {horario}')  # Debugging
-        nombre_cliente = request.POST.get('nombre')
-        print(f'Nombre del cliente recibido: {nombre_cliente}')  # Debugging
-        telefono_cliente = request.POST.get('telefono')
-        print(f'Teléfono del cliente recibido: {telefono_cliente}')  # Debugging
-        email_cliente = request.POST.get('email')
-        print(f'Email del cliente recibido: {email_cliente}')  # Debugging
+        servicio_nombre = request.POST.get('servicio')        
+        dia_semana = request.POST.get('dia')        
+        horario = request.POST.get('horario')        
+        nombre_cliente = request.POST.get('nombre')        
+        telefono_cliente = request.POST.get('telefono')        
+        email_cliente = request.POST.get('email')        
         observaciones = request.POST.get('observaciones', '')
-        print(f'Observaciones recibidas: {observaciones}')  # Debugging
+        
 
         # Validar que todos los campos requeridos están presentes
         if not all([servicio_nombre, dia_semana, horario, nombre_cliente, telefono_cliente, email_cliente]):

@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==============================================
     // 2. Función para cargar horarios
     // ==============================================
-    const cargarHorariosDisponibles = async (servicio, dia) => {
+        const cargarHorariosDisponibles = async (servicio, dia) => {
         timeSlotsContainer.innerHTML = '<p class="info-message">Cargando horarios...</p>';
 
         try {
@@ -61,13 +61,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
             
-            if (!data.horarios || data.horarios.length === 0) {
-                timeSlotsContainer.innerHTML = '<p class="info-message">No hay horarios disponibles</p>';
+            // Verificar si hay error en la respuesta
+            if (data.status === 'error') {
+                throw new Error(data.error || 'Error desconocido del servidor');
+            }
+            
+            // Usar data.total_disponibles para mejor feedback
+            if (!data.horarios || data.total_disponibles === 0) {
+                timeSlotsContainer.innerHTML = '<p class="info-message">No hay horarios disponibles para este día</p>';
                 return;
             }
 
             // Mostrar horarios
-            timeSlotsContainer.innerHTML = ''; // Limpiar contenedor            
+            timeSlotsContainer.innerHTML = '';
             data.horarios.forEach((horario, index) => {
                 const div = document.createElement('div');
                 div.className = 'time-slot';
@@ -76,17 +82,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.type = 'radio';
                 input.id = `turno-${index}`;
                 input.name = 'turno_seleccionado';
-                input.value = horario; // sin reemplazar espacios
+                input.value = horario;
 
                 const label = document.createElement('label');
                 label.htmlFor = `turno-${index}`;
                 label.textContent = horario;
 
-                // Evento que guarda en el input oculto
-                input.addEventListener('change', function () {
-                    const hiddenInput = document.getElementById('horario-seleccionado');
-                    hiddenInput.value = this.value;
-                    console.log('Horario guardado en input oculto:', hiddenInput.value); // debug
+                input.addEventListener('change', function() {
+                    document.getElementById('horario-seleccionado').value = this.value;
+                    console.log('Horario seleccionado:', this.value);
                 });
 
                 div.appendChild(input);
@@ -96,10 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error('Error al cargar horarios:', error);
-            timeSlotsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
+            timeSlotsContainer.innerHTML = `
+                <p class="error-message">Error al cargar horarios</p>
+                <p class="error-detail">${error.message}</p>
+            `;
         }
     };
-
     // ==============================================
     // 3. Manejadores de Eventos
     // ==============================================
