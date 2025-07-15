@@ -14,9 +14,10 @@
 - [x] 🛎️ Crear servicio (Oferente)  
 - [x] 🙋‍♂️ Tomar reserva (Cliente)  
 - [x] 🔒 Bloquear citas reservadas  
-- [ ] 📅 Notificaciones `.ICS` + Correo electrónico  
-- [ ] ❌ Cancelar reservas por el usuario  
-- [ ] 🛠️ Panel administrador  
+- [ ] 📅 Notificaciones `.ICS` al correo electrónico
+- [ ] 🧑‍💼 Crear perfil
+- [ ] ⚙️ Panel administrador
+- [ ] 🎛️ Panel oferente
 
 ---
 
