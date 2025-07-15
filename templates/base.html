@@ -10,42 +10,92 @@
   <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png">
 </head>
 
+<style>  
+/* Nuevos estilos para los botones de acceso y perfil */
+.access-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.profile-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  }
+
+.access-btn:hover, .profile-btn:hover {
+background: rgba(76, 175, 80, 0.4);
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+</style>
+
 <body>
   <div class="holographic-container">
     <div class="holographic-card">
+
+    <!-- Botón de acceso a la izquierda -->
+    <a href="" class="access-btn">
+      <span>🔑</span>Panel de Gestión
+    </a>
+
+    <br>
+    <br>
+    <br>
+
+    <!-- Botón de perfil a la derecha -->
+    <a href="" class="profile-btn">
+      Crea tu perfil <span>🧑‍💻</span>
+    </a>
+
       <div class="holographic-header">
         <h2 class="holographic-title">Sistema reservas <span class="digital">Digital</span></h2>
         <div class="time-display">
           <div class="time" id="live-time">--:--:--</div>
           <div class="date" id="live-date">--- --, ----</div>
         </div>
-      </div>
+      </div> 
 
-
-       <!-- BOTONES DE ACCION -->
-     
+    <!-- BOTONES DE ACCION -->    
     <div class="botones">
+
       <!-- btn ofrecer servicios-->
       <a href="{% url 'disponibilidad' %}" class="animated-button">
-        <svg
-          viewBox="0 0 24 24"
-          class="arr-2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-          ></path>
+        <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
         </svg>
         <span class="text">Ofrecer Servicio</span>
         <span class="circle"></span>
-        <svg
-          viewBox="0 0 24 24"
-          class="arr-1"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-          ></path>
+        <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
         </svg>
       </a>
 
@@ -53,28 +103,17 @@
 
       <!-- btn reservar servicios -->
       <a href="{% url 'reservas:reservar' %}" class="animated-button">
-        <svg
-          viewBox="0 0 24 24"
-          class="arr-2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-          ></path>
+        <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
         </svg>
         <span class="text">Reservar Servicio</span>
         <span class="circle"></span>
-        <svg
-          viewBox="0 0 24 24"
-          class="arr-1"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-          ></path>
+        <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
         </svg>
       </a>
-    </div>
+    </div>     
+
 
       <!-- ANIMACION DE CONEXIONES Y TARJETAS -->
       <div class="connection-lines">
@@ -105,12 +144,14 @@
           <div class="card-content">
             <div class="card-icon">🔗</div>
             <h3>Integracion</h3>
-            <p>Guarda tus agendamientos en tu correo</p>
+            <p>Guarda agendamientos en tu correo</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+
 
   
   <script src="/static/js/PaginaDinamica.js"></script>

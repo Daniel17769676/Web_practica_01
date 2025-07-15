@@ -6,7 +6,7 @@ body {
   line-height: 1.6;
   background-color: #f5f5f5;
   min-height: 100vh;
-  box-sizing: border-box;
+  box-sizing: border-box; 
 }
 
 h1 {
@@ -113,6 +113,15 @@ button:hover {
 .btn-reservar:hover {
   background-color: #054207;
 }
+
+/* ESTILOS PARA BTNES DE ACCESO ADMINISTRADOR Y CREAR CUENTA- > Por crear */
+
+
+
+
+
+
+
 
 /* DÍAS DE LA SEMANA */
 .days-btn-container {
@@ -346,3 +355,5 @@ button:hover {
     margin: 5px 0;
   }
 }
+
+
