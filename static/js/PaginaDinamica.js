@@ -88,3 +88,31 @@ document.querySelectorAll(".card-3d").forEach((card) => {
         closeModal();
       }
     };
+
+    // Funciones para controlar el popup REGISTRO (2)
+    function openModal() {
+      document.getElementById('profileModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal2() {
+      document.getElementById('profileModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Cerrar al hacer clic fuera del popup
+    window.onclick = function(event) {
+      if (event.target.className === 'modal') {
+        closeModal2();
+      }
+    }
+    
+    // Cerrar con ESC
+    document.onkeydown = function(evt) {
+      evt = evt || window.event;
+      if (evt.key === 'Escape') {
+        closeModal2();
+      }
+    };
+
+    

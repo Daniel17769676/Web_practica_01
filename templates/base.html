@@ -26,9 +26,9 @@
     <br>
 
     <!-- Botón de perfil a la derecha -->
-    <a href="" class="profile-btn">
-      Crea tu perfil <span>🧑‍💻</span>
-    </a>
+    <div class="profile-btn" onclick="openModal()">
+      <span>🧑‍💻</span> Crea tu perfil 
+    </div>
 
       <div class="holographic-header">
         <h2 class="holographic-title">Sistema reservas <span class="digital">Digital</span></h2>
@@ -105,16 +105,14 @@
     </div>
   </div>
 
-
-
-  <!-- Pop-up Login Único -->
+  <!-- Pop-up Login-->
   <div id="loginModal" class="modal-login">
     <div class="login-box">
       <div class="login-header">              
         <button class="close-btn" onclick="closeModal()">
           <i class="fas fa-times"></i>
         </button>
-        <i class="fas fa-user-lock"></i>
+        
         <h2>Acceso al Sistema</h2>
       </div>
       <div class="login-body">
@@ -136,6 +134,41 @@
           <span> | </span>
           <a href="#">Registrarse</a>
         </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Popup de Registro -->
+  <div id="profileModal" class="modal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <button class="close-btn" onclick="closeModal2()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2>Crear Perfil</h2>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Nombre completo" required>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-control" placeholder="Correo electrónico" required>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" placeholder="Contraseña" required>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" placeholder="Confirmar contraseña" required>
+          </div>
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-user-plus"></i> Registrarse
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#">¿Ya tienes una cuenta? Inicia sesión</a>
       </div>
     </div>
   </div>
