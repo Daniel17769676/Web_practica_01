@@ -4,8 +4,11 @@ from servicios.models import Disponibilidad, ServicioDia #Importa los modelos de
 from reservas.models import Servicio, Reserva #Importa los modelos de la app RESERVAS
 from django.views.decorators.http import require_GET
 from django.contrib import messages
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, date
 from django.db.models import Q
+from django.core.mail import EmailMessage
+from ics import Calendar, Event
+import arrow
 
 
 
@@ -179,10 +182,70 @@ def procesar_reserva_view(request):
         
     
     
-# Renderiza la plantilla de confirmación de reserva exitosa
+# Vista para mostrar la confirmación de la reserva y enviar el archivo .ICS por correo
 def reserva_exito_view(request, reserva_id):
-    reserva = Reserva.objects.get(id=reserva_id)  # Obtiene la reserva por su ID
-    print(f'Reserva obtenida: {reserva}')  # Debugging
+    reserva = Reserva.objects.get(id=reserva_id)
+    
+    # Asumimos que la reserva es para hoy (ajusta según tu lógica)
+    fecha_actual = date.today()
+    
+    # Crear el archivo .ICS
+    cal = Calendar()
+    
+    # Combinar fecha actual con las horas de reserva
+    inicio_datetime = datetime.combine(fecha_actual, reserva.hora_inicio)
+    fin_datetime = datetime.combine(fecha_actual, reserva.hora_fin)
+    
+    # Convertir a objeto arrow con zona horaria
+    inicio = arrow.get(inicio_datetime).to('local')
+    fin = arrow.get(fin_datetime).to('local')
+    
+    event = Event(
+        name=f"Reserva: {reserva.servicio.nombre}",
+        begin=inicio.datetime,
+        end=fin.datetime,
+        description=f"""
+        Detalles de la reserva:
+        Servicio: {reserva.servicio.nombre}
+        Cliente: {reserva.cliente_nombre}
+        Teléfono: {reserva.cliente_telefono}
+        Email: {reserva.cliente_email}
+        Día: {reserva.dia_semana}
+        Hora: {reserva.hora_inicio.strftime('%H:%M')} - {reserva.hora_fin.strftime('%H:%M')}
+        """,
+        location="Ubicación del servicio",  # Ajusta esto
+        attendees=[reserva.cliente_email]
+    )
+    
+    cal.events.add(event)
+    
+    # Enviar por correo
+    email = EmailMessage(
+        subject=f"Confirmación de reserva - {reserva.servicio.nombre}",
+        body=f"""
+        Hola {reserva.cliente_nombre},
+        
+        Tu reserva ha sido confirmada:
+        
+        Servicio: {reserva.servicio.nombre}
+        Día: {reserva.dia_semana}
+        Hora: {reserva.hora_inicio.strftime('%H:%M')} - {reserva.hora_fin.strftime('%H:%M')}
+        
+        Se ha adjuntado un recordatorio para tu calendario.
+        """,
+        from_email="tusistema@tudominio.com",
+        to=[reserva.cliente_email],
+    )
+    
+    # Adjuntar el .ICS
+    email.attach('reserva.ics', cal.serialize(), 'text/calendar')
+    
+    try:
+        email.send()
+        print("Correo con ICS enviado exitosamente")
+    except Exception as e:
+        print(f"Error enviando correo: {e}")
+    
     return render(request, 'reservas/reserva_exito.html', {
         'servicio': reserva.servicio,
         'cliente_nombre': reserva.cliente_nombre,
@@ -191,7 +254,4 @@ def reserva_exito_view(request, reserva_id):
         'hora_fin': reserva.hora_fin,
         'cliente_telefono': reserva.cliente_telefono,
         'cliente_email': reserva.cliente_email,
-
     })
-
-
