@@ -4,11 +4,13 @@ from configuracion import views
 from reservas.views import reservar_servicios_view, procesar_reserva_view, get_dias_por_servicio_view, get_horarios, reserva_exito_view
 from servicios.views import disponibilidad_view
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),  # URL para el panel de administración
     path('', views.base, name='base'),  # URL para la página de inicio
     path('servicios/', include('servicios.urls')),
     path('reservas/', include(('reservas.urls', 'reservas'), namespace='reservas')),  # Incluye las URLs de la aplicación reservas
+    path('usuarios/', include('usuarios.urls')),  # Incluye las URLs de la aplicación usuarios
 
 
     #URLs de reservas
@@ -20,5 +22,9 @@ urlpatterns = [
     
     #URLs de servicios
     path('disponibilidad/', disponibilidad_view, name='disponibilidad'),   
+
+    #URLs de usuarios
+    
+    
   
 ]

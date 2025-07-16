@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'Web_agendas', # No es necesario incluir el proyecto como una app ya que NO ES UNA APP si no que es el proyecto
     'servicios',  # Aplicación para gestionar servicios
-    'reservas',
+    'reservas', # Aplicación para gestionar reservas
+    'usuarios',  # Aplicación para gestionar usuarios
 
 
 ]

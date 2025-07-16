@@ -482,3 +482,183 @@ body {
   height: 220px;
   opacity: 1;
 }
+
+
+/* ESTILOS PARA EL POPUP DE LOGIN */
+.modal-login {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-box {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  transform: scale(0.9);
+  animation: scaleUp 0.3s forwards;
+}
+
+@keyframes scaleUp {
+  to { transform: scale(1); }
+}
+
+.login-header {
+  padding: 25px;
+  text-align: center;
+  color: white;
+  position: relative;
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+}
+
+.login-header i {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.login-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.login-body {
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  transition: all 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+}
+
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  color: white;
+  transition: all 0.3s;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #43a047 0%, #1b5e20 100%);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.close-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: rotate(90deg);
+}
+
+.footer-links {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer-links a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.footer-links a:hover {
+  color: #4caf50;
+}
+
+
+/* Nuevos estilos para los botones de acceso y perfil */
+.access-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.profile-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.access-btn:hover, .profile-btn:hover {
+  background: rgba(76, 175, 80, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+

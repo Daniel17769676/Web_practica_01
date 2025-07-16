@@ -61,3 +61,30 @@ document.querySelectorAll(".card-3d").forEach((card) => {
     }, 1000);
   });
 });
+
+
+// Funciones para controlar el popup
+    function openLoginModal() {
+      document.getElementById('loginModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      document.getElementById('loginModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Cerrar al hacer clic fuera del popup
+    window.onclick = function(event) {
+      if (event.target.className === 'modal-login') {
+        closeModal();
+      }
+    }
+    
+    // Cerrar con ESC
+    document.onkeydown = function(evt) {
+      evt = evt || window.event;
+      if (evt.key === 'Escape') {
+        closeModal();
+      }
+    };
