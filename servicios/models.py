@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Crear tus modelos aquí. (Los modelos son tablas de la base de datos)
 
@@ -31,6 +32,12 @@ class Disponibilidad(models.Model):
         (30, '30 minutos'),
         (60, '1 hora'),
     ]
+
+    fecha_servicio = models.DateField(
+        validators=[MinValueValidator(date.today())],  # Asegura que la fecha sea hoy o futura               
+        verbose_name="Fecha del servicio", # Nombre legible para el usuario en el admin que es mostrado en la interfaz de administración de Django.
+        help_text="Fecha en la que se ofrece el servicio. No puede ser anterior a hoy."  # Ayuda al usuario a entender el campo
+    )
 
     administrador = models.CharField(max_length=100)
     hora_inicio = models.TimeField()

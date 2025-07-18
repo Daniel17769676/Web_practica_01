@@ -26,11 +26,28 @@
                 <h3>Información del Administrador</h3>
                 <div class="form-group">
                     <label for="administrador">Administrador:</label>
-                    <input type="text" id="administrador" name="administrador" required>
+                    <input type="text" id="administrador" name="administrador" required placeholder="Nombre de quien otorga el servicio">
+                </div>
+            </div> 
+
+            <!-- Seccion fecha del servicio -->
+            <div class="form-section">
+                <h3>Periodo del Servicio</h3>
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="form-group" style="width: 48%;">
+                        <label for="fecha_inicio">Fecha de Inicio:</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" style="width: 100%;" required>
+                    </div>
+                    <div class="form-group" style="width: 48%;">
+                        <label for="fecha_fin">Fecha de Fin:</label>
+                        <input type="date" id="fecha_fin" name="fecha_fin" style="width: 100%;" required>
+                    </div>
                 </div>
             </div>
 
-            <!-- Sección de días -->
+            
+            <!-- EVALUAR SI ESTE CAMPO SE QUEDA YA QUE FECHA ES MAS IMPORTANTE QUE EL DÌA -->
+            <!-- Sección de días 
             <div class="form-section">
                 <h3>Días de la Semana</h3>
                 <div class="days-btn-container">
@@ -54,6 +71,16 @@
 
                     <input class="day-btn" id="sunday" name="dias_semana" type="checkbox" value="domingo" />
                     <label class="day-label" for="sunday">Dom</label>
+                </div>
+            </div>
+            -->
+
+            <!-- Sección de Ubicación -->
+            <div class="form-section">
+                <h3>Ubicación del Servicio</h3>
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación:</label>
+                    <input type="text" id="ubicacion" name="ubicacion" required placeholder="Sala de espera, Oficina 403, etc.">
                 </div>
             </div>
 
@@ -82,10 +109,10 @@
 
             <!-- Detalles del servicio -->
             <div class="form-section">
-                <h3>Detalles del Servicio</h3>
+                <h3>Tipo de Servicio</h3>
                 <div class="form-group">
                     <label for="servicio">Servicio:</label>
-                    <input type="text" id="servicio" name="servicio" required>
+                    <input type="text" id="servicio" name="servicio" required placeholder="Consulta médica, Asesoría legal, etc.">
                 </div>
             </div>
 
