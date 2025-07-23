@@ -18,28 +18,21 @@ class Administrador(models.Model):
 
 # Modelo para la disponibilidad de los administradores
 class Disponibilidad(models.Model):
-    DIAS_CHOICES = [
-        ('lunes', 'Lunes'),
-        ('martes', 'Martes'),
-        ('miércoles', 'Miércoles'),
-        ('jueves', 'Jueves'),
-        ('viernes', 'Viernes'),
-        ('sábado', 'Sábado'),
-        ('domingo', 'Domingo'),
-    ]
     INTERVALO_CHOICES = [
         (15, '15 minutos'),
         (30, '30 minutos'),
         (60, '1 hora'),
     ]
-
-    fecha_servicio = models.DateField(
-        validators=[MinValueValidator(date.today())],  # Asegura que la fecha sea hoy o futura               
-        verbose_name="Fecha del servicio", # Nombre legible para el usuario en el admin que es mostrado en la interfaz de administración de Django.
-        help_text="Fecha en la que se ofrece el servicio. No puede ser anterior a hoy."  # Ayuda al usuario a entender el campo
-    )
-
     administrador = models.CharField(max_length=100)
+    fecha_inicio = models.DateField(
+        validators=[MinValueValidator(date.today())],  # Asegura que la fecha sea hoy o futura
+        verbose_name="Fecha de inicio",  # Nombre legible para el usuario en el admin
+    )
+    fecha_fin = models.DateField(
+        validators=[MinValueValidator(date.today())],  # Asegura que la fecha sea hoy o futura
+        verbose_name="Fecha de fin",  # Nombre legible para el usuario en el admin  
+    )
+    ubicacion = models.CharField(max_length=200, verbose_name="Ubicación del servicio")  # Ubicación donde se presta el servicio
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
     servicio = models.CharField(max_length=100)
@@ -49,7 +42,6 @@ class Disponibilidad(models.Model):
         default=30, 
         verbose_name="Duracion de cada turno"
     )
-
     es_franja_maestra = models.BooleanField(
         default=False,
         verbose_name="¿Es una franja horaria maestra?"
@@ -87,37 +79,6 @@ class Disponibilidad(models.Model):
         
         return turnos
     
-    def __str__(self):
-        dias = ", ".join([dia.get_dia_display() for dia in self.dias.all()])
+    def __str__(self):        
         intervalo = f"({self.intervalo} min)" if not self.es_franja_maestra else ""
-        return f'{self.administrador} - {dias} ({self.hora_inicio}-{self.hora_fin}) {intervalo} {"✅" if self.disponible else "❌"}'
-    
-class ServicioDia(models.Model):
-    OPCIONES_DIAS= [
-        ('lunes', 'Lunes'),
-        ('martes', 'Martes'),
-        ('miércoles', 'Miércoles'),
-        ('jueves', 'Jueves'),
-        ('viernes', 'Viernes'),
-        ('sábado', 'Sábado'),
-        ('domingo', 'Domingo'),
-    ]
-    
-    disponibilidad = models.ForeignKey(
-        'Disponibilidad', 
-        on_delete=models.CASCADE,
-        related_name='dias'  # Permite acceder con `disponibilidad.dias.all()`
-    )
-    dia = models.CharField(max_length=9, choices=OPCIONES_DIAS)
-    
-    class Meta:
-        db_table = 'SERVICIO_DIA'  # Nombre de la tabla en Oracle
-        verbose_name = 'Día del servicio'
-        verbose_name_plural = 'Días del servicio'
-    
-    def get_dia_display(self):
-        """Devuelve la etiqueta legible del día (ej. 'Lunes' en lugar de 'lunes')"""
-        return dict(self.OPCIONES_DIAS).get(self.dia, self.dia)
-    
-    def __str__(self):
-        return f'{self.disponibilidad.servicio} - {self.get_dia_display()}'
+        return f'{self.administrador} - ({self.hora_inicio}-{self.hora_fin}) {intervalo} {"✅" if self.disponible else "❌"}'

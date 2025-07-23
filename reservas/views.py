@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from servicios.models import Disponibilidad, ServicioDia #Importa los modelos de la app SERVICIOS
+from servicios.models import Disponibilidad
 from reservas.models import Servicio, Reserva #Importa los modelos de la app RESERVAS
 from django.views.decorators.http import require_GET
 from django.contrib import messages

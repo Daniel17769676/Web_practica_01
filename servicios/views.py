@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Disponibilidad, ServicioDia
+from .models import Disponibilidad
 from datetime import time, timedelta, datetime
 
 
@@ -14,6 +14,9 @@ def disponibilidad_view(request):
             # 1. Primero creamos la Disponibilidad con todos los campos
             disponibilidad=Disponibilidad.objects.create(
                 administrador=request.POST['administrador'],
+                fecha_inicio=request.POST['fecha_inicio'],
+                fecha_fin=request.POST['fecha_fin'],
+                ubicacion=request.POST['ubicacion'],
                 hora_inicio=request.POST['hora_inicio'],
                 hora_fin=request.POST['hora_fin'],
                 servicio=request.POST['servicio'],
@@ -21,7 +24,7 @@ def disponibilidad_view(request):
                 intervalo = int(request.POST.get('intervalo'))) #Obtenemos el intervalo de tiempo en minutos entre cada disponibilidad.
         
             # 2. Procesar días seleccionados
-            dias_seleccionados = request.POST.getlist('dias_semana') #getlist se utiliza para obtener una lista de valores de un campo de formulario que puede tener múltiples selecciones, como casillas de verificación.
+            #dias_seleccionados = request.POST.getlist('dias_semana') #getlist se utiliza para obtener una lista de valores de un campo de formulario que puede tener múltiples selecciones, como casillas de verificación.
             
 
             # 3.  Convertir horas y generar turnos
@@ -42,28 +45,29 @@ def disponibilidad_view(request):
 
         
             # 4. Creamos un registro en ServicioDia por cada día seleccionado
-            for dia in dias_seleccionados:
-                ServicioDia.objects.create(
-                    disponibilidad=disponibilidad,
-                    dia=dia
-                )   
+            #for dia in dias_seleccionados:
+            #    ServicioDia.objects.create(
+            #        disponibilidad=disponibilidad,
+            #        dia=dia
+            #    )
 
             
 
             return redirect('servicios:confirmacion', disponibilidad_id=disponibilidad.id) #disponibilidad.id es el ID de la disponibilidad que acabamos de crear. Redirige a la vista de confirmación con el ID de la disponibilidad recién creada.
    
     return render(request, 'mi_web/Disponibilidad.html' ,{servicios_disponibles: servicios_disponibles, #la variable 'servicios_disponibles' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista.
-     'dias_opciones': ServicioDia.OPCIONES_DIAS}) # 'dias_opciones' se pasa al contexto de la plantilla para que pueda ser utilizada en la vista. 'ServicioDia.OPCIONES_DIAS' es una lista de tuplas que contiene los días de la semana y sus nombres legibles para el usuario.)
+     })
 
 # Vista para confirmar datos guardados al ofrecer disponibilidad (ADMINISTRADOR)
 def confirmacion_view(request, disponibilidad_id):
     disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id) # Obtiene la disponibilidad por su ID
     print("Datos de disponibilidad:", disponibilidad.__dict__)  # Debug
-    dias = ServicioDia.objects.filter(disponibilidad=disponibilidad) # Obtiene los días asociados a la disponibilidad
+    
     return render(request, 'mi_web/Confirmacion.html', {
         'administrador': disponibilidad.administrador,
         'servicio': disponibilidad.servicio,
-        'dias': [dia.get_dia_display() for dia in dias],  # Muestra el nombre del día (ej: "Lunes")
+        'fecha_inicio': disponibilidad.fecha_inicio,
+        'fecha_fin': disponibilidad.fecha_fin,        
         'horario': f"{disponibilidad.hora_inicio} - {disponibilidad.hora_fin}",
         'estado': "Confirmado" if disponibilidad.disponible else "Pendiente",
     })
