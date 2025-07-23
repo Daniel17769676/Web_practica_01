@@ -114,6 +114,54 @@ button:hover {
   background-color: #054207;
 }
 
+/* ESTILOS PARA BTNES DINAMICOS FECHAS RESERVA */
+
+    .date-slots-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .date-slot input[type="radio"] {
+        display: none;
+    }
+
+    .date-slot label {
+        display: block;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .date-slot input[type="radio"]:checked + label {
+        background-color: #2196F3;
+        color: white;
+        border-color: #2196F3;
+    }
+
+    .time-slots-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .time-slot label {
+        font-size: 0.9em;
+    }
+
+    .loading-message {
+        color: #666;
+        font-style: italic;
+        grid-column: 1 / -1;
+        
+}
+
+
 /* ESTILOS PARA BTNES DE ACCESO ADMINISTRADOR Y CREAR CUENTA- > Por crear */
 
 

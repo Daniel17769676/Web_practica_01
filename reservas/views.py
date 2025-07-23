@@ -20,106 +20,42 @@ def reservar_servicios_view(request):
         return procesar_reserva_view(request)
     
     # Lógica original para GET
-    servicios = Disponibilidad.objects.values_list('servicio', flat=True).distinct()
-    dias = ServicioDia.objects.values_list('dia', flat=True).distinct()
-
+    servicios = Disponibilidad.objects.values_list('servicio', flat=True).distinct() #Obtiene los datos de la tabla disponibilidad y unicamente 'values_list' los valores del campo 'servicio' y los devuelve como una lista de valores únicos.
+    
     if request.method == 'GET' and 'servicio' in request.GET:
-        servicio_seleccionado = request.GET.get('servicio')
-        disponibilidades = Disponibilidad.objects.filter(servicio=servicio_seleccionado)
+        servicio_seleccionado = request.GET.get('servicio') # Obtiene el servicio seleccionado del formulario
+        disponibilidades = Disponibilidad.objects.filter(servicio__iexact=servicio_seleccionado) 
+
+        return JsonResponse({'disponibilidades': list(disponibilidades.values( 'id', 'hora_inicio', 'hora_fin', 'intervalo', 'ubicacion', 'fecha_inicio', 'fecha_fin', 'disponible'))})
+
+    return render(request, 'reservas/reservar.html', {'servicios': servicios})
+
+
         
-        dias_disponibles = ServicioDia.objects.filter(
-            disponibilidad__in=disponibilidades
-        ).values_list('dia', flat=True).distinct()
-        
-        return JsonResponse({
-            'dias': list(dias_disponibles),
-            'disponibilidades': list(disponibilidades.values(
-                'id', 'hora_inicio', 'hora_fin', 'intervalo'
-            ))
-        })
-
-    return render(request, 'reservas/reservar.html', {'servicios': servicios, 'dias': dias, 'horarios': []})
 
 
-# Vista para obtener los días disponibles por servicio (GET)
-@require_GET  # Asegura que solo se acepten peticiones GET
-def get_dias_por_servicio_view(request):
-    servicio = request.GET.get('servicio')
-    
-    if not servicio:
-        return JsonResponse({'error': 'Parámetro "servicio" requerido'}, status=400)
-    
-    try:
-        # Consulta optimizada con select_related (si hay relaciones ForeignKey)
-        dias = ServicioDia.objects.filter(
-            disponibilidad__servicio__iexact=servicio  # iexact para ignorar mayúsculas/minúsculas
-        ).values_list('dia', flat=True).distinct()
 
-           
-        # Obtener nombres legibles de los días
-        dias_choices = dict(ServicioDia.OPCIONES_DIAS)
-        dias_data = [
-            {'value': dia, 'text': dias_choices.get(dia, dia.capitalize())} 
-            for dia in dias
-        ]
-        
-        return JsonResponse({'dias': dias_data})
-    
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-    
-#vista para obtener los horarios disponibles por servicio y día (GET)
-def get_horarios(request):
-    servicio = request.GET.get('servicio', '').strip().lower()
-    dia = request.GET.get('dia', '').strip().lower()
-    
-    if not servicio or not dia:
-        return JsonResponse({'error': 'Faltan parámetros'}, status=400)
-    
-    try:
-        # 1. Obtener disponibilidades activas
-        disponibilidades = Disponibilidad.objects.filter(
-            servicio__iexact=servicio,
-            dias__dia__iexact=dia,
-            disponible=True
-        ).prefetch_related('dias')
 
-        # 2. Obtener horarios reservados (aunque sabemos que está vacío)
-        reservados = Reserva.objects.filter(
-            servicio__nombre__iexact=servicio,
-            dia_semana__iexact=dia,
-            estado__in=['confirmada', 'pendiente']
-        ).values_list('hora_inicio', 'hora_fin')
 
-        # 3. Convertir horarios reservados a formato comparable
-        reservados_set = {
-            (hora_inicio.strftime('%H:%M'), hora_fin.strftime('%H:%M'))
-            for hora_inicio, hora_fin in reservados
-        }
 
-        # 4. Generar horarios disponibles
-        horarios_disponibles = []
-        for disp in disponibilidades:
-            for turno in disp.get_turnos():
-                inicio = turno['inicio'].strftime('%H:%M')
-                fin = turno['fin'].strftime('%H:%M')
-                
-                if (inicio, fin) not in reservados_set:
-                    horarios_disponibles.append(f"{inicio} - {fin}")
 
-        return JsonResponse({
-            'horarios': horarios_disponibles,
-            'total_disponibles': len(horarios_disponibles),
-            'status': 'success'
-        })
-    
-    except Exception as e:
-        return JsonResponse({
-            'error': f"Error al procesar horarios: {str(e)}",
-            'status': 'error'
-        }, status=500)
-    
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TRABAJAR EN  VISTAS DE PROCESAR RESERVAR Y ENVIAR ARCHIVOS .ICS POR CORREO ELECTRÓNICO
         
 # Vista para procesar la reserva (POST)
 def procesar_reserva_view(request):  
@@ -184,74 +120,5 @@ def procesar_reserva_view(request):
     
 # Vista para mostrar la confirmación de la reserva y enviar el archivo .ICS por correo
 def reserva_exito_view(request, reserva_id):
-    reserva = Reserva.objects.get(id=reserva_id)
-    
-    # Asumimos que la reserva es para hoy (ajusta según tu lógica)
-    fecha_actual = date.today()
-    
-    # Crear el archivo .ICS
-    cal = Calendar()
-    
-    # Combinar fecha actual con las horas de reserva
-    inicio_datetime = datetime.combine(fecha_actual, reserva.hora_inicio)
-    fin_datetime = datetime.combine(fecha_actual, reserva.hora_fin)
-    
-    # Convertir a objeto arrow con zona horaria
-    inicio = arrow.get(inicio_datetime).to('local')
-    fin = arrow.get(fin_datetime).to('local')
-    
-    event = Event(
-        name=f"Reserva: {reserva.servicio.nombre}",
-        begin=inicio.datetime,
-        end=fin.datetime,
-        description=f"""
-        Detalles de la reserva:
-        Servicio: {reserva.servicio.nombre}
-        Cliente: {reserva.cliente_nombre}
-        Teléfono: {reserva.cliente_telefono}
-        Email: {reserva.cliente_email}
-        Día: {reserva.dia_semana}
-        Hora: {reserva.hora_inicio.strftime('%H:%M')} - {reserva.hora_fin.strftime('%H:%M')}
-        """,
-        location="Ubicación del servicio",  # Ajusta esto
-        attendees=[reserva.cliente_email]
-    )
-    
-    cal.events.add(event)
-    
-    # Enviar por correo
-    email = EmailMessage(
-        subject=f"Confirmación de reserva - {reserva.servicio.nombre}",
-        body=f"""
-        Hola {reserva.cliente_nombre},
-        
-        Tu reserva ha sido confirmada:
-        
-        Servicio: {reserva.servicio.nombre}
-        Día: {reserva.dia_semana}
-        Hora: {reserva.hora_inicio.strftime('%H:%M')} - {reserva.hora_fin.strftime('%H:%M')}
-        
-        Se ha adjuntado un recordatorio para tu calendario.
-        """,
-        from_email="tusistema@tudominio.com",
-        to=[reserva.cliente_email],
-    )
-    
-    # Adjuntar el .ICS
-    email.attach('reserva.ics', cal.serialize(), 'text/calendar')
-    
-    try:
-        email.send()
-        print("Correo con ICS enviado exitosamente")
-    except Exception as e:
-        print(f"Error enviando correo: {e}")
-    
-    return render(request, 'reservas/reserva_exito.html', {
-        'servicio': reserva.servicio,
-        'cliente_nombre': reserva.cliente_nombre,
-        'dia_semana': reserva.dia_semana,
-        'hora_inicio': reserva.hora_inicio,
-        'hora_fin': reserva.hora_fin,
-        'cliente_telefono': reserva.cliente_telefono,
-        'cliente_email': reserva.cliente_email,
-    })
+    return render(request, 'reservas/reserva_exito.html')
+

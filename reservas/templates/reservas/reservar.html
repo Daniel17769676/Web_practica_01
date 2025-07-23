@@ -8,10 +8,6 @@
     <title>Realizar Reserva</title>
     <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
-
-
-
-
 </head>
 
 <body>
@@ -34,32 +30,26 @@
                         <option value="">No hay servicios disponibles</option>
                         {% endfor %}
                     </select>
-                </div>                
+                </div>               
+          
 
-                <!-- Paso 2: Selección de día -->
-                <div class="form-section">
-                    <h3>2. Selecciona el día</h3>
-                    <select name="dia" id="dia" required tipe="text">
-                        <option value="">-- Seleccionar servicio --</option>
-                        {% for dia in dias %}
-                        <option value="{{ dia }}">
-                            {{ dia }}
-                        </option>
-                        {% empty %}
-                        <option value="">No hay días disponibles</option>
-                        {% endfor %}
-                    </select>
+                <!-- Paso 2: Selección de fecha -->
+                <div class="form-section" id="fecha-container">
+                    <h3>2. Selecciona la fecha</h3>
+                    <div class="date-slots-container" id="date-slots">
+                        <!-- Las fechas se generarán dinámicamente aquí -->
+                    </div>
                 </div>
 
-                <!-- Seleccion Hora servicio -->
-                <div class="form-section">
+                <!-- Paso 3: Selección de horario -->
+                <div class="form-section" id="horario-container">
                     <h3>3. Selecciona el horario</h3>
                     <div class="time-slots-container" id="time-slots">
-                        <p class="info-message">Selecciona primero un servicio y un día</p>
+                        <p class="info-message">Selecciona una fecha primero</p>
                     </div>
-                    <input type="hidden" name="horario" id="horario-seleccionado">  
-                </div>               
-                
+                    <input type="hidden" name="horario" id="horario-seleccionado">
+                    <input type="hidden" name="fecha_reserva" id="fecha-reserva-seleccionada">
+                </div>         
                         
                 <!-- Paso 4: Datos del cliente -->
                 <div class="form-section">
