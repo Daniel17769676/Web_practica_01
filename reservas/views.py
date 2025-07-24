@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from servicios.models import Disponibilidad
-from reservas.models import Servicio, Reserva #Importa los modelos de la app RESERVAS
+from reservas.models import Reserva #Importa los modelos de la app RESERVAS
 from django.views.decorators.http import require_GET
 from django.contrib import messages
 from datetime import datetime, time, timedelta, date
@@ -14,7 +14,7 @@ import arrow
 
 
 # Vista para mostrar los servicios disponibles (GET)
-def reservar_servicios_view(request):
+def obtener_servicios(request):
     # Si es POST, redirige a la vista de procesamiento
     if request.method == 'POST':
         return procesar_reserva_view(request)
@@ -31,90 +31,61 @@ def reservar_servicios_view(request):
     return render(request, 'reservas/reservar.html', {'servicios': servicios})
 
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#TRABAJAR EN  VISTAS DE PROCESAR RESERVAR Y ENVIAR ARCHIVOS .ICS POR CORREO ELECTRÓNICO
-        
+     
 # Vista para procesar la reserva (POST)
 def procesar_reserva_view(request):  
-    try:
-        # Obtener datos del formulario
-        servicio_nombre = request.POST.get('servicio')        
-        dia_semana = request.POST.get('dia')        
+    if request.method == 'POST':
+        #1. Obtener los datos del formulario
+        servicio_nombre = request.POST.get('servicio')
+        fecha_reserva = request.POST.get('fecha_reserva')
         horario = request.POST.get('horario')        
-        nombre_cliente = request.POST.get('nombre')        
-        telefono_cliente = request.POST.get('telefono')        
-        email_cliente = request.POST.get('email')        
+        cliente_nombre = request.POST.get('nombre')
+        cliente_rut = request.POST.get('rut')
+        cliente_telefono = request.POST.get('telefono')
+        cliente_email = request.POST.get('email')
         observaciones = request.POST.get('observaciones', '')
         
 
         # Validar que todos los campos requeridos están presentes
-        if not all([servicio_nombre, dia_semana, horario, nombre_cliente, telefono_cliente, email_cliente]):
+        if not all([servicio_nombre, fecha_reserva, horario, cliente_nombre, cliente_rut, cliente_telefono, cliente_email]):
             messages.error(request, 'Todos los campos son obligatorios')
-            return redirect('reservas:reservar')
+            return redirect('reservas:obtener_servicios')
+        
+        try: # Convertir la fecha de reserva a un objeto date
+            fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()  # Convertir a objeto date
 
-        # Procesar el horario (asumiendo formato "HH:MM - HH:MM")
-        hora_inicio_str, hora_fin_str = horario.split(' - ')
-        hora_inicio = time.fromisoformat(hora_inicio_str)
-        hora_fin = time.fromisoformat(hora_fin_str)
+            # Procesar el horario (formato "HH:MM - HH:MM")
+            hora_inicio_str, hora_fin_str = horario.split(' - ')
+            hora_inicio = time.fromisoformat(hora_inicio_str)
+            hora_fin = time.fromisoformat(hora_fin_str)
 
-        # Validar que el día de la semana sea válido
-        DIAS_VALIDOS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
-        if dia_semana.lower() not in DIAS_VALIDOS:
-            messages.error(request, 'Día de la semana no válido')
-            return redirect('reservas:reservar')
+        
+            # Obtener o crear el servicio
+            servicio, _ = Servicio.objects.get_or_create(
+                nombre=servicio_nombre,
+                defaults={'descripcion': servicio_nombre,'duracion': timedelta(hours=1),'activo': True}
+            )
 
-        # Obtener o crear el servicio
-        servicio, created = Servicio.objects.get_or_create(
-            nombre=servicio_nombre,
-            defaults={
-                'descripcion': servicio_nombre,
-                'duracion': timedelta(hours=1),  # Ajusta según necesites
-                'activo': True
-            }
-        )
+            # Crear la reserva
+            reserva = Reserva.objects.create(
+                servicio=servicio,
+                fecha_reserva=fecha_reserva,                
+                hora_inicio=hora_inicio,
+                hora_fin=hora_fin,
+                cliente_nombre=cliente_nombre,
+                cliente_rut=cliente_rut,
+                cliente_email=cliente_email,
+                cliente_telefono=cliente_telefono,
+                observaciones=observaciones,
+                estado='pendiente'
+            )
 
-        # Crear la reserva
-        reserva = Reserva.objects.create(
-            servicio=servicio,
-            dia_semana=dia_semana.lower(),
-            hora_inicio=hora_inicio,
-            hora_fin=hora_fin,
-            cliente_nombre=nombre_cliente,
-            cliente_email=email_cliente,
-            cliente_telefono=telefono_cliente,  # Asegúrate de agregar este campo al modelo si lo necesitas
-            observaciones=observaciones,
-            estado='pendiente'
-        )
-
-        # Redirigir a página de éxito
-        return redirect('reservas:reserva_exito', reserva_id=reserva.id) #Reserva.id es el ID de la reserva que acabamos de crear. Redirige a la vista de confirmación con el ID de la reserva recién creada.
+            # Redirigir a página de éxito
+            return redirect('reservas:reserva_exito', reserva_id=reserva.id) #Reserva.id es el ID de la reserva que acabamos de crear. Redirige a la vista de confirmación con el ID de la reserva recién creada.
     
-    except Exception as e:        
-        print(f'Error al procesar la reserva: {str(e)}') 
-        return redirect('reservas:reservar')
+        except Exception as e:        
+            print(f'Error al procesar la reserva: {str(e)}') 
+            return redirect('reservas:obtener_servicios')  # Redirige a la vista de servicios si hay un error
         
     
     

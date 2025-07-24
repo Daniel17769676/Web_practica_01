@@ -33,17 +33,31 @@
             <!-- Seccion fecha del servicio -->
             <div class="form-section">
                 <h3>Periodo del Servicio</h3>
+
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: center;">
+                    <button type="button" onclick="establecerFechaHoy()" style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                        Hoy
+                    </button>
+                    <span style="color: #7f8c8d; font-size: 14px;">Seleccione o establezca el periodo</span>
+                </div>
+
                 <div style="display: flex; justify-content: space-between;">
                     <div class="form-group" style="width: 48%;">
-                        <label for="fecha_inicio">Fecha de Inicio:</label>
-                        <input type="date" id="fecha_inicio" name="fecha_inicio" style="width: 100%;" required>
+                        <label for="fecha_inicio" >Fecha de Inicio:</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
                     </div>
+
+                    
+
                     <div class="form-group" style="width: 48%;">
                         <label for="fecha_fin">Fecha de Fin:</label>
-                        <input type="date" id="fecha_fin" name="fecha_fin" style="width: 100%;" required>
-                    </div>
+                        <input type="date" id="fecha_fin" name="fecha_fin" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>                    
                 </div>
             </div>
+
+
+              
             
             <!-- Sección de Ubicación -->
             <div class="form-section">
@@ -79,7 +93,7 @@
 
             <!-- Detalles del servicio -->
             <div class="form-section">
-                <h3>Tipo de Servicio</h3>
+                <h3>Descripción del Servicio</h3>
                 <div class="form-group">
                     <label for="servicio">Servicio:</label>
                     <input type="text" id="servicio" name="servicio" required placeholder="Consulta médica, Asesoría legal, etc.">
@@ -97,6 +111,9 @@
             <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
         </div>
     </div>
+
+<script src="{% static 'servicios/js/disponibilidad.js' %}"></script>
+
 </body>
 
 
@@ -119,6 +136,8 @@
     </div>
 </footer>
 </div>
+
+
 
 
 </html>

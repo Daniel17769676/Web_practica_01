@@ -119,21 +119,34 @@ document.addEventListener('DOMContentLoaded', function() {
         
         disponibilidadesParaFecha.forEach(disp => {
             const turnos = generarTurnosParaFecha(disp, fecha);
-            todosTurnos.push(...turnos.map(t => ({
+            todosTurnos.push(...turnos.map(t => {
+            const [hora, minuto] = t.hora.split(':').map(Number);
+            let finMinuto = minuto + disp.intervalo;
+            let finHora = hora;
+
+            if (finMinuto >= 60) {
+                finHora += Math.floor(finMinuto / 60);
+                finMinuto = finMinuto % 60;
+            }
+
+            const horaFin = `${String(finHora).padStart(2, '0')}:${String(finMinuto).padStart(2, '0')}`;
+            return {
                 ...t,
+                hora_fin: horaFin,
                 ubicacion: disp.ubicacion,
                 disponibilidad_id: disp.id
-            })));
+            };
+        }));
         });
-
+        
         // Mostrar turnos
         timeSlotsContainer.innerHTML = todosTurnos.map(turno => `
             <div class="time-slot">
                 <input type="radio" 
-                       name="turno_seleccionado" 
-                       id="turno-${turno.disponibilidad_id}-${turno.hora}" 
-                       value="${turno.disponibilidad_id}|${turno.hora}"
-                       data-fecha="${fecha}">
+                    name="turno_seleccionado" 
+                    id="turno-${turno.disponibilidad_id}-${turno.hora}" 
+                    value="${turno.hora} - ${turno.hora_fin}" 
+                    data-fecha="${fecha}">
                 <label for="turno-${turno.disponibilidad_id}-${turno.hora}">
                     ${turno.hora} (${turno.ubicacion})
                 </label>

@@ -11,6 +11,23 @@
 </head>
 
 <body>
+
+            <!-- Msjes -->
+            {% if messages %}
+            <div class="messages-container info-message">
+            {% load static %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+            </div>
+            {% endif %}
+
+    
     <div class="container">
         <h1>Realiza tu reserva</h1>
         <form method="post" action="{% url 'reservas:procesar_reserva' %}">
@@ -37,8 +54,9 @@
                 <div class="form-section" id="fecha-container">
                     <h3>2. Selecciona la fecha</h3>
                     <div class="date-slots-container" id="date-slots">
-                        <!-- Las fechas se generarán dinámicamente aquí -->
+                        <!-- Las fechas se generarán dinámicamente aquí -->                         
                     </div>
+                    <input type="hidden" id="fecha-reserva-seleccionada" name="fecha_reserva">
                 </div>
 
                 <!-- Paso 3: Selección de horario -->
@@ -48,7 +66,6 @@
                         <p class="info-message">Selecciona una fecha primero</p>
                     </div>
                     <input type="hidden" name="horario" id="horario-seleccionado">
-                    <input type="hidden" name="fecha_reserva" id="fecha-reserva-seleccionada">
                 </div>         
                         
                 <!-- Paso 4: Datos del cliente -->

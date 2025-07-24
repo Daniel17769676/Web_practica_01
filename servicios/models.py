@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from datetime import datetime, timedelta, date
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 
 # Crear tus modelos aquí. (Los modelos son tablas de la base de datos)
 
