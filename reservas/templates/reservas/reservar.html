@@ -47,8 +47,9 @@
                         <option value="">No hay servicios disponibles</option>
                         {% endfor %}
                     </select>
-                </div>               
-          
+                    <div type="text" id="servicio-seleccionado" name="servicio_seleccionado"></div>
+                </div>
+
 
                 <!-- Paso 2: Selección de fecha -->
                 <div class="form-section" id="fecha-container">
@@ -66,6 +67,9 @@
                         <p class="info-message">Selecciona una fecha primero</p>
                     </div>
                     <input type="hidden" name="horario" id="horario-seleccionado">
+                    
+                    <!-- ✨ NUEVO: Campo oculto para el ID de disponibilidad -->
+                    <input type="hidden" name="disponibilidad_id" id="disponibilidad-id">
                 </div>         
                         
                 <!-- Paso 4: Datos del cliente -->

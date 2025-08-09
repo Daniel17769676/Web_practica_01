@@ -38,7 +38,9 @@ def obtener_servicios(request):
 # Vista para procesar la reserva (POST)
 def procesar_reserva_view(request):  
     if request.method == 'POST':
+        print("Datos recibidos:", request.POST)  # Debug
         #1. Obtener los datos del formulario
+        disponibilidad_id = request.POST.get('disponibilidad_id')
         servicio_nombre = request.POST.get('servicio')
         fecha_reserva = request.POST.get('fecha_reserva')
         horario = request.POST.get('horario')        
@@ -50,7 +52,7 @@ def procesar_reserva_view(request):
         
 
         # Validar que todos los campos requeridos están presentes
-        if not all([servicio_nombre, fecha_reserva, horario, cliente_nombre, cliente_rut, cliente_telefono, cliente_email]):
+        if not all([disponibilidad_id, servicio_nombre, fecha_reserva, horario, cliente_nombre, cliente_rut, cliente_telefono, cliente_email]):
             messages.error(request, 'Todos los campos son obligatorios')
             return redirect('reservas:obtener_servicios')
         
@@ -58,25 +60,24 @@ def procesar_reserva_view(request):
             fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()  # Convertir a objeto date
 
             # Procesar el horario (formato "HH:MM - HH:MM")
-            hora_inicio_str, hora_fin_str = horario.split(' - ')
-            hora_inicio = time.fromisoformat(hora_inicio_str)
-            hora_fin = time.fromisoformat(hora_fin_str)
+            #hora_inicio_str, hora_fin_str = horario.split(' - ')
+            #hora_inicio = time.fromisoformat(hora_inicio_str)
+            #hora_fin = time.fromisoformat(hora_fin_str)
 
         
             # Obtener o crear el servicio
-            servicio, created = Servicio.objects.get_or_create(
-                nombre=servicio_nombre,
-                defaults={'descripcion': servicio_nombre,'duracion': timedelta(hours=1),'activo': True}
-            )
+            #servicio, created = Servicio.objects.get_or_create(
+            #    nombre=servicio_nombre,
+            #    defaults={'descripcion': servicio_nombre,'duracion': timedelta(hours=1),'activo': True}
+            #)
 
 
 
             # Verificar si ya existe una reserva para este servicio, fecha y horario
             reserva_existente = Reserva.objects.filter(
-                servicio=servicio,
+                servicio_nombre=servicio_nombre,
                 fecha_reserva=fecha_reserva,
-                hora_inicio=hora_inicio,
-                hora_fin=hora_fin
+                horario=horario
             ).exists()
 
             if reserva_existente:
@@ -85,10 +86,10 @@ def procesar_reserva_view(request):
 
             # Crear la reserva
             reserva = Reserva.objects.create(
-                servicio=servicio,
-                fecha_reserva=fecha_reserva,                
-                hora_inicio=hora_inicio,
-                hora_fin=hora_fin,
+                disponibilidad_id=disponibilidad_id,
+                servicio_nombre=servicio_nombre,
+                fecha_reserva=fecha_reserva,
+                horario=horario,
                 cliente_nombre=cliente_nombre,
                 cliente_rut=cliente_rut,
                 cliente_email=cliente_email,
