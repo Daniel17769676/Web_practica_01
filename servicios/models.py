@@ -35,7 +35,8 @@ class Disponibilidad(models.Model):
     ubicacion = models.CharField(max_length=200, verbose_name="Ubicación del servicio")  # Ubicación donde se presta el servicio
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
-    servicio = models.CharField(max_length=100)
+    servicio = models.ForeignKey('Servicio', on_delete=models.CASCADE, related_name='disponibilidades',
+        verbose_name="Servicio asociado") # Relación con el modelo Servicio (AÑADE)
     disponible = models.BooleanField(default=True, verbose_name="Disponible para reserva")
     intervalo = models.PositiveSmallIntegerField(
         choices=INTERVALO_CHOICES, 
@@ -82,3 +83,28 @@ class Disponibilidad(models.Model):
     def __str__(self):        
         intervalo = f"({self.intervalo} min)" if not self.es_franja_maestra else ""
         return f'{self.administrador} - ({self.hora_inicio}-{self.hora_fin}) {intervalo} {"✅" if self.disponible else "❌"}'
+    
+
+
+
+class Servicio(models.Model):
+    nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre del servicio")
+    descripcion = models.TextField(blank=True, verbose_name="Descripción")
+    duracion = models.DurationField(
+    default=timedelta(minutes=30),
+        verbose_name="Duración estimada",
+        help_text="Duración estándar para este servicio"
+        )
+    activo = models.BooleanField(
+        default=True,
+        verbose_name="¿Activo?",
+        help_text="Desmarcar para ocultar este servicio"
+        )
+ 
+    class Meta:
+        verbose_name = "Servicio"
+        verbose_name_plural = "Servicios"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return f"{self.nombre} ({self.duracion})"

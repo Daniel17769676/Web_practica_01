@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from servicios.models import Disponibilidad
+from servicios.models import Disponibilidad, Servicio
 from reservas.models import Reserva #Importa los modelos de la app RESERVAS
 from django.views.decorators.http import require_GET
 from django.contrib import messages
@@ -61,10 +61,24 @@ def procesar_reserva_view(request):
 
         
             # Obtener o crear el servicio
-            servicio, _ = Servicio.objects.get_or_create(
+            servicio, created = Servicio.objects.get_or_create(
                 nombre=servicio_nombre,
                 defaults={'descripcion': servicio_nombre,'duracion': timedelta(hours=1),'activo': True}
             )
+
+
+
+            # Verificar si ya existe una reserva para este servicio, fecha y horario
+            reserva_existente = Reserva.objects.filter(
+                servicio=servicio,
+                fecha_reserva=fecha_reserva,
+                hora_inicio=hora_inicio,
+                hora_fin=hora_fin
+            ).exists()
+
+            if reserva_existente:
+                messages.error(request, 'Ya existe una reserva para este servicio en la fecha y horario seleccionados')
+                return redirect('reservas:obtener_servicios')
 
             # Crear la reserva
             reserva = Reserva.objects.create(
@@ -84,7 +98,8 @@ def procesar_reserva_view(request):
             return redirect('reservas:reserva_exito', reserva_id=reserva.id) #Reserva.id es el ID de la reserva que acabamos de crear. Redirige a la vista de confirmación con el ID de la reserva recién creada.
     
         except Exception as e:        
-            print(f'Error al procesar la reserva: {str(e)}') 
+            print(f'Error al procesar la reserva: {str(e)}')
+            messages.error(request, f'Ocurrió un error al procesar la reserva {str(e)}')  
             return redirect('reservas:obtener_servicios')  # Redirige a la vista de servicios si hay un error
         
     
