@@ -11,17 +11,17 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-    migrations.AddField(
+    migrations.AlterField(
         model_name='disponibilidad',
         name='intervalo',
         field=models.PositiveSmallIntegerField(choices=[(15, '15 minutos'), (30, '30 minutos'), (60, '1 hora')], default=30, verbose_name='Duracion de cada turno'),
     ),
-    migrations.AddField(
+    migrations.AlterField(
         model_name='disponibilidad',
         name='es_franja_maestra',
         field=models.BooleanField(default=False, verbose_name='¿Es una franja horaria maestra?'),
     ),
-    migrations.AddField(
+    migrations.AlterField(
         model_name='disponibilidad',
         name='franja_padre',
         field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='sub_franjas', to='servicios.disponibilidad', verbose_name='Franja original'),

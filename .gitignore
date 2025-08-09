@@ -3,3 +3,9 @@ __pycache__/
 
 # Ficheros con credenciales
 Super_USUARIO_DJANGO.txt
+
+# Entorno virtual de Python
+venv/
+.venv/
+ENV/
+env/

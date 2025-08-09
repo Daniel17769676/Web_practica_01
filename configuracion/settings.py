@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'configuracion.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': '127.0.0.1:1521/XE',
+        'NAME': '127.0.0.1:1521/XEPDB1', #Datos XE cambiado a XEPDB1
         'USER': 'proyecto_web01',
         'PASSWORD': 'proyecto_web01',
         'TEST': {
