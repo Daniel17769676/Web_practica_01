@@ -20,13 +20,16 @@ def obtener_servicios(request):
         return procesar_reserva_view(request)
     
     # Lógica original para GET
-    servicios = Disponibilidad.objects.values_list('servicio', flat=True).distinct() #Obtiene los datos de la tabla disponibilidad y unicamente 'values_list' los valores del campo 'servicio' y los devuelve como una lista de valores únicos.
+    servicios = Servicio.objects.values_list('nombre', flat=True).distinct() #Obtiene los datos de la tabla disponibilidad y unicamente 'values_list' los valores del campo 'servicio' y los devuelve como una lista de valores únicos.
     
     if request.method == 'GET' and 'servicio' in request.GET:
         servicio_seleccionado = request.GET.get('servicio') # Obtiene el servicio seleccionado del formulario
-        disponibilidades = Disponibilidad.objects.filter(servicio__iexact=servicio_seleccionado) 
+        disponibilidades = Disponibilidad.objects.filter(servicio__nombre__iexact=servicio_seleccionado).values(
+            'id', 'hora_inicio', 'hora_fin', 'intervalo', 
+            'ubicacion', 'fecha_inicio', 'fecha_fin', 'disponible'
+        ) 
 
-        return JsonResponse({'disponibilidades': list(disponibilidades.values( 'id', 'hora_inicio', 'hora_fin', 'intervalo', 'ubicacion', 'fecha_inicio', 'fecha_fin', 'disponible'))})
+        return JsonResponse({'disponibilidades': list(disponibilidades)})
 
     return render(request, 'reservas/reservar.html', {'servicios': servicios})
 
