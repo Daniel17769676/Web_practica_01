@@ -6,19 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const timeSlotsContainer = document.getElementById('time-slots');
     const fechaReservaInput = document.getElementById('fecha-reserva-seleccionada');
     const horarioSeleccionadoInput = document.getElementById('horario-seleccionado');
+    const disponibilidadIdInput = document.getElementById('disponibilidad-id');
 
     let disponibilidadesActuales = [];
     let fechaSeleccionada = null;
 
     servicioSelect.addEventListener('change', async function() {
-        const servicio = this.value;
+        const servicioId = this.value;
         
         resetUI();
-        if (!servicio) return;
+        if (!servicioId) return;
 
         try {
             showLoading();
-            const response = await fetch(`/reservas/reservar/?servicio=${encodeURIComponent(servicio)}`);
+            const response = await fetch(`/reservas/obtener-servicios/?servicio_id=${encodeURIComponent(servicioId)}`);
             const data = await response.json();
             
             if (!data.disponibilidades || data.disponibilidades.length === 0) {
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ===== Funciones auxiliares =====
     function resetUI() {
         fechaContainer.style.display = 'none';
         horarioContainer.style.display = 'none';
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fechaSeleccionada = null;
         fechaReservaInput.value = '';
         horarioSeleccionadoInput.value = '';
+        disponibilidadIdInput.value = '';
     }
 
     function showLoading() {
@@ -56,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function mostrarFechasDisponibles(disponibilidades) {
-        // Obtener todas las fechas únicas dentro de los rangos
         const todasFechas = [];
         
         disponibilidades.forEach(disp => {
@@ -71,10 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Ordenar fechas
         todasFechas.sort();
 
-        // Mostrar fechas como botones seleccionables
         dateSlotsContainer.innerHTML = todasFechas.map(fecha => `
             <div class="date-slot">
                 <input type="radio" 
@@ -87,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `).join('');
 
-        // Manejador de selección de fecha
         document.querySelectorAll('.date-slot input').forEach(radio => {
             radio.addEventListener('change', function() {
                 fechaSeleccionada = this.value;
@@ -101,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function mostrarHorariosDisponibles(fecha) {
         timeSlotsContainer.innerHTML = '<p class="loading-message">Cargando horarios...</p>';
         
-        // Filtrar disponibilidades que incluyan la fecha seleccionada
         const disponibilidadesParaFecha = disponibilidadesActuales.filter(disp => {
             const dispFechaInicio = new Date(disp.fecha_inicio);
             const dispFechaFin = new Date(disp.fecha_fin);
@@ -114,50 +110,58 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Generar todos los turnos disponibles para la fecha
         const todosTurnos = [];
         
         disponibilidadesParaFecha.forEach(disp => {
             const turnos = generarTurnosParaFecha(disp, fecha);
             todosTurnos.push(...turnos.map(t => {
-            const [hora, minuto] = t.hora.split(':').map(Number);
-            let finMinuto = minuto + disp.intervalo;
-            let finHora = hora;
+                const [hora, minuto] = t.hora.split(':').map(Number);
+                let finMinuto = minuto + disp.intervalo;
+                let finHora = hora;
 
-            if (finMinuto >= 60) {
-                finHora += Math.floor(finMinuto / 60);
-                finMinuto = finMinuto % 60;
-            }
+                if (finMinuto >= 60) {
+                    finHora += Math.floor(finMinuto / 60);
+                    finMinuto = finMinuto % 60;
+                }
 
-            const horaFin = `${String(finHora).padStart(2, '0')}:${String(finMinuto).padStart(2, '0')}`;
-            return {
-                ...t,
-                hora_fin: horaFin,
-                ubicacion: disp.ubicacion,
-                disponibilidad_id: disp.id
-            };
-        }));
+                const horaFin = `${String(finHora).padStart(2, '0')}:${String(finMinuto).padStart(2, '0')}`;
+                return {
+                    ...t,
+                    hora_fin: horaFin,
+                    ubicacion: disp.ubicacion,
+                    disponibilidad_id: disp.id,
+                    hora_inicio: t.hora,
+                    hora_fin: horaFin
+                };
+            }));
         });
         
-        // Mostrar turnos
         timeSlotsContainer.innerHTML = todosTurnos.map(turno => `
             <div class="time-slot">
                 <input type="radio" 
                     name="turno_seleccionado" 
-                    id="turno-${turno.disponibilidad_id}-${turno.hora}" 
-                    value="${turno.hora} - ${turno.hora_fin}" 
-                    data-fecha="${fecha}">
-                <label for="turno-${turno.disponibilidad_id}-${turno.hora}">
-                    ${turno.hora} (${turno.ubicacion})
+                    id="turno-${turno.disponibilidad_id}" 
+                    value="${turno.disponibilidad_id}"
+                    data-hora-inicio="${turno.hora_inicio}"
+                    data-hora-fin="${turno.hora_fin}">
+                <label for="turno-${turno.disponibilidad_id}">
+                    ${turno.hora_inicio} - ${turno.hora_fin} (${turno.ubicacion})
                 </label>
             </div>
         `).join('');
 
-        // Manejador de selección de horario
         document.querySelectorAll('.time-slot input').forEach(radio => {
             radio.addEventListener('change', function() {
-                horarioSeleccionadoInput.value = this.value;
-                console.log('Turno seleccionado:', this.value);
+                // Guardar el ID de disponibilidad
+                disponibilidadIdInput.value = this.value;
+                
+                // Guardar el horario formateado
+                horarioSeleccionadoInput.value = `${this.dataset.horaInicio} - ${this.dataset.horaFin}`;
+                
+                console.log('Datos seleccionados:', {
+                    disponibilidad_id: this.value,
+                    horario: horarioSeleccionadoInput.value
+                });
             });
         });
     }

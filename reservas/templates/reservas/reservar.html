@@ -1,132 +1,131 @@
-<!DOCTYPE html>
-<html lang="es">
+    <!DOCTYPE html>
+    <html lang="es">
 
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Realizar Reserva</title>
-    <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
-    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
-</head>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Realizar Reserva</title>
+        <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
+        <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+    </head>
 
-<body>
+    <body>
 
-            <!-- Msjes -->
-            {% if messages %}
-            <div class="messages-container info-message">
-            {% load static %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            {% endfor %}
-            </div>
-            {% endif %}
-
-    
-    <div class="container">
-        <h1>Realiza tu reserva</h1>
-        <form method="post" action="{% url 'reservas:procesar_reserva' %}">
-            {% csrf_token %}
-
-            <div class="container form">
-                <!-- Paso 1: Selección de servicio -->
-                <div class="form-section">
-                    <h3>1. Selecciona el servicio</h3>
-                    <select name="servicio" id="servicio" required>
-                        <option value="">-- Seleccione un servicio --</option>
-                        {% for servicio in servicios %}
-                        <option value="{{ servicio }}">
-                            {{ servicio }}
-                        </option>
-                        {% empty %}
-                        <option value="">No hay servicios disponibles</option>
-                        {% endfor %}
-                    </select>
-                    <div type="text" id="servicio-seleccionado" name="servicio_seleccionado"></div>
+                <!-- Msjes -->
+                {% if messages %}
+                <div class="messages-container info-message">
+                {% load static %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-
-
-                <!-- Paso 2: Selección de fecha -->
-                <div class="form-section" id="fecha-container">
-                    <h3>2. Selecciona la fecha</h3>
-                    <div class="date-slots-container" id="date-slots">
-                        <!-- Las fechas se generarán dinámicamente aquí -->                         
-                    </div>
-                    <input type="hidden" id="fecha-reserva-seleccionada" name="fecha_reserva">
+                {% endfor %}
                 </div>
+                {% endif %}
 
-                <!-- Paso 3: Selección de horario -->
-                <div class="form-section" id="horario-container">
-                    <h3>3. Selecciona el horario</h3>
-                    <div class="time-slots-container" id="time-slots">
-                        <p class="info-message">Selecciona una fecha primero</p>
+        
+        <div class="container">
+            <h1>Realiza tu reserva</h1>
+            <form method="post" action="{% url 'reservas:procesar_reserva' %}">
+                {% csrf_token %}
+
+                <div class="container form">
+                    <!-- Paso 1: Selección de servicio -->
+                    <div class="form-section">
+                        <h3>1. Selecciona el servicio</h3>
+                        <select name="servicio" id="servicio" required>
+                            <option value="">-- Seleccione un servicio --</option>
+                            {% for servicio in servicios %}
+                            <option value="{{ servicio.0 }}">
+                                {{ servicio.1 }} <!-- Aquí se usa el segundo elemento de la tupla (nombre del servicio) -->
+                            </option>
+                            {% empty %}
+                            <option value="">No hay servicios disponibles</option>
+                            {% endfor %}
+                        </select>
+                        <div type="text" id="servicio-seleccionado" name="servicio_seleccionado"></div>
+                        <input type="hidden" name="disponibilidad_id" id="disponibilidad-id" value="">
                     </div>
-                    <input type="hidden" name="horario" id="horario-seleccionado">
-                    
-                    <!-- ✨ NUEVO: Campo oculto para el ID de disponibilidad -->
-                    <input type="hidden" name="disponibilidad_id" id="disponibilidad-id">
-                </div>         
+
+
+                    <!-- Paso 2: Selección de fecha -->
+                    <div class="form-section" id="fecha-container">
+                        <h3>2. Selecciona la fecha</h3>
+                        <div class="date-slots-container" id="date-slots">
+                            <!-- Las fechas se generarán dinámicamente aquí -->                         
+                        </div>
+                        <input type="hidden" id="fecha-reserva-seleccionada" name="fecha_reserva">
+                    </div>
+
+                    <!-- Paso 3: Selección de horario -->
+                    <div class="form-section" id="horario-container">
+                        <h3>3. Selecciona el horario</h3>
+                        <div class="time-slots-container" id="time-slots">
+                            <p class="info-message">Selecciona una fecha primero</p>
+                        </div>
+                        <input type="hidden" name="horario" id="horario-seleccionado">
                         
-                <!-- Paso 4: Datos del cliente -->
-                <div class="form-section">
-                    <h3>4. Datos del cliente</h3>
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control" required>
+                    </div>         
+                            
+                    <!-- Paso 4: Datos del cliente -->
+                    <div class="form-section">
+                        <h3>4. Datos del cliente</h3>
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" required>
 
-                    <label for="rut">Rut:</label>
-                    <input type="text" name="rut" id="rut" class="form-control" required>
+                        <label for="rut">Rut:</label>
+                        <input type="text" name="rut" id="rut" class="form-control" required>
 
-                    <label for="telefono">Teléfono:</label>
-                    <input type="tel" name="telefono" id="telefono" class="form-control" required>
+                        <label for="telefono">Teléfono:</label>
+                        <input type="tel" name="telefono" id="telefono" class="form-control" required>
 
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
 
-                    <label for="observaciones">Observaciones:</label>
-                    <textarea name="observaciones" id="observaciones" class="form-control"></textarea>
+                        <label for="observaciones">Observaciones:</label>
+                        <textarea name="observaciones" id="observaciones" class="form-control"></textarea>
+                    </div>
+
+                    <div class="button-container">
+                        <button type="submit" class="btn-reservar">Reservar</button>                                        
+                    </div>
+                    
                 </div>
+            </form>
 
-                <div class="button-container">
-                    <button type="submit" class="btn-reservar">Reservar</button>                                        
-                </div>
-                
+            <div class="button-container" style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
             </div>
-        </form>
-
-        <div class="button-container" style="text-align: center; margin-top: 20px;">
-            <a href="{% url 'base' %}" class="btn-volver">Volver a la Portada</a>
         </div>
-    </div>
 
-    <!--Los Script's de JS van en esta parte del HTML -->
-    <script src="{% static 'reservas/js/CargaHoraria.js' %}"></script>
-  
-</body>
-
-<!-- Footer -->
-<footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
-    <div class="footer-container" style="max-width: 1200px; margin: 0 auto;">
-        <p style="margin: 0.5rem 0;">&copy; 2023 - 2025 Reservas. Todos los derechos reservados.</p>
-        <p style="margin: 0.5rem 0; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-            Desarrollado por 
-            <a href="https://cl.linkedin.com/in/daniel-cabrera-analista-programador" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               style="color: #4ea3f1; text-decoration: none; display: flex; align-items: center;">
-                Daniel Cabrera
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0077B5" viewBox="0 0 24 24" style="margin-left: 5px;">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.938v5.667H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.849 3.37-1.849 3.602 0 4.266 2.369 4.266 5.455v6.285zM5.337 7.433c-1.144 0-2.07-.926-2.07-2.07s.926-2.07 2.07-2.07 2.07.926 2.07 2.07-.926 2.07-2.07 2.07zm1.777 13.019H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.225.792 24 1.771 24h20.451C23.2 24 24 23.225 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
-                </svg>
-            </a>
-        </p>
-    </div>
-</footer>
-</div>
+        <!--Los Script's de JS van en esta parte del HTML -->
+        <script src="{% static 'reservas/js/CargaHoraria.js' %}"></script>
     
+    </body>
 
-</html>
+    <!-- Footer -->
+    <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
+        <div class="footer-container" style="max-width: 1200px; margin: 0 auto;">
+            <p style="margin: 0.5rem 0;">&copy; 2023 - 2025 Reservas. Todos los derechos reservados.</p>
+            <p style="margin: 0.5rem 0; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                Desarrollado por 
+                <a href="https://cl.linkedin.com/in/daniel-cabrera-analista-programador" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style="color: #4ea3f1; text-decoration: none; display: flex; align-items: center;">
+                    Daniel Cabrera
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0077B5" viewBox="0 0 24 24" style="margin-left: 5px;">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.938v5.667H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.849 3.37-1.849 3.602 0 4.266 2.369 4.266 5.455v6.285zM5.337 7.433c-1.144 0-2.07-.926-2.07-2.07s.926-2.07 2.07-2.07 2.07.926 2.07 2.07-.926 2.07-2.07 2.07zm1.777 13.019H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.225.792 24 1.771 24h20.451C23.2 24 24 23.225 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+                    </svg>
+                </a>
+            </p>
+        </div>
+    </footer>
+    </div>
+        
+
+    </html>

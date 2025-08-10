@@ -1,8 +1,7 @@
 from django.db import models
 
 
-class Reserva(models.Model):
-    servicio_nombre = models.ForeignKey('servicios.Disponibilidad', on_delete=models.PROTECT) #esto permite que se relacione la reserva con el servicio
+class Reserva(models.Model):    
     disponibilidad = models.ForeignKey('servicios.Disponibilidad', on_delete=models.PROTECT, related_name='reservas') #esto permite que se relacione la reserva con la disponibilidad    
     fecha_reserva = models.DateField() #este campo permite que se guarde la fecha de la reserva
     horario = models.CharField(max_length=50) #este campo permite que se guarde el horario de la reserva
