@@ -44,7 +44,7 @@ def procesar_reserva_view(request):
 
         # 1. Obtener los datos del formulario
         disponibilidad_id = request.POST.get('disponibilidad_id')
-        servicio_id = request.POST.get('servicio')  # Cambiado de servicio_nombre a servicio_id
+        servicio_id = request.POST.get('servicio') 
         fecha_reserva = request.POST.get('fecha_reserva')
         horario = request.POST.get('horario')        
         cliente_nombre = request.POST.get('nombre')

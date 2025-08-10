@@ -140,11 +140,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="time-slot">
                 <input type="radio" 
                     name="turno_seleccionado" 
-                    id="turno-${turno.disponibilidad_id}" 
+                    id="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}" 
                     value="${turno.disponibilidad_id}"
                     data-hora-inicio="${turno.hora_inicio}"
                     data-hora-fin="${turno.hora_fin}">
-                <label for="turno-${turno.disponibilidad_id}">
+                <label for="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}">
                     ${turno.hora_inicio} - ${turno.hora_fin} (${turno.ubicacion})
                 </label>
             </div>
@@ -152,14 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.querySelectorAll('.time-slot input').forEach(radio => {
             radio.addEventListener('change', function() {
-                // Guardar el ID de disponibilidad
                 disponibilidadIdInput.value = this.value;
-                
-                // Guardar el horario formateado
                 horarioSeleccionadoInput.value = `${this.dataset.horaInicio} - ${this.dataset.horaFin}`;
-                
-                console.log('Datos seleccionados:', {
-                    disponibilidad_id: this.value,
+                console.log('Turno seleccionado:', {
+                    id: this.value,
                     horario: horarioSeleccionadoInput.value
                 });
             });

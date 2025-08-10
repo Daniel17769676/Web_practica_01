@@ -7,6 +7,6 @@ urlpatterns = [
 
 path('procesar-reserva/', procesar_reserva_view, name='procesar_reserva'),
 path('reserva_exito/<int:reserva_id>', reserva_exito_view, name='reserva_exito'),
-path('obtener-servicios/', obtener_servicios, name='obtener_servicios'),
+path('obtener-servicios/', obtener_servicios, name='obtener_servicios'), #Pagina principal de reservas
 
 ]
