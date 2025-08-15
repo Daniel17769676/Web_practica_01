@@ -1,3 +1,4 @@
+import locale
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from servicios.models import Disponibilidad, Servicio
@@ -90,5 +91,51 @@ def procesar_reserva_view(request):
     
 # Vista para mostrar la confirmación de la reserva y enviar el archivo .ICS por correo
 def reserva_exito_view(request, reserva_id):
-    return render(request, 'reservas/reserva_exito.html', {'reserva_id': reserva_id})
+    # Configurar locale para español (con manejo de errores)
+    try:
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES')
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, 'spanish')
+
+    try:
+        reserva = Reserva.objects.get(id=reserva_id)
+        servicio = Servicio.objects.get(id=reserva.disponibilidad.servicio.id)
+        
+        # Función mejorada para formatear fechas
+        def format_date(date_obj):
+            if isinstance(date_obj, str):
+                date_obj = datetime.strptime(date_obj, '%Y-%m-%d').date()
+            elif isinstance(date_obj, datetime):
+                date_obj = date_obj.date()
+            return date_obj.strftime('%A, %d de %B de %Y').capitalize()
+
+        # Obtener fecha formateada
+        fecha_reserva_formateada = format_date(reserva.fecha_reserva)
+        
+
+
+        context = {
+            'cliente_nombre': reserva.cliente_nombre,
+            'servicio': servicio,
+            'fecha_reserva': fecha_reserva_formateada,  # Usar la versión formateada
+            'fecha_reserva_original': reserva.fecha_reserva,  # Mantener formato original por si acaso
+            'horario': reserva.horario,
+            'horario_original': reserva.horario,
+            'telefono': reserva.cliente_telefono,
+            'cliente_email': reserva.cliente_email,
+            'observaciones': reserva.observaciones,
+            'reserva_id': reserva.id,
+        }
+        
+        return render(request, 'reservas/reserva_exito.html', context)
+
+    except Reserva.DoesNotExist:
+        # Manejar error si la reserva no existe
+        return render(request, 'reservas/error.html', {'mensaje': 'La reserva no existe'})
+    except Exception as e:
+        # Manejar otros errores
+        return render(request, 'reservas/error.html', {'mensaje': str(e)})
 

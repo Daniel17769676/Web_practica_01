@@ -22,19 +22,19 @@
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Servicio:</span>
-                <span class="confirmation-detail-value">{{ servicio }}</span>
+                <span class="confirmation-detail-value">{{ servicio.nombre }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Día:</span>
-                <span class="confirmation-detail-value">{{ dia_semana }}</span>
+                <span class="confirmation-detail-value">{{ fecha_reserva }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Horario:</span>
-                <span class="confirmation-detail-value">{{ hora_inicio|time:"H:i" }} - {{ hora_fin|time:"H:i" }}</span>
+                <span class="confirmation-detail-value">{{ horario }} </span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Teléfono:</span>
-                <span class="confirmation-detail-value">{{ cliente_telefono }}</span>
+                <span class="confirmation-detail-value">{{ telefono }}</span>
             </div>
             <div class="confirmation-detail-row">
                 <span class="confirmation-detail-label">Email:</span>
@@ -55,10 +55,41 @@
         <p class="confirmation-footer">Recibirás un correo de confirmación con los detalles de tu reserva.</p>
         
         <div class="confirmation-buttons">
-            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">Volver al Inicio</a>
-            <button onclick="window.print()" class="confirmation-btn confirmation-btn-print">Imprimir Confirmación</button>
-            <a href="{% url 'obtener_servicios' %}" class="confirmation-btn confirmation-btn-secondary">Generar otra Reserva</a>
+
+            <a href="{% url 'obtener_servicios' %}" class="confirmation-btn confirmation-btn-secondary">
+                <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; vertical-align: middle;">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Generar otra Reserva
+            </a>
+
+            <!-- Btn WhatsApp -->
+            <button class="confirmation-btn whatsapp-btn" onclick="compartirWhatsApp()">
+                <svg class="whatsapp-icon" viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488"/>
+                </svg>
+                Compartir
+            </button>
+
+            <!-- Botón impresión -->
+            <button onclick="imprimirComprobante()" class="confirmation-btn confirmation-btn-print">
+                <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
+                    <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+                </svg>
+                Imprimir
+            </button>           
+                                
         </div>
+
+        <br>
+        <!-- Botón Volver al Inicio -->
+        <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">
+            <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+                Inicio
+        </a>
+
 
         <div class="confirmation-footer">
             <p>Si tienes alguna duda, puedes contactarnos a través de nuestro correo electrónico o número de teléfono.</p>
@@ -87,5 +118,240 @@
 </footer>
 </div>
 
+
+<script>
+    function compartirWhatsApp() {
+        const nombre = "{{ cliente_nombre }}";
+        const servicio = "{{ servicio.nombre }}";
+        const fecha = "{{ fecha_reserva }}";
+        const horario = "{{ horario }}";
+        
+        const mensaje = `🎉 ¡Reserva Confirmada! 🎉
+
+    📋 *Detalles de mi reserva:*
+    - Nombre: ${nombre}
+    - Servicio: ${servicio}
+    - Fecha: ${fecha}
+    - Horario: ${horario}
+    - Estado: ✅ Confirmado
+
+    ¡Ya tengo mi cita agendada!`;
+
+
+            
+        const mensajeCodificado = encodeURIComponent(mensaje);
+        const urlWhatsApp = `https://wa.me/?text=${mensajeCodificado}`;
+        
+        window.open(urlWhatsApp, '_blank');
+    }
+
+</script>
+
+<script>
+    function imprimirComprobante() {
+        // Crear una ventana de impresión optimizada
+        const ventanaImpresa = window.open('', 'PRINT', 'height=600,width=800');
+        
+        // Obtener los datos dinámicos
+        const datos = {
+            nombre: "{{ cliente_nombre }}",
+            servicio: "{{ servicio.nombre }}",
+            fecha: "{{ fecha_reserva }}",
+            horario: "{{ horario }}",
+            telefono: "{{ telefono }}",
+            email: "{{ cliente_email }}",
+            observaciones: "{{ observaciones }}",
+            fecha_actual: new Date().toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })
+        };
+
+        // Diseño optimizado para impresión con íconos
+        ventanaImpresa.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <title>Comprobante de Reserva</title>
+                <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        line-height: 1.6; 
+                        color: #333; 
+                        max-width: 800px; 
+                        margin: 0 auto; 
+                        padding: 20px; 
+                    }
+                    .header { 
+                        text-align: center; 
+                        margin-bottom: 20px; 
+                        border-bottom: 2px solid #eee; 
+                        padding-bottom: 10px; 
+                    }
+                    .logo { 
+                        max-width: 150px; 
+                        margin-bottom: 10px; 
+                    }
+                    h1 { 
+                        color: #2c3e50; 
+                        margin: 0; 
+                        font-size: 24px; 
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                    }
+                    .subtitle { 
+                        color: #7f8c8d; 
+                        margin: 5px 0 20px; 
+                    }
+                    .comprobante-body { 
+                        margin: 30px 0; 
+                    }
+                    .detalle { 
+                        display: flex; 
+                        margin-bottom: 10px; 
+                        align-items: center;
+                    }
+                    .detalle-label { 
+                        font-weight: bold; 
+                        width: 120px; 
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    .footer { 
+                        margin-top: 30px; 
+                        text-align: center; 
+                        font-size: 12px; 
+                        color: #95a5a6; 
+                        border-top: 1px solid #eee; 
+                        padding-top: 10px; 
+                    }
+                    .icon {
+                        width: 18px;
+                        height: 18px;
+                        fill: currentColor;
+                    }
+                    @media print {
+                        .no-print { 
+                            display: none !important; 
+                        }
+                        body { 
+                            -webkit-print-color-adjust: exact; 
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        Comprobante de Reserva
+                    </h1>
+                    <div class="subtitle">${datos.fecha_actual}</div>
+                </div>
+                
+                <div class="comprobante-body">
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            Nombre:
+                        </div>
+                        <div>${datos.nombre}</div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M13 8c0-2.21-1.79-4-4-4S5 5.79 5 8s1.79 4 4 4 4-1.79 4-4zm-2 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zM1 18v2h16v-2c0-2.66-5.33-4-8-4s-8 1.34-8 4zm2 0c.2-.71 3.3-2 6-2 2.69 0 5.78 1.28 6 2H3zm17-3v-3h3v-2h-3V7h-2v3h-3v2h3v3h2z"/>
+                            </svg>
+                            Servicio:
+                        </div>
+                        <div>${datos.servicio}</div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                            </svg>
+                            Fecha:
+                        </div>
+                        <div>${datos.fecha}</div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            Horario:
+                        </div>
+                        <div>${datos.horario}</div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                            </svg>
+                            Teléfono:
+                        </div>
+                        <div>${datos.telefono}</div>
+                    </div>
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                            Email:
+                        </div>
+                        <div>${datos.email}</div>
+                    </div>
+                    ${datos.observaciones ? `
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                            Observaciones:
+                        </div>
+                        <div>${datos.observaciones}</div>
+                    </div>
+                    ` : ''}
+                    <div class="detalle">
+                        <div class="detalle-label">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Estado:
+                        </div>
+                        <div><strong>CONFIRMADO</strong></div>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <p>Este comprobante fue generado automáticamente. Gracias por su reserva.</p>
+                    <p class="no-print">Para versión impresa, use los comandos de impresión de su navegador.</p>
+                </div>
+                
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            window.close();
+                        }, 300);
+                    };
+                <\/script>
+            </body>
+            </html>
+        `);
+        
+        ventanaImpresa.document.close();
+    }
+</script>
 
 </html>

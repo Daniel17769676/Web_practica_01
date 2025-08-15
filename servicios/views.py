@@ -1,6 +1,7 @@
+import locale
 from django.shortcuts import render, redirect
 from .models import Disponibilidad, Servicio
-from datetime import time, timedelta, datetime
+from datetime import time, timedelta, datetime, timezone
 
 
 
@@ -68,7 +69,7 @@ def disponibilidad_view(request):
 
     return render(request, 'mi_web/Disponibilidad.html', {
                     'servicios_disponibles': servicios_disponibles,
-                    'servicios': Servicio.objects.all()  # Añadir esto para el select en el template
+                    'servicios': Servicio.objects.all()  
                 })            
 
 
@@ -76,15 +77,29 @@ def disponibilidad_view(request):
 
 # Vista para confirmar datos guardados al ofrecer disponibilidad (ADMINISTRADOR)
 def confirmacion_view(request, disponibilidad_id):
-    disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id) # Obtiene la disponibilidad por su ID
-    print("Datos de disponibilidad:", disponibilidad.__dict__)  # Debug
+    try:
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+    except:
+        locale.setlocale(locale.LC_TIME, 'es_ES') 
+
+
+    disponibilidad = Disponibilidad.objects.get(id=disponibilidad_id)
+    
+    # Formatear fechas en español (versión corregida)
+    def format_date(date_obj):
+        # Convierte la fecha a objeto datetime si es necesario
+        if isinstance(date_obj, datetime):
+            date_obj = date_obj.date()
+        return date_obj.strftime('%A, %d de %B de %Y')
+    
+    fecha_inicio = format_date(disponibilidad.fecha_inicio)
+    fecha_fin = format_date(disponibilidad.fecha_fin)
     
     return render(request, 'mi_web/Confirmacion.html', {
         'administrador': disponibilidad.administrador,
         'servicio': disponibilidad.servicio,
-        'fecha_inicio': disponibilidad.fecha_inicio,
-        'fecha_fin': disponibilidad.fecha_fin,        
-        'horario': f"{disponibilidad.hora_inicio} - {disponibilidad.hora_fin}",
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+        'horario': f"{disponibilidad.hora_inicio.strftime('%H:%M')} - {disponibilidad.hora_fin.strftime('%H:%M')}",
         'estado': "Confirmado" if disponibilidad.disponible else "Pendiente",
     })
-    
