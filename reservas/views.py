@@ -39,75 +39,53 @@ def obtener_servicios(request):
      
 def procesar_reserva_view(request):  
     if request.method == 'POST':
-        # Debug: Imprimir los datos recibidos
-        print("Datos recibidos:", request.POST)
-
         # 1. Obtener los datos del formulario
         disponibilidad_id = request.POST.get('disponibilidad_id')
         servicio_id = request.POST.get('servicio') 
         fecha_reserva = request.POST.get('fecha_reserva')
-        horario = request.POST.get('horario')        
-        cliente_nombre = request.POST.get('nombre')
-        cliente_rut = request.POST.get('rut')
-        cliente_telefono = request.POST.get('telefono')
-        cliente_email = request.POST.get('email')
-        observaciones = request.POST.get('observaciones', '')
-
-        # 2. Validación de campos requeridos
-        required_fields = [
-            disponibilidad_id, servicio_id, fecha_reserva, horario,
-            cliente_nombre, cliente_rut, cliente_email
-        ]
-        if not all(required_fields):
-            messages.error(request, 'Todos los campos son obligatorios')
-            return redirect('reservas:obtener_servicios')
+        horario = request.POST.get('horario')  # Este debería ser el horario específico "HH:MM - HH:MM"
         
+        # Extraer hora_inicio y hora_fin del horario
         try:
-            # 3. Convertir y validar fecha
+            hora_inicio_str, hora_fin_str = horario.split(' - ')
+            hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
+            hora_fin = datetime.strptime(hora_fin_str, '%H:%M').time()
+        except:
+            messages.error(request, 'Formato de horario inválido')
+            return redirect('reservas:obtener_servicios')
+
+        try:
+            # 2. Convertir fecha
             fecha_reserva = datetime.strptime(fecha_reserva, '%Y-%m-%d').date()
             
-            # 4. Obtener y bloquear la disponibilidad
-            with transaction.atomic():
-                disponibilidad = Disponibilidad.objects.select_for_update().get(
-                    id=disponibilidad_id,
-                    disponible=True
-                )
-                
-                # 5. Verificar reserva existente
-                if Reserva.objects.filter(
-                    disponibilidad=disponibilidad,
-                    fecha_reserva=fecha_reserva
-                ).exists():
-                    messages.error(request, 'Ya existe una reserva para este horario')
-                    return redirect('reservas:obtener_servicios')
-                
-                # 6. Crear la reserva
-                reserva = Reserva.objects.create(
-                    disponibilidad=disponibilidad,
-                    fecha_reserva=fecha_reserva,
-                    horario=horario,
-                    cliente_nombre=cliente_nombre,
-                    cliente_rut=cliente_rut,
-                    cliente_email=cliente_email,
-                    cliente_telefono=cliente_telefono,
-                    observaciones=observaciones,
-                    estado='pendiente'
-                )
-                
-                # 7. Marcar como no disponible
-                disponibilidad.disponible = False
-                disponibilidad.save()
+            # 3. Verificar reserva existente para este horario específico
+            if Reserva.objects.filter(
+                disponibilidad_id=disponibilidad_id,
+                fecha_reserva=fecha_reserva,
+                horario=horario  # Ahora verificamos el horario exacto
+            ).exists():
+                messages.error(request, 'Este horario ya ha sido reservado')
+                return redirect('reservas:obtener_servicios')
+            
+            # 4. Crear la reserva (sin marcar toda la disponibilidad como False)
+            reserva = Reserva.objects.create(
+                disponibilidad_id=disponibilidad_id,
+                fecha_reserva=fecha_reserva,
+                horario=horario,
+                cliente_nombre=request.POST.get('nombre'),
+                cliente_rut=request.POST.get('rut'),
+                cliente_email=request.POST.get('email'),
+                cliente_telefono=request.POST.get('telefono'),
+                observaciones=request.POST.get('observaciones', ''),
+                estado='pendiente'
+            )
 
-                # 8. Redirigir a página de éxito
-                return redirect('reservas:reserva_exito', reserva_id=reserva.id)
+            return redirect('reservas:reserva_exito', reserva_id=reserva.id)
 
-        except Disponibilidad.DoesNotExist:
-            messages.error(request, 'El horario seleccionado ya no está disponible')
         except Exception as e:
             print(f'Error al procesar reserva: {str(e)}')
             messages.error(request, f'Ocurrió un error al procesar la reserva: {str(e)}')
-        
-        return redirect('reservas:obtener_servicios')
+            return redirect('reservas:obtener_servicios')
     
     
 # Vista para mostrar la confirmación de la reserva y enviar el archivo .ICS por correo
