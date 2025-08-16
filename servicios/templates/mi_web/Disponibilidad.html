@@ -69,18 +69,35 @@
             </div>
 
             <!-- Horarios -->
-            <div class="form-section">
-                <h3>Horario de Disponibilidad</h3>
-                <div class="form-group">
-                    <label for="hora_inicio">Hora de inicio:</label>
-                    <input type="time" id="hora_inicio" name="hora_inicio" required>
+                <div class="form-section">
+                    <h3>Horario de Disponibilidad</h3>
+                    <div class="form-group">
+                        <label for="hora_inicio">Hora de inicio:</label>
+                        <input 
+                            type="time" 
+                            id="hora_inicio" 
+                            name="hora_inicio" 
+                            required
+                            onchange="validarHoras()" 
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_fin">Hora de fin:</label>
+                        <input 
+                            type="time" 
+                            id="hora_fin" 
+                            name="hora_fin" 
+                            required
+                            onchange="validarHoras()"  
+                        >
+                        <span id="error-horas" style="color: red; display: none;">
+                            ⚠ La <strong>hora de fin</strong> debe ser <strong>posterior</strong> a la hora de inicio. ⚠  
+                        </span>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="hora_fin">Hora de fin:</label>
-                    <input type="time" id="hora_fin" name="hora_fin" required>
-                </div>
-
+            <!-- Intervalo de tiempo -->
                 <div class="form-group">
                     <label for="intervalo">Duración de cada servicio:</label>
                     <select id="intervalo" name="intervalo" required>
@@ -89,7 +106,7 @@
                         <option value="60">60 minutos</option>
                     </select>
                 </div>
-            </div>
+                
 
             <!-- Detalles del servicio -->
             <div class="form-section">
@@ -138,6 +155,26 @@
 </div>
 
 
+<!-- Validación de horas -->
+<script>
+    function validarHoras() {
+        const horaInicio = document.getElementById("hora_inicio").value; // Formato "HH:MM"
+        const horaFin = document.getElementById("hora_fin").value;
+        const errorSpan = document.getElementById("error-horas");
+        const submitBtn = document.querySelector("button[type='submit']");
+
+        if (horaInicio && horaFin) {
+            if (horaFin <= horaInicio) {  // Comparación directa (strings en formato HH:MM)
+                errorSpan.style.display = "inline"; // Muestra error
+                submitBtn.disabled = true; // Bloquea el botón
+            } else {
+                errorSpan.style.display = "none";   // Oculta error
+                submitBtn.disabled = false; // Habilita el botón
+            }
+        }
+    }
+
+</script>
 
 
 </html>

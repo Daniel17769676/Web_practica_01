@@ -40,8 +40,8 @@
                         <select name="servicio" id="servicio" required>
                             <option value="">-- Seleccione un servicio --</option>
                             {% for servicio in servicios %}
-                            <option value="{{ servicio.0 }}">
-                                {{ servicio.1 }} <!-- Aquí se usa el segundo elemento de la tupla (nombre del servicio) -->
+                            <option value="{{ servicio.0 }}"> <!-- ID del servicio -->
+                            {{ servicio.1 }} - {{ servicio.2 }}  <!-- Nombre del servicio - Nombre del admin -->
                             </option>
                             {% empty %}
                             <option value="">No hay servicios disponibles</option>

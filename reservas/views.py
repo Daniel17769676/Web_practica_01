@@ -11,6 +11,8 @@ from django.core.mail import EmailMessage
 from ics import Calendar, Event
 import arrow
 from django.db import transaction
+from django.db.models import OuterRef, Subquery
+from django.utils import timezone
 
 
 
@@ -22,8 +24,15 @@ def obtener_servicios(request):
         return procesar_reserva_view(request)
     
     # Lógica original para GET
-    servicios = Servicio.objects.values_list('id', 'nombre').distinct() #Obtiene los datos de la tabla disponibilidad y unicamente 'values_list' los valores del campo 'servicio' y los devuelve como una lista de valores únicos.
-    
+    servicios = Servicio.objects.annotate(
+        admin_nombre=Subquery(
+            Disponibilidad.objects.filter(servicio=OuterRef('pk'))
+            .order_by('id')
+            .values('administrador')[:1]
+        )
+    ).values_list('id', 'nombre', 'admin_nombre')
+
+
     if request.method == 'GET' and 'servicio_id' in request.GET:
         servicio_id = request.GET.get('servicio_id') # Obtiene el id seleccionado del formulario
         disponibilidades = Disponibilidad.objects.filter(servicio__id=servicio_id).values(
@@ -35,7 +44,6 @@ def obtener_servicios(request):
         return JsonResponse({'disponibilidades': list(disponibilidades)}) # Devuelve las disponibilidades en formato JSON
 
     return render(request, 'reservas/reservar.html', {'servicios': servicios})
-
 
      
 def procesar_reserva_view(request):  
