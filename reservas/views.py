@@ -2,17 +2,14 @@ import locale
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from servicios.models import Disponibilidad, Servicio
-from reservas.models import Reserva #Importa los modelos de la app RESERVAS
-from django.views.decorators.http import require_GET
+from reservas.models import Reserva
 from django.contrib import messages
-from datetime import datetime, time, timedelta, date
-from django.db.models import Q
+from datetime import datetime, timedelta, date
 from django.core.mail import EmailMessage
-from ics import Calendar, Event
-import arrow
-from django.db import transaction
+from ics import Calendar, Event, alarm
 from django.db.models import OuterRef, Subquery
-from django.utils import timezone
+from django.conf import settings
+import pytz
 
 
 
@@ -89,6 +86,74 @@ def procesar_reserva_view(request):
                 estado='pendiente'
             )
 
+            # --- Generar archivo .ics ---
+            timezone = pytz.timezone('America/Santiago')  # Ajusta según tu zona horaria
+            
+            # Convertir fecha y hora a datetime con zona horaria
+            inicio = timezone.localize(
+                datetime.combine(reserva.fecha_reserva, hora_inicio)  # Usa hora_inicio (datetime.time)
+            )
+            fin = timezone.localize(
+                datetime.combine(reserva.fecha_reserva, hora_fin)  # Usa hora_fin (datetime.time)
+            )
+
+            # Opcional: Calcula duración automáticamente
+            duracion = datetime.combine(date.min, hora_fin) - datetime.combine(date.min, hora_inicio)
+
+            # --- Añadir alarma/alertas ---
+            #alarma = alarm()
+            #alarma.trigger = timedelta(minutes=-5)  # 5 minutos antes
+            #alarma.action = "DISPLAY"  # Mostrar notificación
+            #alarma.description = f"Recordatorio: Reserva de {reserva.disponibilidad.servicio.nombre}"
+            #event.alarms.append(alarma)  # Añadir alarma al evento
+            
+            # Crear evento ICS
+            calendar = Calendar()
+            event = Event()
+            event.name = f"Reserva: {reserva.disponibilidad.servicio.nombre}"
+            event.begin = inicio
+            event.end = fin
+            event.duration = duracion  # Usa la duración calculada
+            event.description = (
+                f"Cliente: {reserva.cliente_nombre}\n"
+                f"Teléfono: {reserva.cliente_telefono}\n"
+                f"Email: {reserva.cliente_email}\n"
+                f"Observaciones: {reserva.observaciones or 'Ninguna'}"
+            )
+            event.location = reserva.disponibilidad.ubicacion or "Ubicación no especificada"
+            calendar.events.add(event)
+            
+            # Guardar archivo temporal
+            ics_content = str(calendar)
+            
+            # --- Enviar por email ---
+            email = EmailMessage(
+                subject=f"Confirmación de reserva - {reserva.disponibilidad.servicio.nombre}",
+                body=f"""
+                Hola {reserva.cliente_nombre},
+                
+                Tu reserva para {reserva.disponibilidad.servicio.nombre} ha sido confirmada.
+                
+                Detalles:
+                - Fecha: {reserva.fecha_reserva.strftime('%d/%m/%Y')}
+                - Hora: {reserva.horario}
+                - Ubicación: {reserva.disponibilidad.ubicacion or 'Por confirmar'}
+                
+                Adjunto encontrarás el evento para tu calendario.
+                """,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[reserva.cliente_email],
+                cc=[],  # Puedes añadir CC si es necesario
+            )
+            
+            email.attach(
+                filename=f"reserva_{reserva.id}.ics",
+                content=ics_content,
+                mimetype="text/calendar"
+            )
+            email.send()            
+
+
             return redirect('reservas:reserva_exito', reserva_id=reserva.id)
 
         except Exception as e:
@@ -122,7 +187,6 @@ def reserva_exito_view(request, reserva_id):
 
         # Obtener fecha formateada
         fecha_reserva_formateada = format_date(reserva.fecha_reserva)
-        
 
 
         context = {
@@ -142,8 +206,8 @@ def reserva_exito_view(request, reserva_id):
 
     except Reserva.DoesNotExist:
         # Manejar error si la reserva no existe
-        return render(request, 'reservas/error.html', {'mensaje': 'La reserva no existe'})
+        return render(request, 'reservas/reservar.html', {'mensaje': 'La reserva no existe'})
     except Exception as e:
         # Manejar otros errores
-        return render(request, 'reservas/error.html', {'mensaje': str(e)})
+        return render(request, 'reservas/reservar.html', {'mensaje': str(e)})
 
