@@ -14,7 +14,7 @@
 - [x] 🛎️ Crear servicio (Oferente)  
 - [x] 🙋‍♂️ Tomar reserva (Cliente)  
 - [x] 🔒 Bloquear citas reservadas  
-- [ ] 📅 Notificaciones `.ICS` al correo electrónico
+- [x] 📅 Notificaciones `.ICS` al correo electrónico
 - [ ] 🧑‍💼 Crear perfil
 - [ ] ⚙️ Panel administrador
 - [ ] 🎛️ Panel oferente
