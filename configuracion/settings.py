@@ -142,7 +142,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'daniel.cabrera.araya@gmail.com'
-EMAIL_HOST_PASSWORD = 'mjnt xzab ezio zyqe'
+EMAIL_HOST_PASSWORD = 'knha izjh biek khqe'
+DEFAULT_FROM_EMAIL = 'daniel.cabrera.araya@gmail.com'  # Dirección desde la que se enviarán los correos
 
 STATIC_URL = '/static/'
 

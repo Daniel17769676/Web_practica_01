@@ -400,3 +400,177 @@ button:hover {
 }
 
 
+
+/* ESTILOS PANEL RESERVAS */
+
+ .reservas-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .reservas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reservas-title {
+            color: #4caf50;
+            margin: 0;
+        }
+
+        .reservas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .reservas-table th {
+            background-color: #4caf50;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .reservas-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .reservas-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .reservas-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .badge-pendiente {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .badge-confirmada {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-cancelada {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-completada {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-editar {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-editar:hover {
+            background-color: #138496;
+        }
+
+        .btn-cancelar {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #c82333;
+        }
+
+        .btn-confirmar {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-confirmar:hover {
+            background-color: #218838;
+        }
+
+        .no-reservas {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #4caf50;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #4caf50;
+            color: white;
+            border: 1px solid #4caf50;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }

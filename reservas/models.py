@@ -10,8 +10,7 @@ class Reserva(models.Model):
     cliente_telefono = models.CharField(max_length=15, blank=True, null=True) #este campo permite que se guarde el telefono del cliente, es opcional
     cliente_email = models.EmailField() #este campo permite que se guarde el email del cliente
     observaciones = models.TextField(blank=True, null=True) #este campo permite que se guarden las observaciones de la reserva    
-    ESTADO_CHOICES = [ 
-        ('pendiente', 'Pendiente'),
+    ESTADO_CHOICES = [     
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
         ('completada', 'Completada'),]

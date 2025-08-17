@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Últimas Reservas</title>
+    <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
+    <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+</head>
+
+<body>
+    <!-- Msjes -->
+    {% if messages %}
+    <div class="messages-container info-message">
+        {% load static %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="reservas-container">
+        <div class="reservas-header">
+            <h1 class="reservas-title">Últimas Reservas</h1>
+            
+            <a href="{% url 'obtener_servicios' %}" class="confirmation-btn confirmation-btn-secondary">
+                <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; vertical-align: middle;">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Generar otra Reserva
+            </a>
+
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-container"> 
+                <label for="filtro-cliente">Cliente</label>
+                <input type="text" id="filtro-cliente" placeholder="Buscar por nombre..." style="width:200px; padding:6px; font-size:14px;">
+        </div>
+    
+
+        <!-- Tabla de reservas -->
+        <table class="reservas-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Fecha</th>
+                    <th>Horario</th>                 
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.id }}</td>
+                    <td>{{ reserva.cliente_nombre }}</td>
+                    <td>
+                        {% if reserva.disponibilidad and reserva.disponibilidad.servicio %}
+                            {{ reserva.disponibilidad.servicio.nombre }}
+                        {% else %}
+                            Servicio no disponible
+                        {% endif %}
+                    </td>
+                    <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
+                    <td>{{ reserva.horario }}</td>
+                    <td>
+                        {% if reserva.estado == 'pendiente' %}
+                        <span class="badge badge-pendiente">Pendiente</span>
+                        {% elif reserva.estado == 'confirmada' %}
+                        <span class="badge badge-confirmada">Confirmada</span>
+                        {% elif reserva.estado == 'cancelada' %}
+                        <span class="badge badge-cancelada">Cancelada</span>
+                        {% else %}
+                        <span class="badge badge-completada">Completada</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if reserva.estado != 'cancelada' %}
+                        <button class="action-btn btn-cancelar">Cancelar</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="no-reservas">No hay reservas registradas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">&raquo;</a>
+        </div>
+        <br>
+        <!-- Botón Volver al Inicio -->
+        <div class="button-container" style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">
+            <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+                Volver</a>
+        </div>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
+        <div class="footer-container" style="max-width: 1200px; margin: 0 auto;">
+            <p style="margin: 0.5rem 0;">&copy; 2023 - 2025 Reservas. Todos los derechos reservados.</p>
+            <p style="margin: 0.5rem 0; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                Desarrollado por 
+                <a href="https://cl.linkedin.com/in/daniel-cabrera-analista-programador" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style="color: #4ea3f1; text-decoration: none; display: flex; align-items: center;">
+                    Daniel Cabrera
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0077B5" viewBox="0 0 24 24" style="margin-left: 5px;">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.938v5.667H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.849 3.37-1.849 3.602 0 4.266 2.369 4.266 5.455v6.285zM5.337 7.433c-1.144 0-2.07-.926-2.07-2.07s.926-2.07 2.07-2.07 2.07.926 2.07 2.07-.926 2.07-2.07 2.07zm1.777 13.019H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.225.792 24 1.771 24h20.451C23.2 24 24 23.225 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+                    </svg>
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+   <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filtroCliente = document.getElementById('filtro-cliente');
+            const filas = document.querySelectorAll('.reservas-table tbody tr');
+            
+            filtroCliente.addEventListener('input', function() {
+                const textoBusqueda = this.value.toLowerCase();
+                
+                filas.forEach(fila => {
+                    const celdaCliente = fila.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    
+                    if (celdaCliente.includes(textoBusqueda)) {
+                        fila.style.display = '';
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-cancelar').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('La cancelación se enviará al moderador. ¿Está seguro?')) {
+                        alert('Cancelación solicitada con éxito');
+                        // Aquí iría la lógica real para cancelar la reserva
+                    }
+                });
+            });
+        });
+    </script>
+
+    
+</body>
+</html>

@@ -1,6 +1,8 @@
 import locale
+from urllib import request
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+import reservas
 from servicios.models import Disponibilidad, Servicio
 from reservas.models import Reserva
 from django.contrib import messages
@@ -10,6 +12,7 @@ from ics import Calendar, Event, alarm
 from django.db.models import OuterRef, Subquery
 from django.conf import settings
 import pytz
+from ics.alarm import DisplayAlarm
 
 
 # Vista para mostrar los servicios disponibles (GET)
@@ -81,7 +84,7 @@ def procesar_reserva_view(request):
                 cliente_email=request.POST.get('email'),
                 cliente_telefono=request.POST.get('telefono'),
                 observaciones=request.POST.get('observaciones', ''),
-                estado='pendiente'
+                estado='confirmada'  # Estado inicial de la reserva     
             )
 
             # --- Generar archivo .ics ---
@@ -97,14 +100,7 @@ def procesar_reserva_view(request):
 
             # Opcional: Calcula duración automáticamente
             duracion = datetime.combine(date.min, hora_fin) - datetime.combine(date.min, hora_inicio)
-
-            # --- Añadir alarma/alertas ---
-            #alarma = alarm()
-            #alarma.trigger = timedelta(minutes=-5)  # 5 minutos antes
-            #alarma.action = "DISPLAY"  # Mostrar notificación
-            #alarma.description = f"Recordatorio: Reserva de {reserva.disponibilidad.servicio.nombre}"
-            #event.alarms.append(alarma)  # Añadir alarma al evento
-            
+          
             # Crear evento ICS
             calendar = Calendar()
             event = Event()
@@ -120,7 +116,14 @@ def procesar_reserva_view(request):
             )
             event.location = reserva.disponibilidad.ubicacion or "Ubicación no especificada"
             calendar.events.append(event)
+
+            # --- Añadir alarma/alertas al .ICS---
+            alarma = DisplayAlarm()
+            alarma.trigger = timedelta(minutes=-5)  # 5 minutos antes
+            alarma.display_text = f"Recordatorio: Reserva de {reserva.disponibilidad.servicio.nombre}"
             
+            event.alarms.append(alarma)  # Añadir alarma al evento
+
             # Guardar archivo temporal
             ics_content = str(calendar)
             
@@ -150,7 +153,6 @@ def procesar_reserva_view(request):
                 mimetype="text/calendar"
             )
             email.send()            
-
 
             return redirect('reservas:reserva_exito', reserva_id=reserva.id)
 
@@ -209,3 +211,13 @@ def reserva_exito_view(request, reserva_id):
         # Manejar otros errores
         return render(request, 'reservas/reservar.html', {'mensaje': str(e)})
 
+def panel_reservas_view(request):
+    # Consulta optimizada que incluye todas las relaciones necesarias
+    reservas = Reserva.objects.select_related(
+        'disponibilidad__servicio'  # Carga el servicio a través de disponibilidad
+    ).order_by('-fecha_reserva', '-horario')
+    
+    if not reservas.exists():
+        messages.info(request, 'No hay reservas registradas.')
+    
+    return render(request, 'reservas/panel_reservas.html', {'reservas': reservas})
