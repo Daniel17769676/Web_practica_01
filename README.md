@@ -15,9 +15,13 @@
 - [x] 🙋‍♂️ Tomar reserva (Cliente)  
 - [x] 🔒 Bloquear citas reservadas  
 - [x] 📅 Notificaciones `.ICS` al correo electrónico
-- [ ] 🧑‍💼 Crear perfil
+- [x] 🎛️ Panel básico de visualización de reservas
+
+### 🛠 Pendiente:
+- [ ] 👨‍💻 Crear perfil administrador
+- [ ] 🧑‍💼 Crear perfil oferente
 - [ ] ⚙️ Panel administrador
-- [ ] 🎛️ Panel oferente
+- [ ] 👔 Panel oferente
 
 ---
 
