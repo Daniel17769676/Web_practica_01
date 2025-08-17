@@ -12,8 +12,6 @@ from django.conf import settings
 import pytz
 
 
-
-
 # Vista para mostrar los servicios disponibles (GET)
 def obtener_servicios(request):
     # Si es POST, redirige a la vista de procesamiento
@@ -121,7 +119,7 @@ def procesar_reserva_view(request):
                 f"Observaciones: {reserva.observaciones or 'Ninguna'}"
             )
             event.location = reserva.disponibilidad.ubicacion or "Ubicación no especificada"
-            calendar.events.add(event)
+            calendar.events.append(event)
             
             # Guardar archivo temporal
             ics_content = str(calendar)
