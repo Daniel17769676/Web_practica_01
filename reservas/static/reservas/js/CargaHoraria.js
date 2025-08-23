@@ -214,11 +214,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!horario) return '';
         
         // Eliminar espacios extras y normalizar
-        return horario
+        let normalized = horario
             .replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
-            .trim() // Eliminar espacios al inicio y final
-            .replace(/:(\d)(?=\s|$)/g, ':0$1') // Asegurar dos dígitos en minutos
-            .replace(/(\d)(?=\s*-)/, '0$1'); // Asegurar dos dígitos en horas si es necesario
+            .trim(); // Eliminar espacios al inicio y final
+        
+        // Asegurar formato HH:MM - HH:MM
+        const partes = normalized.split(' - ');
+        if (partes.length === 2) {
+            const [inicio, fin] = partes;
+            
+            // Normalizar cada parte del tiempo
+            const normalizarTiempo = (tiempo) => {
+                const [h, m] = tiempo.split(':');
+                return `${String(h).padStart(2, '0')}:${String(m || '00').padStart(2, '0')}`;
+            };
+            
+            normalized = `${normalizarTiempo(inicio)} - ${normalizarTiempo(fin)}`;
+        }
+        
+        return normalized;
     }
 
     function generarTurnosParaFecha(disponibilidad, fecha) {
@@ -236,10 +250,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 hora: horaFormateada
             });
             
+            // Calcular el próximo intervalo CORRECTAMENTE
             minActual += intervalo;
+            
+            // Ajustar horas y minutos si los minutos exceden 59
             if (minActual >= 60) {
                 horaActual += Math.floor(minActual / 60);
                 minActual = minActual % 60;
+            }
+            
+            // Verificar si hemos superado el horario de fin
+            if (horaActual > horaFin || (horaActual === horaFin && minActual >= minFin)) {
+                break;
             }
         }
         
