@@ -269,8 +269,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function formatearFechaBonita(fechaStr) {
-        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const fecha = new Date(fechaStr);
+        // Crear la fecha en la zona horaria local, no UTC
+        const [year, month, day] = fechaStr.split('-');
+        const fecha = new Date(year, month - 1, day); // Meses son 0-indexados en JS
+        
+        const opciones = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            timeZone: 'America/Santiago' // Especifica la zona horaria de Chile
+        };
+        
         return fecha.toLocaleDateString('es-ES', opciones);
     }
 });
