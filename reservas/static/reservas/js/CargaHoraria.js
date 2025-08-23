@@ -95,71 +95,130 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function mostrarHorariosDisponibles(fecha) {
+    async function mostrarHorariosDisponibles(fecha) {
         timeSlotsContainer.innerHTML = '<p class="loading-message">Cargando horarios...</p>';
         
-        const disponibilidadesParaFecha = disponibilidadesActuales.filter(disp => {
-            const dispFechaInicio = new Date(disp.fecha_inicio);
-            const dispFechaFin = new Date(disp.fecha_fin);
-            const fechaSeleccionadaObj = new Date(fecha);
-            return fechaSeleccionadaObj >= dispFechaInicio && fechaSeleccionadaObj <= dispFechaFin;
-        });
-
-        if (disponibilidadesParaFecha.length === 0) {
-            timeSlotsContainer.innerHTML = '<p class="info-message">No hay horarios para esta fecha</p>';
+        const servicioId = servicioSelect.value;
+        
+        if (!servicioId) {
+            timeSlotsContainer.innerHTML = '<p class="info-message">Primero selecciona un servicio</p>';
             return;
         }
-
-        const todosTurnos = [];
         
-        disponibilidadesParaFecha.forEach(disp => {
-            const turnos = generarTurnosParaFecha(disp, fecha);
-            todosTurnos.push(...turnos.map(t => {
-                const [hora, minuto] = t.hora.split(':').map(Number);
-                let finMinuto = minuto + disp.intervalo;
-                let finHora = hora;
+        try {
+            // Obtener horarios ya reservados para esta fecha y servicio
+            const response = await fetch(`/reservas/horarios-reservados/?servicio_id=${servicioId}&fecha=${fecha}`);
+                
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('La respuesta no es JSON');
+            }
+            
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                throw new Error(data.message);
+            }
+            
+            // Normalizar los horarios reservados
+            const horariosReservados = (data.horarios_reservados || []).map(normalizarHorario);
+            console.log('Horarios reservados:', horariosReservados); // Para debugging
+            
+            // Resto del código para procesar disponibilidades...
+            const disponibilidadesParaFecha = disponibilidadesActuales.filter(disp => {
+                const dispFechaInicio = new Date(disp.fecha_inicio);
+                const dispFechaFin = new Date(disp.fecha_fin);
+                const fechaSeleccionadaObj = new Date(fecha);
+                return fechaSeleccionadaObj >= dispFechaInicio && fechaSeleccionadaObj <= dispFechaFin;
+            });
 
-                if (finMinuto >= 60) {
-                    finHora += Math.floor(finMinuto / 60);
-                    finMinuto = finMinuto % 60;
-                }
+            if (disponibilidadesParaFecha.length === 0) {
+                timeSlotsContainer.innerHTML = '<p class="info-message">No hay horarios para esta fecha</p>';
+                return;
+            }
 
-                const horaFin = `${String(finHora).padStart(2, '0')}:${String(finMinuto).padStart(2, '0')}`;
-                return {
-                    ...t,
-                    hora_fin: horaFin,
-                    ubicacion: disp.ubicacion,
-                    disponibilidad_id: disp.id,
-                    hora_inicio: t.hora,
-                    hora_fin: horaFin
-                };
-            }));
-        });
-        
-        timeSlotsContainer.innerHTML = todosTurnos.map(turno => `
-            <div class="time-slot">
-                <input type="radio" 
-                    name="turno_seleccionado" 
-                    id="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}" 
-                    value="${turno.disponibilidad_id}"
-                    data-hora-inicio="${turno.hora_inicio}"
-                    data-hora-fin="${turno.hora_fin}">
-                <label for="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}">
-                    ${turno.hora_inicio} - ${turno.hora_fin} (${turno.ubicacion})
-                </label>
-            </div>
-        `).join('');
+            const todosTurnos = [];
+            
+            disponibilidadesParaFecha.forEach(disp => {
+                const turnos = generarTurnosParaFecha(disp, fecha);
+                turnos.forEach(t => {
+                    const [hora, minuto] = t.hora.split(':').map(Number);
+                    let finMinuto = minuto + disp.intervalo;
+                    let finHora = hora;
 
-        document.querySelectorAll('.time-slot input').forEach(radio => {
-            radio.addEventListener('change', function() {
-                disponibilidadIdInput.value = this.value;
-                horarioSeleccionadoInput.value = `${this.dataset.horaInicio} - ${this.dataset.horaFin}`;
-                console.log('Turno seleccionado:', {
-                    id: this.value,
-                    horario: horarioSeleccionadoInput.value
+                    if (finMinuto >= 60) {
+                        finHora += Math.floor(finMinuto / 60);
+                        finMinuto = finMinuto % 60;
+                    }
+
+                    const horaInicioFormateada = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+                    const horaFinFormateada = `${String(finHora).padStart(2, '0')}:${String(finMinuto).padStart(2, '0')}`;
+                    const horarioCompleto = normalizarHorario(`${horaInicioFormateada} - ${horaFinFormateada}`);
+                    
+                    console.log('Verificando horario:', horarioCompleto); // Para debugging
+                    
+                    // Verificar si este horario ya está reservado
+                    const estaReservado = horariosReservados.some(hr => hr === horarioCompleto);
+                    
+                    if (!estaReservado) {
+                        todosTurnos.push({
+                            hora_inicio: horaInicioFormateada,
+                            hora_fin: horaFinFormateada,
+                            horario_completo: horarioCompleto,
+                            ubicacion: disp.ubicacion,
+                            disponibilidad_id: disp.id
+                        });
+                    } else {
+                        console.log('Horario reservado encontrado:', horarioCompleto); // Para debugging
+                    }
                 });
             });
-        });
+            
+            console.log('Turnos disponibles:', todosTurnos.length); // Para debugging
+            
+            if (todosTurnos.length === 0) {
+                timeSlotsContainer.innerHTML = '<p class="info-message">No hay horarios disponibles para esta fecha</p>';
+                return;
+            }
+            
+            timeSlotsContainer.innerHTML = todosTurnos.map(turno => `
+                <div class="time-slot">
+                    <input type="radio" 
+                        name="turno_seleccionado" 
+                        id="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}" 
+                        value="${turno.disponibilidad_id}"
+                        data-hora-inicio="${turno.hora_inicio}"
+                        data-hora-fin="${turno.hora_fin}">
+                    <label for="turno-${turno.disponibilidad_id}-${turno.hora_inicio.replace(':', '')}">
+                        ${turno.horario_completo} (${turno.ubicacion})
+                    </label>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.time-slot input').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    disponibilidadIdInput.value = this.value;
+                    horarioSeleccionadoInput.value = `${this.dataset.horaInicio} - ${this.dataset.horaFin}`;
+                });
+            });
+            
+        } catch (error) {
+            console.error('Error al obtener horarios reservados:', error);
+            timeSlotsContainer.innerHTML = '<p class="error-message">Error al cargar horarios. Por favor, intenta nuevamente.</p>';
+        }
+    }
+
+    // Función para normalizar formatos de horario (eliminar espacios extras, asegurar formato)
+    function normalizarHorario(horario) {
+        if (!horario) return '';
+        
+        // Eliminar espacios extras y normalizar
+        return horario
+            .replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
+            .trim() // Eliminar espacios al inicio y final
+            .replace(/:(\d)(?=\s|$)/g, ':0$1') // Asegurar dos dígitos en minutos
+            .replace(/(\d)(?=\s*-)/, '0$1'); // Asegurar dos dígitos en horas si es necesario
     }
 
     function generarTurnosParaFecha(disponibilidad, fecha) {

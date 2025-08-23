@@ -1,27 +1,102 @@
 import locale
-from urllib import request
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-import reservas
 from servicios.models import Disponibilidad, Servicio
 from reservas.models import Reserva
 from django.contrib import messages
 from datetime import datetime, timedelta, date
 from django.core.mail import EmailMessage
-from ics import Calendar, Event, alarm
+from ics import Calendar, Event
 from django.db.models import OuterRef, Subquery
 from django.conf import settings
 import pytz
 from ics.alarm import DisplayAlarm
+from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+
+
+
+
+# Vista para obtener horarios reservados desde la BBDD
+@csrf_exempt
+def obtener_horarios_reservados(request):
+    if request.method == 'GET':
+        servicio_id = request.GET.get('servicio_id')
+        fecha = request.GET.get('fecha')
+        
+        if servicio_id and fecha:
+            try:
+                horarios_reservados = Reserva.objects.filter(
+                    disponibilidad__servicio_id=servicio_id,
+                    fecha_reserva=fecha
+                ).values_list('horario', flat=True)
+                
+                # Normalizar los horarios para consistencia
+                horarios_normalizados = []
+                for horario in horarios_reservados:
+                    if horario:
+                        # Asegurar formato consistente: "HH:MM - HH:MM"
+                        partes = horario.split('-')
+                        if len(partes) == 2:
+                            inicio = partes[0].strip()
+                            fin = partes[1].strip()
+                            
+                            # Normalizar formato de tiempo
+                            for i, tiempo in enumerate([inicio, fin]):
+                                if ':' in tiempo:
+                                    h, m = tiempo.split(':')
+                                    h = h.strip().zfill(2)  # Asegurar 2 dígitos
+                                    m = m.strip().zfill(2)  # Asegurar 2 dígitos
+                                    if i == 0:
+                                        inicio = f"{h}:{m}"
+                                    else:
+                                        fin = f"{h}:{m}"
+                            
+                            horario_normalizado = f"{inicio} - {fin}"
+                            horarios_normalizados.append(horario_normalizado)
+                
+                return JsonResponse({
+                    'status': 'success',
+                    'horarios_reservados': horarios_normalizados
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': str(e)
+                }, status=500)
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Parámetros inválidos'
+    }, status=400)
+
 
 
 # Vista para mostrar los servicios disponibles (GET)
 def obtener_servicios(request):
-    # Si es POST, redirige a la vista de procesamiento
-    if request.method == 'POST':
-        return procesar_reserva_view(request)
+    if 'servicio_id' in request.GET:
+        servicio_id = request.GET.get('servicio_id')
+        
+        # Obtener horarios reservados si se proporciona fecha
+        horarios_reservados = []
+        if 'fecha' in request.GET:
+            fecha = request.GET.get('fecha')
+            horarios_reservados = Reserva.objects.filter(
+                disponibilidad__servicio_id=servicio_id,
+                fecha_reserva=fecha
+            ).values_list('horario', flat=True)
+        
+        disponibilidades = Disponibilidad.objects.filter(servicio__id=servicio_id).values(
+            'id', 'hora_inicio', 'hora_fin', 'intervalo', 
+            'ubicacion', 'fecha_inicio', 'fecha_fin', 'disponible'
+        )
+        
+        return JsonResponse({
+            'disponibilidades': list(disponibilidades),
+            'horarios_reservados': list(horarios_reservados)
+        })
     
-    # Lógica original para GET
+    # Si no es una solicitud con servicio_id, renderizar la página normal
     servicios = Servicio.objects.annotate(
         admin_nombre=Subquery(
             Disponibilidad.objects.filter(servicio=OuterRef('pk'))
@@ -29,18 +104,7 @@ def obtener_servicios(request):
             .values('administrador')[:1]
         )
     ).values_list('id', 'nombre', 'admin_nombre')
-
-
-    if request.method == 'GET' and 'servicio_id' in request.GET:
-        servicio_id = request.GET.get('servicio_id') # Obtiene el id seleccionado del formulario
-        disponibilidades = Disponibilidad.objects.filter(servicio__id=servicio_id).values(
-            'id', 'hora_inicio', 'hora_fin', 'intervalo', 
-            'ubicacion', 'fecha_inicio', 'fecha_fin', 'disponible'
-        )
-      
-
-        return JsonResponse({'disponibilidades': list(disponibilidades)}) # Devuelve las disponibilidades en formato JSON
-
+    
     return render(request, 'reservas/reservar.html', {'servicios': servicios})
 
      
@@ -55,8 +119,13 @@ def procesar_reserva_view(request):
         # Extraer hora_inicio y hora_fin del horario
         try:
             hora_inicio_str, hora_fin_str = horario.split(' - ')
-            hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
-            hora_fin = datetime.strptime(hora_fin_str, '%H:%M').time()
+            # Asegurar formato HH:MM
+            hora_inicio = datetime.strptime(hora_inicio_str.strip(), '%H:%M').time()
+            hora_fin = datetime.strptime(hora_fin_str.strip(), '%H:%M').time()
+            
+            # Reconstruir horario en formato consistente
+            horario = f"{hora_inicio.strftime('%H:%M')} - {hora_fin.strftime('%H:%M')}"
+            
         except:
             messages.error(request, 'Formato de horario inválido')
             return redirect('reservas:obtener_servicios')
@@ -73,6 +142,11 @@ def procesar_reserva_view(request):
             ).exists():
                 messages.error(request, 'Este horario ya ha sido reservado')
                 return redirect('reservas:obtener_servicios')
+            
+            
+            
+
+            
             
             # 4. Crear la reserva (sin marcar toda la disponibilidad como False)
             reserva = Reserva.objects.create(
