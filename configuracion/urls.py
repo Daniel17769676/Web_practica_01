@@ -22,6 +22,6 @@ urlpatterns = [
     path('disponibilidad/', disponibilidad_view, name='disponibilidad'),   
 
     #URLs de usuarios
-    path('usuarios/', include('usuarios.urls')),
+
 
 ]

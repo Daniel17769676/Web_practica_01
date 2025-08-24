@@ -16,19 +16,71 @@
   <div class="holographic-container">
     <div class="holographic-card">
 
-    <!-- Botón de acceso a la izquierda -->
+ <!-- Botón de acceso a la izquierda -->
     <div class="access-btn" onclick="openLoginModal()">
-      <span>🔑</span>Panel de Gestión      
+        <span>🔑</span>Panel de Gestión      
     </div>
 
+    <!-- Pop-up Login -->
+    <div id="loginModal" class="modal-login">
+        <div class="login-box">
+            <div class="login-header">              
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <h2>Acceso al Sistema</h2>
+            </div>
+            <div class="login-body">
+                <!-- CAMBIA el formulario para que envíe a la vista de login -->
+                <form method="POST" action="{% url 'usuarios:login_administrador' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su correo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                    </button>
+                </form>
+                
+        <!-- Mensajes de error -->
+        {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="footer-links">
+          <a href="#">¿Olvidó su contraseña?</a>
+          <span> | </span>
+          <a href="#">Registrarse</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
     <br>
     <br>
     <br>
 
-    <!-- Botón de perfil a la derecha -->
+    <!-- Botón de perfil a la derecha 
     <div class="profile-btn" onclick="openModal()">
       <span>🧑‍💻</span> Crea tu perfil 
     </div>
+    -->
 
       <div class="holographic-header">
         <h2 class="holographic-title">Sistema reservas <span class="digital">Digital</span></h2>

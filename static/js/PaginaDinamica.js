@@ -62,57 +62,31 @@ document.querySelectorAll(".card-3d").forEach((card) => {
   });
 });
 
-
 // Funciones para controlar el popup
-    function openLoginModal() {
-      document.getElementById('loginModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeModal() {
-      document.getElementById('loginModal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
-    
-    // Cerrar al hacer clic fuera del popup
-    window.onclick = function(event) {
-      if (event.target.className === 'modal-login') {
-        closeModal();
-      }
-    }
-    
-    // Cerrar con ESC
-    document.onkeydown = function(evt) {
-      evt = evt || window.event;
-      if (evt.key === 'Escape') {
-        closeModal();
-      }
-    };
 
-    // Funciones para controlar el popup REGISTRO (2)
-    function openModal() {
-      document.getElementById('profileModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeModal2() {
-      document.getElementById('profileModal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
-    
-    // Cerrar al hacer clic fuera del popup
-    window.onclick = function(event) {
-      if (event.target.className === 'modal') {
-        closeModal2();
-      }
-    }
-    
-    // Cerrar con ESC
-    document.onkeydown = function(evt) {
-      evt = evt || window.event;
-      if (evt.key === 'Escape') {
-        closeModal2();
-      }
-    };
-
-    
+        // Función para abrir el modal
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Previene el scroll
+        }
+        
+        // Función para cerrar el modal
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Habilita el scroll nuevamente
+        }
+        
+        // Cerrar el modal si se hace clic fuera del contenido
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        
+        // Cerrar con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });

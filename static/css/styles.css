@@ -664,119 +664,192 @@ body {
 }
 
 /* POPUP  REGISTRO*/
-    .modal {
-      cursor: pointer;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-  
-    }
-    
-    .modal-box {
-      background: white;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    
-    .modal-header {
-      padding: 20px;
-      text-align: center;
-      color: white;
-      position: relative;
-      border-radius: 10px 10px 0 0;
-      background: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
-    }
-    
-    .modal-header h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-    
-    .modal-body {
-      padding: 25px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-    
-    .form-control:focus {
-      border-color: #4285F4;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
-    }
-    
-    .btn-submit {
-      width: 100%;
-      padding: 12px;
-      border-radius: 5px;
-      font-weight: 600;
-      border: none;
-      color: white;
-      transition: all 0.3s;
-      margin-top: 10px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
-    }
-    
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
-    }
-    
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .close-btn:hover {
-      background: rgba(255,255,255,0.3);
-      transform: rotate(90deg);
-    }
-    
-    .modal-footer {
-      text-align: center;
-      padding: 15px;
-      border-top: 1px solid #eee;
-      font-size: 0.9rem;
-    }
-    
-    .modal-footer a {
-      color: #666;
-      text-decoration: none;
-      transition: all 0.3s;
-    }
-    
-    .modal-footer a:hover {
-      color: #4285F4;
-    }
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .access-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #09b835 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .access-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Modal de Login - Posición ajustada más arriba */
+        .modal-login {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .login-box {
+            background-color: white;
+            margin: 8% auto; /* Cambiado de 15% a 8% para subir el modal */
+            width: 90%;
+            max-width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideDown 0.4s ease;
+            position: relative;
+            top: -40px; /* Ajuste adicional para subir más el modal */
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #4caf50 0%, #09b835 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .login-header h2 {
+            font-weight: 500;
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+        
+        .login-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4caf50 0%, #09b835 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-height: 700px) {
+            .login-box {
+                margin: 5% auto;
+                top: -20px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .login-box {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .access-btn {
+                left: 10px;
+                top: 10px;
+                padding: 10px 15px;
+            }
+        } 
