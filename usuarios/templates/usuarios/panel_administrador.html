@@ -8,8 +8,113 @@
     <title>Panel de Administración - Reservas</title>
     <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'usuarios/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'servicios/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para la sección de servicios */
+        .servicios-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .servicios-form .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .servicios-form .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .servicios-form .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .servicios-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .servicios-form input[type="text"],
+        .servicios-form input[type="date"],
+        .servicios-form input[type="time"],
+        .servicios-form select,
+        .servicios-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .servicios-form .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .btn-submit {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+        
+        .date-helper {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .date-helper-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .date-helper-text {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .date-inputs {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .date-inputs .form-group {
+            width: 48%;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -39,6 +144,7 @@
         <div class="admin-nav">
             <button class="nav-btn active" data-section="dashboard">Dashboard</button>
             <button class="nav-btn" data-section="reservas">Gestión de Reservas</button>
+            <button class="nav-btn" data-section="servicios">Gestión de Servicios</button>
             <button class="nav-btn" data-section="reportes">Reportes</button>
             <button class="nav-btn" data-section="usuarios">Gestión de Usuarios</button>
             <button class="nav-btn" data-section="configuracion">Configuración</button>
@@ -241,6 +347,113 @@
                 <a href="#">2</a>
                 <a href="#">3</a>
                 <a href="#">&raquo;</a>
+            </div>
+        </div>
+
+        <!-- Sección Gestión de Servicios -->
+        <div id="servicios" class="admin-section">
+            <h2>Gestión de Servicios</h2>
+            
+            <div class="servicios-form">
+                <form method="post" action="{% url 'servicios:disponibilidad' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Sección Administrador -->
+                    <div class="form-section">
+                        <h3>Información del Administrador</h3>
+                        <div class="form-group">
+                            <label for="administrador">Administrador:</label>
+                            <input type="text" id="administrador" name="administrador" required placeholder="Nombre de quien otorga el servicio">
+                        </div>
+                    </div> 
+
+                    <!-- Seccion fecha del servicio -->
+                    <div class="form-section">
+                        <h3>Periodo del Servicio</h3>
+
+                        <div class="date-helper">
+                            <button type="button" onclick="establecerFechaHoy()" class="date-helper-btn">
+                                Hoy
+                            </button>
+                            <span class="date-helper-text">Seleccione o establezca el periodo</span>
+                        </div>
+
+                        <div class="date-inputs">
+                            <div class="form-group">
+                                <label for="fecha_inicio">Fecha de Inicio:</label>
+                                <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fecha_fin">Fecha de Fin:</label>
+                                <input type="date" id="fecha_fin" name="fecha_fin" required>
+                            </div>                    
+                        </div>
+                    </div>
+
+                    <!-- Sección de Ubicación -->
+                    <div class="form-section">
+                        <h3>Ubicación del Servicio</h3>
+                        <div class="form-group">
+                            <label for="ubicacion">Ubicación:</label>
+                            <input type="text" id="ubicacion" name="ubicacion" required placeholder="Sala de espera, Oficina 403, etc.">
+                        </div>
+                    </div>
+
+                    <!-- Horarios -->
+                    <div class="form-section">
+                        <h3>Horario de Disponibilidad</h3>
+                        <div class="form-group">
+                            <label for="hora_inicio">Hora de inicio:</label>
+                            <input 
+                                type="time" 
+                                id="hora_inicio" 
+                                name="hora_inicio" 
+                                required
+                                onchange="validarHoras()" 
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hora_fin">Hora de fin:</label>
+                            <input 
+                                type="time" 
+                                id="hora_fin" 
+                                name="hora_fin" 
+                                required
+                                onchange="validarHoras()"  
+                            >
+                            <span id="error-horas" class="error-message">
+                                ⚠ La <strong>hora de fin</strong> debe ser <strong>posterior</strong> a la hora de inicio. ⚠  
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Intervalo de tiempo -->
+                    <div class="form-group">
+                        <label for="intervalo">Duración de cada servicio:</label>
+                        <select id="intervalo" name="intervalo" required>
+                            <option value="15">15 minutos</option>
+                            <option value="30" selected>30 minutos</option>
+                            <option value="60">60 minutos</option>
+                        </select>
+                    </div>
+                    
+
+                    <!-- Detalles del servicio -->
+                    <div class="form-section">
+                        <h3>Descripción del Servicio</h3>
+                        <div class="form-group">
+                            <label for="servicio">Servicio:</label>
+                            <input type="text" id="servicio" name="servicio" required placeholder="Consulta médica, Asesoría legal, etc.">
+                        </div>
+                    </div>
+
+                    <!-- Botón de enviar -->
+                    <div class="button-container">
+                        <button type="submit" class="btn-submit">Guardar Servicio</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -480,7 +693,31 @@
                 });
             }
         });
+
+        // Funciones para la gestión de servicios
+        function establecerFechaHoy() {
+            const hoy = new Date();
+            const fechaFormateada = hoy.toISOString().split('T')[0];
+            document.getElementById('fecha_inicio').value = fechaFormateada;
+            document.getElementById('fecha_fin').value = fechaFormateada;
+        }
+
+        function validarHoras() {
+            const horaInicio = document.getElementById("hora_inicio").value;
+            const horaFin = document.getElementById("hora_fin").value;
+            const errorSpan = document.getElementById("error-horas");
+            const submitBtn = document.querySelector("button[type='submit']");
+
+            if (horaInicio && horaFin) {
+                if (horaFin <= horaInicio) {
+                    errorSpan.style.display = "block";
+                    submitBtn.disabled = true;
+                } else {
+                    errorSpan.style.display = "none";
+                    submitBtn.disabled = false;
+                }
+            }
+        }
     </script>
 </body>
-
 </html>
