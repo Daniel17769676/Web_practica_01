@@ -5,26 +5,6 @@ from django.core.validators import MinValueValidator
 
 # Crear tus modelos aquí. (Los modelos son tablas de la base de datos)
 
-# Modelo para los administradores
-class Administrador(models.Model):
-    nombre = models.CharField(max_length=100)
-    correo = models.EmailField()
-    password = models.CharField(max_length=128)  # Para almacenar contraseñas hasheadas
-
-    # Estos campos son necesarios para la autenticación
-    last_login = models.DateTimeField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    
-    class Meta:
-        db_table = 'ADMINISTRADOR'  # Nombre exacto de tu tabla en Oracle
-        managed = False  # Le dice a Django que no gestione esta tabla
-    
-    def __str__(self):
-        return self.nombre
-
-
 # Modelo para la disponibilidad de los administradores
 class Disponibilidad(models.Model):
     INTERVALO_CHOICES = [

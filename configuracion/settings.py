@@ -106,8 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 AUTHENTICATION_BACKENDS = [
-    'usuarios.backends.ModeradorBackend',
-    'django.contrib.auth.backends.ModelBackend',  # Mantén el backend por defecto
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 
