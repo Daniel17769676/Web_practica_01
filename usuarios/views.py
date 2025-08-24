@@ -1,20 +1,49 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from reservas.models import Reserva
 from usuarios.models import Administrador
 from django.contrib.auth.decorators import login_required
 
+# Decorador personalizado para verificar sesión de admin
+def admin_login_required(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.session.get('is_admin_logged_in'):
+            messages.error(request, 'Debe iniciar sesión como administrador')
+            return redirect('base')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
-@login_required
+@admin_login_required  # Usa SOLO tu decorador personalizado
 def panel_administrador(request):
-    # Verifica que el usuario sea un administrador
-    if not hasattr(request.user, 'administrador'):
-        messages.error(request, 'No tiene permisos para acceder a esta página')
+    # Obtener datos del admin desde la sesión
+    admin_id = request.session.get('admin_id')
+    
+    try:
+        admin = Administrador.objects.get(id=admin_id)
+    except Administrador.DoesNotExist:
+        messages.error(request, 'Administrador no encontrado')
         return redirect('base')
     
-    # Tu lógica para el panel de administración
-    return render(request, 'panel_administrador.html')
+    # ✅ CONSULTA DE RESERVAS
+    consulta_admin = Reserva.objects.select_related(
+        'disponibilidad__servicio'
+    ).order_by('-fecha_reserva', '-horario')
 
+    if not consulta_admin.exists():
+        messages.info(request, 'No hay reservas registradas.')
+    
+    # Debug para verificar
+    print(f"Reservas encontradas: {consulta_admin.count()}")
+    for reserva in consulta_admin:
+        print(f"Reserva ID: {reserva.id}, Cliente: {reserva.cliente_nombre}")
+    
+    context = {
+        'admin': admin,
+        'reservas': consulta_admin
+    }
+    
+    return render(request, 'usuarios/panel_administrador.html', context)
 
 def login_administrador(request):
     if request.method == 'POST':
@@ -43,30 +72,8 @@ def login_administrador(request):
 
     return render(request, 'base.html')
 
-# Decorador personalizado para verificar sesión de admin
-def admin_login_required(view_func):
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.session.get('is_admin_logged_in'):
-            messages.error(request, 'Debe iniciar sesión como administrador')
-            return redirect('base')
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
-@admin_login_required
-def panel_administrador(request):
-    # Obtener datos del admin desde la sesión
-    admin_id = request.session['admin_id']
-    admin = Administrador.objects.get(id=admin_id)
-
-    return render(request, 'usuarios/panel_administrador.html', {'admin': admin})
-
-
-# usuarios/views.py
 def logout_administrador(request):
     # Limpiar la sesión
     request.session.flush()
     messages.success(request, 'Sesión cerrada correctamente')
     return redirect('base')
-
-
-

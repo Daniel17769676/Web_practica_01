@@ -57,17 +57,17 @@ def disponibilidad_view(request):
                 return redirect('servicios:confirmacion', disponibilidad_id=disponibilidad.id) #disponibilidad.id es el ID de la disponibilidad que acabamos de crear. Redirige a la vista de confirmación con el ID de la disponibilidad recién creada.
     
             except KeyError as e:
-                return render(request, 'mi_web/Disponibilidad.html', {
+                return render(request, 'usuarios/panel_administrador.html', {
                     'servicios_disponibles': servicios_disponibles,
                     'error': f'Falta el campo requerido: {e}'
                 })
             except Exception as e:
-                return render(request, 'mi_web/Disponibilidad.html', {
+                return render(request, 'usuarios/panel_administrador.html', {
                     'servicios_disponibles': servicios_disponibles,
                     'error': f'Error inesperado: {str(e)}'
                 })
 
-    return render(request, 'mi_web/Disponibilidad.html', {
+    return render(request, 'usuarios/panel_administrador.html', {
                     'servicios_disponibles': servicios_disponibles,
                     'servicios': Servicio.objects.all()  
                 })            

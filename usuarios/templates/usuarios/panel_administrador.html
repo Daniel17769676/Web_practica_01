@@ -143,8 +143,8 @@
 
         <div class="admin-nav">
             <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-            <button class="nav-btn" data-section="reservas">Gestión de Reservas</button>
             <button class="nav-btn" data-section="servicios">Gestión de Servicios</button>
+            <button class="nav-btn" data-section="reservas">Gestión de Reservas</button>
             <button class="nav-btn" data-section="reportes">Reportes</button>
             <button class="nav-btn" data-section="usuarios">Gestión de Usuarios</button>
             <button class="nav-btn" data-section="configuracion">Configuración</button>
@@ -175,179 +175,7 @@
                     <div class="stat-value">94%</div>
                     <div class="stat-label">Tasa de Confirmación</div>
                 </div>
-            </div>
-
-            <h3>Reservas Recientes</h3>
-            <table class="reservas-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Servicio</th>
-                        <th>Fecha</th>
-                        <th>Horario</th>                 
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reserva in reservas %}
-                    <tr>
-                        <td>{{ reserva.id }}</td>
-                        <td>{{ reserva.cliente_nombre }}</td>
-                        <td>
-                            {% if reserva.disponibilidad and reserva.disponibilidad.servicio %}
-                                {{ reserva.disponibilidad.servicio.nombre }}
-                            {% else %}
-                                Servicio no disponible
-                            {% endif %}
-                        </td>
-                        <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
-                        <td>{{ reserva.horario }}</td>
-                        <td>
-                            {% if reserva.estado == 'pendiente' %}
-                            <span class="badge badge-pendiente">Pendiente</span>
-                            {% elif reserva.estado == 'confirmada' %}
-                            <span class="badge badge-confirmada">Confirmada</span>
-                            {% elif reserva.estado == 'cancelada' %}
-                            <span class="badge badge-cancelada">Cancelada</span>
-                            {% else %}
-                            <span class="badge badge-completada">Completada</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="admin-actions">
-                                {% if reserva.estado != 'cancelada' %}
-                                <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="no-reservas">No hay reservas registradas</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Sección Gestión de Reservas -->
-        <div id="reservas" class="admin-section">
-            <h2>Gestión de Reservas</h2>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="filtro-estado">Estado</label>
-                    <select id="filtro-estado">
-                        <option value="">Todos los estados</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmada">Confirmada</option>
-                        <option value="cancelada">Cancelada</option>
-                        <option value="completada">Completada</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filtro-fecha">Fecha</label>
-                    <input type="date" id="filtro-fecha">
-                </div>
-                <div class="filter-group">
-                    <label for="filtro-servicio">Servicio</label>
-                    <select id="filtro-servicio">
-                        <option value="">Todos los servicios</option>
-                        <option value="1">Corte de Cabello</option>
-                        <option value="2">Manicure</option>
-                        <option value="3">Pedicure</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <button class="btn-filter"><i class="fas fa-filter"></i> Filtrar</button>
-                </div>
-            </div>
-            
-            <table class="reservas-table">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="select-all"></th>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Servicio</th>
-                        <th>Fecha</th>
-                        <th>Horario</th>                 
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reserva in reservas %}
-                    <tr>
-                        <td><input type="checkbox" class="reserva-checkbox" value="{{ reserva.id }}"></td>
-                        <td>{{ reserva.id }}</td>
-                        <td>{{ reserva.cliente_nombre }}</td>
-                        <td>
-                            {% if reserva.disponibilidad and reserva.disponibilidad.servicio %}
-                                {{ reserva.disponibilidad.servicio.nombre }}
-                            {% else %}
-                                Servicio no disponible
-                            {% endif %}
-                        </td>
-                        <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
-                        <td>{{ reserva.horario }}</td>
-                        <td>
-                            {% if reserva.estado == 'pendiente' %}
-                            <span class="badge badge-pendiente">Pendiente</span>
-                            {% elif reserva.estado == 'confirmada' %}
-                            <span class="badge badge-confirmada">Confirmada</span>
-                            {% elif reserva.estado == 'cancelada' %}
-                            <span class="badge badge-cancelada">Cancelada</span>
-                            {% else %}
-                            <span class="badge badge-completada">Completada</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="admin-actions">
-                                {% if reserva.estado != 'cancelada' %}
-                                <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="8" class="no-reservas">No hay reservas registradas</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-            <div class="action-buttons">
-                <button class="btn-excel"><i class="fas fa-file-excel"></i> Exportar a Excel</button>
-                <button class="confirmation-btn confirmation-btn-secondary" id="bulk-confirm">
-                    <i class="fas fa-check"></i> Confirmar Seleccionadas
-                </button>
-                <button class="confirmation-btn confirmation-btn-print" id="bulk-cancel">
-                    <i class="fas fa-times"></i> Cancelar Seleccionadas
-                </button>
-            </div>
-            
-            <!-- Paginación -->
-            <div class="pagination">
-                <a href="#">&laquo;</a>
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">&raquo;</a>
-            </div>
+            </div>           
         </div>
 
         <!-- Sección Gestión de Servicios -->
@@ -457,6 +285,83 @@
             </div>
         </div>
 
+        <!-- Sección Gestión de Reservas -->
+        <div id="reservas" class="admin-section">
+            <h2>Gestión de Reservas</h2>
+            
+            <table class="reservas-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Servicio</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>                 
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr>
+                        <td><input type="checkbox" class="reserva-checkbox" value="{{ reserva.id }}"></td>
+                        <td>{{ reserva.id }}</td>
+                        <td>{{ reserva.cliente_nombre }}</td>                        
+                        <td>
+                            {% if reserva.disponibilidad and reserva.disponibilidad.servicio %}
+                                {{ reserva.disponibilidad.servicio.nombre }}
+                            {% else %}
+                                Servicio no disponible
+                            {% endif %}
+                        </td>
+                        <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
+                        <td>{{ reserva.horario }}</td>
+                        <td>
+
+                            {% if reserva.estado == 'confirmada' %}
+                            <span class="badge badge-confirmada">Confirmada</span>
+
+                            {% elif reserva.estado == 'cancelada' %}
+                            <span class="badge badge-cancelada">Cancelada</span>
+
+                            {% else %}
+                            <span class="badge badge-completada">Completada</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="admin-actions">
+                                {% if reserva.estado != 'cancelada' %}
+                                <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="no-reservas">No hay reservas registradas</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+            
+            <!-- Paginación -->
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+
         <!-- Sección Reportes -->
         <div id="reportes" class="admin-section">
             <h2>Reportes y Estadísticas</h2>
@@ -471,14 +376,17 @@
                         <option value="ingresos">Ingresos por Período</option>
                     </select>
                 </div>
+
                 <div class="filter-group">
                     <label for="reporte-desde">Desde</label>
                     <input type="date" id="reporte-desde">
                 </div>
+                <br><!-- SALTO DE LINEA -->
                 <div class="filter-group">
                     <label for="reporte-hasta">Hasta</label>
                     <input type="date" id="reporte-hasta">
                 </div>
+                <br><!-- SALTO DE LINEA -->
                 <div class="filter-group">
                     <button class="btn-excel"><i class="fas fa-file-excel"></i> Generar Reporte</button>
                 </div>

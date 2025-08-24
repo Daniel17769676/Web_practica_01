@@ -17,7 +17,7 @@ class Reserva(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente') #este campo permite que se guarde el estado de la reserva   
     
     def __str__(self):
-        return f"Reserva #{self.id}-{self.cliente_nombre} ({self.servicio.nombre} - {self.fecha_reserva})"
+        return f"Reserva #{self.id}-{self.cliente_nombre} ({self.disponibilidad.servicio.nombre} - {self.fecha_reserva})"
     
     class Meta:
         verbose_name = 'Reserva' #Este campo permite que se muestre el nombre del modelo en singular en el panel de administracion
