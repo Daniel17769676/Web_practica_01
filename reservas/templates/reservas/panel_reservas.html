@@ -8,6 +8,99 @@
     <title>Panel de Últimas Reservas</title>
     <link rel="stylesheet" href="{% static 'reservas/css/styles.css' %}">
     <link rel="icon" href="{% static 'img/agenda.png' %}" type="image/png" />
+    <style>
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            text-align: right;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-confirm {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,6 +119,27 @@
     </div>
     {% endif %}
 
+    <!-- Modal para cancelación de reserva -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3 class="modal-title">Cancelar Reserva</h3>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea solicitar la cancelación de esta reserva? Se enviará al moderador.</p>
+                <div class="form-group">
+                    <label for="observaciones">Observaciones (motivo del rechazo):</label>
+                    <textarea id="observaciones" placeholder="Ingrese el motivo de la cancelación..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel">Cancelar</button>
+                <button type="button" class="btn btn-confirm" id="confirmCancel">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="reservas-container">
         <div class="reservas-header">
             <h1 class="reservas-title">Últimas Reservas</h1>
@@ -36,7 +150,6 @@
                 </svg>
                 Generar otra Reserva
             </a>
-
         </div>
 
         <!-- Filtros -->
@@ -61,7 +174,7 @@
             </thead>
             <tbody>
                 {% for reserva in reservas %}
-                <tr>
+                <tr id="reserva-{{ reserva.id }}">
                     <td>{{ reserva.id }}</td>
                     <td>{{ reserva.cliente_nombre }}</td>
                     <td>
@@ -73,7 +186,7 @@
                     </td>
                     <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
                     <td>{{ reserva.horario }}</td>
-                    <td>
+                    <td class="estado-reserva">
                         {% if reserva.estado == 'pendiente' %}
                         <span class="badge badge-pendiente">Pendiente</span>
                         {% elif reserva.estado == 'confirmada' %}
@@ -86,7 +199,7 @@
                     </td>
                     <td>
                         {% if reserva.estado != 'cancelada' %}
-                       <button onclick="cancelarReserva('{{ reserva.id }}', this)"
+                       <button onclick="mostrarModalCancelacion('{{ reserva.id }}')"
                             class="btn-cancelar">
                             Cancelar
                         </button>
@@ -121,6 +234,7 @@
         
     </div>
 
+    
     <!-- Footer -->
     <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
         <div class="footer-container" style="max-width: 1200px; margin: 0 auto;">
@@ -142,6 +256,13 @@
 
     <!-- Scripts -->
 <script>
+    // Variables globales
+    let reservaActualId = null;
+    const modal = document.getElementById("cancelModal");
+    const span = document.getElementsByClassName("close")[0];
+    const btnCancelarModal = document.querySelector(".btn-cancel");
+    const btnConfirmar = document.getElementById("confirmCancel");
+    
     // Función para obtener el token CSRF
     function getCookie(name) {
         let cookieValue = null;
@@ -160,58 +281,91 @@
 
     const csrftoken = getCookie('csrftoken');
 
-    // FUNCIÓN GLOBAL - debe estar FUERA de DOMContentLoaded
-    function cancelarReserva(reservaId, buttonElement) {
-        console.log('ID recibido:', reservaId);
+    // Mostrar modal de cancelación
+    function mostrarModalCancelacion(reservaId) {
+        reservaActualId = reservaId;
+        document.getElementById('observaciones').value = '';
+        modal.style.display = "block";
+    }
+
+    // Cerrar modal al hacer clic en la X
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Cerrar modal al hacer clic en Cancelar
+    btnCancelarModal.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Confirmar cancelación
+    btnConfirmar.onclick = function() {
+        const observaciones = document.getElementById('observaciones').value;
         
-        if (!reservaId) {
+        if (!reservaActualId) {
             alert('Error: ID de reserva no válido');
             return;
         }
 
-        if (!confirm('¿Está seguro? Se enviará al moderador')) {
-            return;
-        }
+        // Realizar la solicitud de cancelación
+        cancelarReserva(reservaActualId, observaciones);
+    }
 
+    // Cerrar modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Función para cancelar reserva
+    function cancelarReserva(reservaId, observaciones) {
         fetch(`/reservas/cancelar-reserva/${reservaId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrftoken
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                observaciones: observaciones
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-
-                // VERIFICAR que el elemento existe antes de usarlo
+                // Cerrar el modal
+                modal.style.display = "none";
+                
+                // Actualizar la interfaz
                 const fila = document.getElementById(`reserva-${reservaId}`);
-                if (!fila) {
-                    alert('Solicitud enviada. Recargando página...');
-                    location.reload();
-                    return;
+                if (fila) {
+                    const estadoCell = fila.querySelector('.estado-reserva');
+                    if (estadoCell) {
+                        estadoCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>';
+                    }
+                    
+                    const botonCancelar = fila.querySelector('.btn-cancelar');
+                    if (botonCancelar) {
+                        botonCancelar.style.display = 'none';
+                    }
                 }
                 
-                const estadoCell = fila.querySelector('.estado-reserva');
-                if (estadoCell) {
-                    estadoCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>';
-                }
-                
-                buttonElement.style.display = 'none';
-                alert('Solicitud enviada al moderador');
+                alert('Solicitud de cancelación enviada al moderador');
             } else {
                 alert('Error al enviar cancelación: ' + data.message);
             }
-  
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al procesar la solicitud');
         });
     }
 
+    // Filtro de búsqueda
     document.addEventListener('DOMContentLoaded', function() {
         const filtroCliente = document.getElementById('filtro-cliente');
         const filas = document.querySelectorAll('.reservas-table tbody tr');
         
-        // Solo el filtro de búsqueda aquí
         filtroCliente.addEventListener('input', function() {
             const textoBusqueda = this.value.toLowerCase();
             
@@ -225,10 +379,8 @@
                 }
             });
         });
-
     });
 </script>
-
     
 </body>
 </html>

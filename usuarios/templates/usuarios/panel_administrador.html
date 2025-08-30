@@ -322,6 +322,9 @@
                             {% if reserva.estado == 'confirmada' %}
                             <span class="badge badge-confirmada">Confirmada</span>
 
+                            {% elif reserva.estado == 'pendiente' %}
+                            <span class="badge badge-Pendiente">Pendiente</span>
+
                             {% elif reserva.estado == 'cancelada' %}
                             <span class="badge badge-cancelada">Cancelada</span>
 
@@ -329,16 +332,17 @@
                             <span class="badge badge-completada">Completada</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td> <!--BTNES DE ACCION-->
                             <div class="admin-actions">
-                                {% if reserva.estado != 'cancelada' %}
                                 <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-check"></i>
                                 </button>
-                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
+
+                                <button class="admin-action-btn btn-reject" data-id="{{ reserva.id }}">
                                     <i class="fas fa-times"></i>
                                 </button>
-                                {% endif %}
+
+
                             </div>
                         </td>
                     </tr>
@@ -348,10 +352,14 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+
+
+               
             </table>
 
 
             
+          
             <!-- Paginación -->
             <div class="pagination">
                 <a href="#">&laquo;</a>
@@ -478,7 +486,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Cancelar Reserva</h2>
-            <p>¿Está seguro de que desea cancelar la reserva #<span id="reserva-id"></span>?</p>
+            <p>¿Está seguro de aprobar la solicitud #<span id="reserva-id"></span>?</p>
             <div class="form-group">
                 <label for="motivo-cancelacion">Motivo de cancelación</label>
                 <textarea id="motivo-cancelacion" rows="3" placeholder="Opcional"></textarea>
