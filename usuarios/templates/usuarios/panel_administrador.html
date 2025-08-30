@@ -287,7 +287,71 @@
 
         <!-- Sección Gestión de Reservas -->
         <div id="reservas" class="admin-section">
-            <h2>Gestión de Reservas</h2>
+            <h2>❌ Solicitudes de Cancelación </h2>
+        
+            <table class="reservas-table">
+                <thead>                    
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Servicio</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>                 
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for reserva in reservas %}
+                            <!-- Filtro solo por reservas con estado 'pendiente' -->
+                            {% if reserva.estado == 'pendiente' %}
+                                <tr>
+                                    <td><input type="checkbox" class="reserva-checkbox" value="{{ reserva.id }}"></td>
+                                    <td>{{ reserva.id }}</td>
+                                    <td>{{ reserva.cliente_nombre }}</td>                        
+                                    <td>
+                                        {% if reserva.disponibilidad and reserva.disponibilidad.servicio %}
+                                            {{ reserva.disponibilidad.servicio.nombre }}
+                                        {% else %}
+                                            Servicio no disponible
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
+                                    <td>{{ reserva.horario }}</td>
+                                    <td>
+                                        <span class="badge badge-pendiente">Pendiente</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-actions">
+                                            <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="admin-action-btn btn-reject" data-id="{{ reserva.id }}">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" class="no-reservas">No hay reservas registradas</td>
+                            </tr>
+                        {% endfor %}
+                        
+                        {% if pendientes_count == 0 and reservas.count > 0 %}
+                            <p>No hay solicitudes de reservas pendientes</p>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+            <br>
+
+
+        <!-- Sección Gestión de Reservas -->
+        <div id="reservas" class="admin-section">
+            <h2> 📅 Gestión de Reservas</h2>
             
             <table class="reservas-table">
                 <thead>
@@ -302,6 +366,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
+                
                 <tbody>
                     {% for reserva in reservas %}
                     <tr>
@@ -333,19 +398,20 @@
                             {% endif %}
                         </td>
                         <td> <!--BTNES DE ACCION-->
-
-                            {% if reserva.estado == 'pendiente' %}
                             <div class="admin-actions">
+                                <!--btn editar-->
                                 <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-check"></i>
+                                    <i class="fas fa-pencil-alt"></i>
                                 </button>
 
-                                <button class="admin-action-btn btn-reject" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-times"></i>
+                                <!--btn eliminar-->
+                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
+                                    <i class="fas fa-trash"></i>                                
                                 </button>
 
-                                {% endif %}
-
+                                
+                            </td>
+                        </div>
 
                             </div>
                         </td>
@@ -357,9 +423,7 @@
                     {% endfor %}
                 </tbody>               
             </table>
-
-
-            
+           
           
             <!-- Paginación -->
             <div class="pagination">
