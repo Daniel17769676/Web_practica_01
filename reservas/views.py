@@ -13,6 +13,8 @@ import pytz
 from ics.alarm import DisplayAlarm
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 
 
 
@@ -245,3 +247,12 @@ def panel_reservas_view(request):
         messages.info(request, 'No hay reservas registradas.')
     
     return render(request, 'reservas/panel_reservas.html', {'reservas': reservas})
+
+def cancelar_reserva(request, reserva_id):
+    try:
+        reserva = Reserva.objects.get(id=reserva_id)
+        reserva.estado = 'pendiente'
+        reserva.save()
+        return JsonResponse({'success': True, 'message': 'Solicitud de cancelación enviada al moderador'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

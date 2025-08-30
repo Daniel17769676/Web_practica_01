@@ -86,7 +86,10 @@
                     </td>
                     <td>
                         {% if reserva.estado != 'cancelada' %}
-                        <button class="action-btn btn-cancelar">Cancelar</button>
+                       <button onclick="cancelarReserva('{{ reserva.id }}', this)"
+                            class="btn-cancelar">
+                            Cancelar
+                        </button>
                         {% endif %}
                     </td>
                 </tr>
@@ -138,35 +141,93 @@
     </footer>
 
     <!-- Scripts -->
-   <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filtroCliente = document.getElementById('filtro-cliente');
-            const filas = document.querySelectorAll('.reservas-table tbody tr');
-            
-            filtroCliente.addEventListener('input', function() {
-                const textoBusqueda = this.value.toLowerCase();
-                
-                filas.forEach(fila => {
-                    const celdaCliente = fila.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                    
-                    if (celdaCliente.includes(textoBusqueda)) {
-                        fila.style.display = '';
-                    } else {
-                        fila.style.display = 'none';
-                    }
-                });
-            });
+<script>
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
-            document.querySelectorAll('.btn-cancelar').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (confirm('La cancelación se enviará al moderador. ¿Está seguro?')) {
-                        alert('Cancelación solicitada con éxito');
-                        // Aquí iría la lógica real para cancelar la reserva
-                    }
-                });
+    const csrftoken = getCookie('csrftoken');
+
+    // FUNCIÓN GLOBAL - debe estar FUERA de DOMContentLoaded
+    function cancelarReserva(reservaId, buttonElement) {
+        console.log('ID recibido:', reservaId);
+        
+        if (!reservaId) {
+            alert('Error: ID de reserva no válido');
+            return;
+        }
+
+        if (!confirm('¿Está seguro? Se enviará al moderador')) {
+            return;
+        }
+
+        fetch(`/reservas/cancelar-reserva/${reservaId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+
+                // VERIFICAR que el elemento existe antes de usarlo
+                const fila = document.getElementById(`reserva-${reservaId}`);
+                if (!fila) {
+                    alert('Solicitud enviada. Recargando página...');
+                    location.reload();
+                    return;
+                }
+                
+                const estadoCell = fila.querySelector('.estado-reserva');
+                if (estadoCell) {
+                    estadoCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>';
+                }
+                
+                buttonElement.style.display = 'none';
+                alert('Solicitud enviada al moderador');
+            } else {
+                alert('Error al enviar cancelación: ' + data.message);
+            }
+  
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const filtroCliente = document.getElementById('filtro-cliente');
+        const filas = document.querySelectorAll('.reservas-table tbody tr');
+        
+        // Solo el filtro de búsqueda aquí
+        filtroCliente.addEventListener('input', function() {
+            const textoBusqueda = this.value.toLowerCase();
+            
+            filas.forEach(fila => {
+                const celdaCliente = fila.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (celdaCliente.includes(textoBusqueda)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
             });
         });
-    </script>
+
+    });
+</script>
 
     
 </body>
