@@ -206,7 +206,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if reserva.estado != 'cancelada' %}
+                        {% if reserva.estado != 'cancelada' and reserva.estado != 'pendiente' %}
                        <button onclick="mostrarModalCancelacion('{{ reserva.id }}')"
                             class="btn-cancelar">
                             Cancelar
@@ -360,7 +360,7 @@
                 if (fila) {
                     const estadoCell = fila.querySelector('.estado-reserva');
                     if (estadoCell) {
-                        estadoCell.innerHTML = '<span class="badge badge-pendiente">pendiente</span>';
+                        estadoCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>';
                     }
                     
                     const botonCancelar = fila.querySelector('.btn-cancelar');
