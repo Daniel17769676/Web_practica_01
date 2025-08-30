@@ -323,7 +323,7 @@
                             <span class="badge badge-confirmada">Confirmada</span>
 
                             {% elif reserva.estado == 'pendiente' %}
-                            <span class="badge badge-Pendiente">Pendiente</span>
+                            <span class="badge badge-pendiente">Pendiente</span>
 
                             {% elif reserva.estado == 'cancelada' %}
                             <span class="badge badge-cancelada">Cancelada</span>
@@ -333,6 +333,8 @@
                             {% endif %}
                         </td>
                         <td> <!--BTNES DE ACCION-->
+
+                            {% if reserva.estado == 'pendiente' %}
                             <div class="admin-actions">
                                 <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
                                     <i class="fas fa-check"></i>
@@ -341,6 +343,8 @@
                                 <button class="admin-action-btn btn-reject" data-id="{{ reserva.id }}">
                                     <i class="fas fa-times"></i>
                                 </button>
+
+                                {% endif %}
 
 
                             </div>
@@ -351,10 +355,7 @@
                         <td colspan="8" class="no-reservas">No hay reservas registradas</td>
                     </tr>
                     {% endfor %}
-                </tbody>
-
-
-               
+                </tbody>               
             </table>
 
 
@@ -481,22 +482,6 @@
         </div>
     </div>
 
-    <!-- Modal para Cancelar Reserva -->
-    <div id="modalCancelar" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Cancelar Reserva</h2>
-            <p>¿Está seguro de aprobar la solicitud #<span id="reserva-id"></span>?</p>
-            <div class="form-group">
-                <label for="motivo-cancelacion">Motivo de cancelación</label>
-                <textarea id="motivo-cancelacion" rows="3" placeholder="Opcional"></textarea>
-            </div>
-            <div class="action-buttons">
-                <button class="confirmation-btn confirmation-btn-primary" id="confirmar-cancelacion">Confirmar Cancelación</button>
-                <button class="confirmation-btn confirmation-btn-print" id="cerrar-modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
