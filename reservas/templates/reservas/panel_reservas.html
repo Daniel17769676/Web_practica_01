@@ -100,6 +100,13 @@
             color: white;
             margin-right: 10px;
         }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 
@@ -127,10 +134,11 @@
                 <h3 class="modal-title">Cancelar Reserva</h3>
             </div>
             <div class="modal-body">
-                <p>¿Está seguro que desea solicitar la cancelación de esta reserva? Se enviará al moderador.</p>
+                <p>¿Está seguro que desea cancelar esta reserva?</p>
                 <div class="form-group">
-                    <label for="observaciones">Observaciones (motivo del rechazo):</label>
-                    <textarea id="observaciones" placeholder="Ingrese el motivo de la cancelación..."></textarea>
+                    <label for="motivo_cancelacion">Motivo de cancelación:</label>
+                    <textarea id="motivo_cancelacion" placeholder="Ingrese el motivo de la cancelación..." required></textarea>
+                    <div id="motivo-error" class="error-message">Por favor, ingrese el motivo de la cancelación.</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -217,7 +225,7 @@
         <!-- Paginación -->
         <div class="pagination">
             <a href="#">&laquo;</a>
-            <a href="#" class="active">1</a>
+            <a href="#">1</a>
             <a href="#">2</a>
             <a href="#">3</a>
             <a href="#">&raquo;</a>
@@ -262,6 +270,8 @@
     const span = document.getElementsByClassName("close")[0];
     const btnCancelarModal = document.querySelector(".btn-cancel");
     const btnConfirmar = document.getElementById("confirmCancel");
+    const motivoCancelacionInput = document.getElementById("motivo_cancelacion");
+    const motivoError = document.getElementById("motivo-error");
     
     // Función para obtener el token CSRF
     function getCookie(name) {
@@ -284,7 +294,8 @@
     // Mostrar modal de cancelación
     function mostrarModalCancelacion(reservaId) {
         reservaActualId = reservaId;
-        document.getElementById('observaciones').value = '';
+        motivoCancelacionInput.value = '';
+        motivoError.style.display = 'none';
         modal.style.display = "block";
     }
 
@@ -298,9 +309,17 @@
         modal.style.display = "none";
     }
 
-    // Confirmar cancelación
+    // Validar y confirmar cancelación
     btnConfirmar.onclick = function() {
-        const observaciones = document.getElementById('observaciones').value;
+        const motivoCancelacion = motivoCancelacionInput.value.trim();
+        
+        // Validar que se haya ingresado un motivo
+        if (!motivoCancelacion) {
+            motivoError.style.display = 'block';
+            return;
+        }
+        
+        motivoError.style.display = 'none';
         
         if (!reservaActualId) {
             alert('Error: ID de reserva no válido');
@@ -308,7 +327,7 @@
         }
 
         // Realizar la solicitud de cancelación
-        cancelarReserva(reservaActualId, observaciones);
+        cancelarReserva(reservaActualId, motivoCancelacion);
     }
 
     // Cerrar modal al hacer clic fuera del contenido
@@ -319,7 +338,7 @@
     }
 
     // Función para cancelar reserva
-    function cancelarReserva(reservaId, observaciones) {
+    function cancelarReserva(reservaId, motivoCancelacion) {
         fetch(`/reservas/cancelar-reserva/${reservaId}/`, {
             method: 'POST',
             headers: {
@@ -327,7 +346,7 @@
                 'X-CSRFToken': csrftoken
             },
             body: JSON.stringify({
-                observaciones: observaciones
+                motivo_cancelacion: motivoCancelacion
             })
         })
         .then(response => response.json())
@@ -341,7 +360,7 @@
                 if (fila) {
                     const estadoCell = fila.querySelector('.estado-reserva');
                     if (estadoCell) {
-                        estadoCell.innerHTML = '<span class="badge badge-pendiente">Pendiente</span>';
+                        estadoCell.innerHTML = '<span class="badge badge-pendiente">pendiente</span>';
                     }
                     
                     const botonCancelar = fila.querySelector('.btn-cancelar');
@@ -350,9 +369,9 @@
                     }
                 }
                 
-                alert('Solicitud de cancelación enviada al moderador');
+                alert(data.message || 'cancelacion solicitada exitosamente');
             } else {
-                alert('Error al enviar cancelación: ' + data.message);
+                alert('Error al cancelar la reserva: ' + data.message);
             }
         })
         .catch(error => {

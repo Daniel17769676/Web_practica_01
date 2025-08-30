@@ -15,7 +15,8 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
         ('completada', 'Completada'),]
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente') #este campo permite que se guarde el estado de la reserva   
-    
+    motivo_cancelacion = models.TextField(blank=True, null=True)  # Campo para guardar el motivo de cancelación
+
     def __str__(self):
         return f"Reserva #{self.id}-{self.cliente_nombre} ({self.disponibilidad.servicio.nombre} - {self.fecha_reserva})"
     

@@ -1,3 +1,4 @@
+import json
 import locale
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -250,9 +251,31 @@ def panel_reservas_view(request):
 
 def cancelar_reserva(request, reserva_id):
     try:
+        # Parsear los datos JSON del request
+        data = json.loads(request.body)
+        motivo_cancelacion = data.get('motivo_cancelacion', '')
+        
+        # Obtener la reserva
         reserva = Reserva.objects.get(id=reserva_id)
-        reserva.estado = 'pendiente'
+        
+        # Actualizar la reserva con el motivo de cancelación y cambiar estado
+        reserva.motivo_cancelacion = motivo_cancelacion
+        reserva.estado = 'pendiente'  
         reserva.save()
-        return JsonResponse({'success': True, 'message': 'Solicitud de cancelación enviada al moderador'})
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Solicitud de cancelación enviada al moderador'
+        })
+        
+    except Reserva.DoesNotExist:
+        return JsonResponse({
+            'success': False, 
+            'message': 'La reserva no existe'
+        }, status=404)
+        
     except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)})
+        return JsonResponse({
+            'success': False, 
+            'message': f'Error al cancelar la reserva: {str(e)}'
+        }, status=500)
