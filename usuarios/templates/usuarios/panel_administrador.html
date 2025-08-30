@@ -297,8 +297,9 @@
                         <th>Cliente</th>
                         <th>Servicio</th>
                         <th>Fecha</th>
-                        <th>Horario</th>                 
-                        <th>Estado</th>
+                        <th>Horario</th>
+                        <th>Motivo cancelacion</th>                 
+                        <th>Estado</th>                         
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -320,18 +321,38 @@
                                     <td>{{ reserva.fecha_reserva|date:"d/m/Y" }}</td>
                                     <td>{{ reserva.horario }}</td>
                                     <td>
-                                        <span class="badge badge-pendiente">Pendiente</span>
+                                        {% if reserva.motivo_cancelacion %}
+                                            <span title="{{ reserva.motivo_cancelacion }}">
+                                                {{ reserva.motivo_cancelacion|truncatechars:40 }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">Sin motivo</span>
+                                        {% endif %}
                                     </td>
                                     <td>
+                                        <span class="badge badge-pendiente">Pendiente</span>
+                                        </td>
+                                    <td>
                                         <div class="admin-actions">
-                                            <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
+                                            <!-- Botón Confirmar -->
+                                            <button 
+                                                class="admin-action-btn btn-confirm" 
+                                                title="Confirmar cancelacion" 
+                                                data-id="{{ reserva.id }}"
+                                                style="background-color: #4caf50; color: #fff;">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                            <button class="admin-action-btn btn-reject" data-id="{{ reserva.id }}">
+                                            <!-- Botón Rechazar -->
+                                            <button 
+                                                class="admin-action-btn btn-reject" 
+                                                title="Rechazar/cancelacion" 
+                                                data-id="{{ reserva.id }}"
+                                                style="background-color: #e74c3c; color: #fff;">
                                                 <i class="fas fa-times"></i>
                                             </button>
+
                                         </div>
-                                    </td>
+                                    </td>  
                                 </tr>
                             {% endif %}
                         {% empty %}
