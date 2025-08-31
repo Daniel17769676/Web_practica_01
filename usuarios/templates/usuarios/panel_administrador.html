@@ -114,6 +114,63 @@
             margin-top: 5px;
             display: none;
         }
+
+        /* Modal de confirmación */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .modal-btn.confirm {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background-color: #95a5a6;
+            color: white;
+        }
     </style>
 </head>
 
@@ -285,7 +342,7 @@
             </div>
         </div>
 
-        <!-- Sección Gestión de Reservas -->
+        <!-- Sección Gestión de Reservas: CANCELACIONES -->
         <div id="reservas" class="admin-section">
             <h2>❌ Solicitudes de Cancelación </h2>
         
@@ -307,7 +364,7 @@
                         {% for reserva in reservas %}
                             <!-- Filtro solo por reservas con estado 'pendiente' -->
                             {% if reserva.estado == 'pendiente' %}
-                                <tr>
+                                <tr id="reserva-row-{{ reserva.id }}">
                                     <td><input type="checkbox" class="reserva-checkbox" value="{{ reserva.id }}"></td>
                                     <td>{{ reserva.id }}</td>
                                     <td>{{ reserva.cliente_nombre }}</td>                        
@@ -334,19 +391,21 @@
                                         </td>
                                     <td>
                                         <div class="admin-actions">
-                                            <!-- Botón Confirmar -->
+                                            <!-- Botón Confirmar (Eliminar) -->
                                             <button 
                                                 class="admin-action-btn btn-confirm" 
-                                                title="Confirmar cancelacion" 
+                                                title="Confirmar cancelación (Eliminar)" 
                                                 data-id="{{ reserva.id }}"
+                                                onclick="confirmarCancelacion({{ reserva.id }}, event)"
                                                 style="background-color: #4caf50; color: #fff;">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                            <!-- Botón Rechazar -->
+                                            <!-- Botón Rechazar (Cambiar estado) -->
                                             <button 
                                                 class="admin-action-btn btn-reject" 
-                                                title="Rechazar/cancelacion" 
+                                                title="Rechazar cancelación (Confirmar reserva)" 
                                                 data-id="{{ reserva.id }}"
+                                                onclick="rechazarCancelacion({{ reserva.id }})"
                                                 style="background-color: #e74c3c; color: #fff;">
                                                 <i class="fas fa-times"></i>
                                             </button>
@@ -497,7 +556,7 @@
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="buscar-usuario">Buscar Usuario</label>
-                    <input type="text" id="buscar-usuario" placeholder="Nombre o email...">
+                    <input type="text" id="buscar-usuario" placeholder="Nombre or email...">
                 </div>
                 <div class="filter-group">
                     <button class="btn-filter"><i class="fas fa-search"></i> Buscar</button>
@@ -566,6 +625,18 @@
         </div>
     </div>
 
+    <!-- Modal de confirmación para eliminar reserva -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar permanentemente esta reserva?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelDelete">Cancelar</button>
+                <button class="modal-btn confirm" id="confirmDelete">Eliminar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
@@ -579,7 +650,7 @@
                 style="color: #4ea3f1; text-decoration: none; display: flex; align-items: center;">
                     Daniel Cabrera
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0077B5" viewBox="0 0 24 24" style="margin-left: 5px;">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.938v5.667H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.849 3.37-1.849 3.602 0 4.266 2.369 4.266 5.455v6.285zM5.337 7.433c-1.144 0-2.07-.926-2.07-2.07s.926-2.07 2.07-2.07 2.07.926 2.07 2.07-.926 2.07-2.07 2.07zm1.777 13.019H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.225.792 24 1.771 24h20.451C23.2 24 24 23.225 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.938v5.667H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.849 3.37-1.849 3.602 0 4.266 2.369 4.266 5.455v6.285zM5.337 极客时间 7.433c-1.144 0-2.07-.926-2.07-2.07s.926-2.07 2.07-2.07 2.07.926 2.07 2.07-.926 2.07-2.07 2.07zm1.777 13.019H3.56V9h3.554v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.225.792 24 1.771 24h20.451C23.2 24 24 23.225 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
                     </svg>
                 </a>
             </p>
@@ -617,31 +688,27 @@
             const closeModalBtn = document.getElementById('cerrar-modal');
             const cancelButtons = document.querySelectorAll('.btn-delete');
             
-            cancelButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const reservaId = this.getAttribute('data-id');
-                    document.getElementById('reserva-id').textContent = reservaId;
-                    modal.style.display = 'block';
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    modal.style.display = 'none';
                 });
-            });
+            }
             
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+            }
             
-            closeModalBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-            
-            document.getElementById('confirmar-cancelacion').addEventListener('click', function() {
-                const motivo = document.getElementById('motivo-cancelacion').value;
-                const reservaId = document.getElementById('reserva-id').textContent;
-                
-                alert(`Reserva #${reservaId} cancelada. Motivo: ${motivo || 'No especificado'}`);
-                modal.style.display = 'none';
-                
-                // Aquí iría la lógica real para cancelar la reserva
-            });
+            if (cancelButtons) {
+                cancelButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const reservaId = this.getAttribute('data-id');
+                        document.getElementById('reserva-id').textContent = reservaId;
+                        modal.style.display = 'block';
+                    });
+                });
+            }
             
             // Seleccionar todas las reservas
             document.getElementById('select-all').addEventListener('change', function() {
@@ -656,9 +723,36 @@
                 if (event.target === modal) {
                     modal.style.display = 'none';
                 }
+                if (event.target === document.getElementById('confirmModal')) {
+                    document.getElementById('confirmModal').style.display = 'none';
+                }
             });
             
-            // Filtro de cliente (ya existente)
+            // Configuración del modal de confirmación
+            const confirmModal = document.getElementById('confirmModal');
+            const closeConfirmModal = document.querySelector('#confirmModal .close');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
+            
+            if (closeConfirmModal) {
+                closeConfirmModal.addEventListener('click', function() {
+                    confirmModal.style.display = 'none';
+                });
+            }
+            
+            if (cancelDeleteBtn) {
+                cancelDeleteBtn.addEventListener('click', function() {
+                    confirmModal.style.display = 'none';
+                });
+            }
+            
+            // Configurar el botón de confirmar eliminación
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                if (window.reservaIdParaEliminar) {
+                    eliminarReserva(window.reservaIdParaEliminar);
+                }
+            });
+            
+            // Funciones para FILTRO CLIENTES
             const filtroCliente = document.getElementById('filtro-cliente');
             const filas = document.querySelectorAll('.reservas-table tbody tr');
             
@@ -679,7 +773,7 @@
             }
         });
 
-        // Funciones para la gestión de servicios
+        // Funciones para la GESTION DE SERVICIOS
         function establecerFechaHoy() {
             const hoy = new Date();
             const fechaFormateada = hoy.toISOString().split('T')[0];
@@ -702,6 +796,116 @@
                     submitBtn.disabled = false;
                 }
             }
+        }
+
+        // Variables globales para el manejo de reservas
+        window.reservaIdParaEliminar = null;
+
+        // Función para confirmar cancelación (eliminar reserva)
+        function confirmarCancelacion(reservaId) {
+            window.reservaIdParaEliminar = reservaId;
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        // Función para eliminar reserva (AJAX)
+        function eliminarReserva(reservaId) {
+            const url = `/usuarios/cancelar/${reservaId}/`;
+
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminar la fila de la tabla
+                    const row = document.getElementById(`reserva-row-${reservaId}`);
+                    if (row) {
+                        row.remove();
+                    }
+                    alert('Reserva eliminada correctamente');
+                } else {
+                    alert('Error al eliminar la reserva');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar la reserva');
+            })
+            .finally(() => {
+                document.getElementById('confirmModal').style.display = 'none';
+                window.reservaIdParaEliminar = null;
+            });
+        }
+
+        // Función para rechazar cancelación (confirmar reserva)
+        function rechazarCancelacion(reservaId, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            if (confirm('¿Estás seguro de que deseas rechazar la cancelación y confirmar esta reserva?')) {
+                // URL dinámica con el ID de la reserva
+                const url = `/usuarios/confirmar/${reservaId}/`;
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || 'Error del servidor');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Actualizar solo la fila específica
+                        const badge = document.querySelector(`#reserva-row-${reservaId} .badge`);
+                        if (badge) {
+                            badge.textContent = 'Confirmada';
+                            badge.className = 'badge badge-confirmada';
+                        }
+                        
+                        // Ocultar/mostrar botones según el nuevo estado
+                        const buttons = document.querySelectorAll(`#reserva-row-${reservaId} button`);
+                        buttons.forEach(button => button.style.display = 'none');
+                        
+                        alert('Reserva confirmada correctamente');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al confirmar la reserva: ' + error.message);
+                });
+            }
+        }
+
+        // Función auxiliar para obtener el token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
     </script>
 </body>

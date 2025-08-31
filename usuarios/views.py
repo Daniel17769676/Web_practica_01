@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -77,3 +78,44 @@ def logout_administrador(request):
     request.session.flush()
     messages.success(request, 'Sesión cerrada correctamente')
     return redirect('base')
+
+#View que ELIMINA LA RESERVA (Solicitud de cancelación)
+def cancelar_reserva(request, reserva_id):
+    if request.method == 'DELETE':
+        try:
+            reserva = Reserva.objects.get(id=reserva_id)
+            reserva.delete()
+            # Respuesta JSON para AJAX
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Reserva cancelada correctamente'
+            })
+        except Reserva.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Reserva no encontrada'
+            }, status=404)
+
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+
+#View que CONFIRMA LA RESERVA (Rechaza la solicitud de CANCELACION)
+def confirmar_reserva(request, reserva_id):
+    if request.method == 'POST':
+        try:
+            reserva = Reserva.objects.get(id=reserva_id)
+            reserva.estado = 'confirmada'
+            reserva.save()
+
+            # Respuesta JSON para AJAX
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Reserva confirmada correctamente'
+            })
+            
+        except Reserva.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Reserva no encontrada'
+            }, status=404)
+    
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
