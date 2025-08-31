@@ -1,10 +1,16 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from reservas.models import Reserva
 from usuarios.models import Administrador
 from django.contrib.auth.decorators import login_required
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from django.utils import timezone
+from datetime import datetime
+from openpyxl.styles import PatternFill
+
 
 # Decorador personalizado para verificar sesión de admin
 def admin_login_required(view_func):
@@ -119,3 +125,75 @@ def confirmar_reserva(request, reserva_id):
             }, status=404)
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+
+
+def generar_reportes(request):
+    if request.method == 'POST':
+        # Obtener parámetros del formulario
+        tipo_reporte = request.POST.get('reporte-tipo')
+        fecha_desde = request.POST.get('reporte-desde')
+        fecha_hasta = request.POST.get('reporte-hasta')
+        
+        # Crear libro de Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Reporte Reservas"
+        
+        # Estilos
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        alignment = Alignment(horizontal="center", vertical="center")
+        
+        if tipo_reporte == 'reservas':
+            # Reporte de reservas por fecha
+            queryset = Reserva.objects.filter(
+                fecha_reserva__range=[fecha_desde, fecha_hasta]
+            )
+            
+            # Encabezados
+            headers = ['ID', 'Cliente', 'Servicio', 'Fecha', 'Hora', 'Estado', 'Motivo Cancelación']
+            for col_num, header in enumerate(headers, 1):
+                cell = ws.cell(row=1, column=col_num)
+                cell.value = header
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = alignment
+            
+            # Datos
+            for row_num, reserva in enumerate(queryset, 2):
+                ws.cell(row=row_num, column=1).value = reserva.id
+                ws.cell(row=row_num, column=2).value = reserva.cliente_nombre
+                ws.cell(row=row_num, column=3).value = reserva.disponibilidad.servicio.nombre if reserva.disponibilidad and reserva.disponibilidad.servicio else 'N/A'
+                ws.cell(row=row_num, column=4).value = reserva.fecha_reserva.strftime('%d/%m/%Y')
+                ws.cell(row=row_num, column=5).value = reserva.horario
+                ws.cell(row=row_num, column=6).value = reserva.estado
+                ws.cell(row=row_num, column=7).value = reserva.motivo_cancelacion or 'N/A'
+        
+        elif tipo_reporte == 'servicios':
+            # Reporte de servicios (ejemplo)
+            headers = ['ID Servicio', 'Nombre', 'Cantidad Reservas', 'Ingresos']
+            # ... lógica para servicios ...
+        
+        # Ajustar anchos de columnas
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Crear respuesta HTTP
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename=reporte_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+        
+        wb.save(response)
+        return response
+    
+    return HttpResponse("Método no permitido", status=405)
