@@ -448,7 +448,7 @@
                 
                 <tbody>
                     {% for reserva in reservas %}
-                    <tr>
+                      <tr id="reserva-row-{{ reserva.id }}">
                         <td><input type="checkbox" class="reserva-checkbox" value="{{ reserva.id }}"></td>
                         <td>{{ reserva.id }}</td>
                         <td>{{ reserva.cliente_nombre }}</td>                        
@@ -478,16 +478,12 @@
                         </td>
                         <td> <!--BTNES DE ACCION-->
                             <div class="admin-actions">
-
-
                                 <!--btn eliminar-->
                                     <button class="admin-action-btn btn-delete" 
                                         data-id="{{ reserva.id }}"
                                         onclick="confirmarCancelacion({{ reserva.id }}, event)">
                                     <i class="fas fa-trash"></i>
                                 </button>
-
-                                
                             </td>
                         </div>
 
