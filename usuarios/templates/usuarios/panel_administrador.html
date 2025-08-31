@@ -478,14 +478,13 @@
                         </td>
                         <td> <!--BTNES DE ACCION-->
                             <div class="admin-actions">
-                                <!--btn editar-->
-                                <button class="admin-action-btn btn-edit" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+
 
                                 <!--btn eliminar-->
-                                <button class="admin-action-btn btn-delete" data-id="{{ reserva.id }}">
-                                    <i class="fas fa-trash"></i>                                
+                                    <button class="admin-action-btn btn-delete" 
+                                        data-id="{{ reserva.id }}"
+                                        onclick="confirmarCancelacion({{ reserva.id }}, event)">
+                                    <i class="fas fa-trash"></i>
                                 </button>
 
                                 
