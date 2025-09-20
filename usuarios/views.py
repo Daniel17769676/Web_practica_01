@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from reservas.models import Reserva
+from servicios.models import Disponibilidad
 from usuarios.models import Administrador
 from django.contrib.auth.decorators import login_required
 from openpyxl import Workbook
@@ -126,7 +127,6 @@ def confirmar_reserva(request, reserva_id):
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
 
-
 def generar_reportes(request):
     if request.method == 'POST':
         # Obtener parámetros del formulario
@@ -151,7 +151,7 @@ def generar_reportes(request):
             )
             
             # Encabezados
-            headers = ['ID', 'Cliente', 'Servicio', 'Fecha', 'Hora', 'Estado', 'Motivo Cancelación']
+            headers = ['ID', 'Cliente', 'Servicio', 'Fecha', 'Hora', 'Estado']
             for col_num, header in enumerate(headers, 1):
                 cell = ws.cell(row=1, column=col_num)
                 cell.value = header
@@ -167,13 +167,33 @@ def generar_reportes(request):
                 ws.cell(row=row_num, column=4).value = reserva.fecha_reserva.strftime('%d/%m/%Y')
                 ws.cell(row=row_num, column=5).value = reserva.horario
                 ws.cell(row=row_num, column=6).value = reserva.estado
-                ws.cell(row=row_num, column=7).value = reserva.motivo_cancelacion or 'N/A'
+                
         
         elif tipo_reporte == 'servicios':
-            # Reporte de servicios (ejemplo)
-            headers = ['ID Servicio', 'Nombre', 'Cantidad Reservas', 'Ingresos']
-            # ... lógica para servicios ...
-        
+
+            # Reporte de servicios
+            queryset = Disponibilidad.objects.select_related('servicio').all()
+
+            # Encabezados
+            headers = ['ID Servicio', 'Administrador', 'Hora_inicio', 'Hora_Fin', 'Duracion_servicio', 'Ubicacion', 'Fecha_fin', 'Fecha_inicio']
+            for col_num, header in enumerate(headers, 1):
+                cell = ws.cell(row=1, column=col_num)
+                cell.value = header
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = alignment
+
+            # Datos
+            for row_num, disponibilidad in enumerate(queryset, 2):
+                ws.cell(row=row_num, column=1).value = disponibilidad.servicio.id
+                ws.cell(row=row_num, column=2).value = disponibilidad.administrador if disponibilidad.administrador else 'N/A'
+                ws.cell(row=row_num, column=3).value = disponibilidad.hora_inicio.strftime('%H:%M')
+                ws.cell(row=row_num, column=4).value = disponibilidad.hora_fin.strftime('%H:%M')
+                ws.cell(row=row_num, column=5).value = disponibilidad.intervalo
+                ws.cell(row=row_num, column=6).value = disponibilidad.ubicacion
+                ws.cell(row=row_num, column=7).value = disponibilidad.fecha_fin.strftime('%d/%m/%Y') if disponibilidad.fecha_fin else 'N/A'
+                ws.cell(row=row_num, column=8).value = disponibilidad.fecha_inicio.strftime('%d/%m/%Y') if disponibilidad.fecha_inicio else 'N/A'
+
         # Ajustar anchos de columnas
         for column in ws.columns:
             max_length = 0

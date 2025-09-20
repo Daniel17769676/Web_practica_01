@@ -142,7 +142,7 @@ def procesar_reserva_view(request):
                 f"Observaciones: {reserva.observaciones or 'Ninguna'}"
             )
             event.location = reserva.disponibilidad.ubicacion or "Ubicación no especificada"
-            calendar.events.append(event)
+            calendar.events.add(event)
 
             # --- Añadir alarma/alertas al .ICS---
             alarma = DisplayAlarm()

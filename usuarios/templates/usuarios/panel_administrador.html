@@ -518,8 +518,9 @@
                     <div class="filter-group">
                         <label for="reporte-tipo">Tipo de Reporte</label>
                         <select id="reporte-tipo" name="reporte-tipo">
-                            <option value="reservas">Reservas por fecha</option>
-                            <option value="servicios">Servicios registrados</option>
+                            <option value="reservas">Reservas</option>
+                            <option value="reservas-canceladas">Reservas canceladas</option>
+                            <option value="servicios">Servicios registrados</option>                            
                         </select>
                     </div>
 
@@ -532,6 +533,8 @@
                         <label for="reporte-hasta">Hasta</label>
                         <input type="date" id="reporte-hasta" name="reporte-hasta" required>
                     </div>
+
+                    <br>
 
                     <div class="filter-group">
                         <button type="submit" class="btn-excel">
