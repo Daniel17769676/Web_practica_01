@@ -264,8 +264,7 @@ def cancelar_reserva(request, reserva_id):
         reserva.save()
         
         return JsonResponse({
-            'success': True, 
-            'message': 'Solicitud de cancelación enviada al moderador'
+            'success': True,             
         })
         
     except Reserva.DoesNotExist:

@@ -188,14 +188,30 @@
         </div>
         {% endfor %}
     </div>
-    {% endif %}
+    {% endif %}    
+
 
     <div class="admin-container">
         <div class="admin-header">
             <h1 class="admin-title"><i class="fas fa-cogs"></i> Panel de Administración</h1>
-            <a href="{% url 'base' %}" class="confirmation-btn confirmation-btn-primary">
-                <i class="fas fa-home"></i> Volver al Inicio
-            </a>
+            <!-- Usuario actual-->
+
+            <div class="admin-user">
+                <i class="fas fa-user-circle"></i> {{ request.user.username }}
+                <span class="user-role">{{ request.user.get_role_display }} Daniel Cabrera</span>
+            </div>
+           
+
+            <button class="confirmation-btn confirmation-btn-primary" onclick="location.reload()" title="Refrescar">
+                <i class="fas fa-sync"></i> Refrescar
+            </button>                      
+            <button class="confirmation-btn confirmation-btn-danger" onclick="confirmAction('¿Estás seguro de que deseas cerrar sesión?')">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button> 
+
+            
+            <!-- AÑADIR ACCION A CERRAR SESION, NO FUNCIONAL 20-09-2025 -->
+
         </div>
 
         <div class="admin-nav">
@@ -921,6 +937,13 @@
                 return false;
             }
         });
+
+
+        function confirmAction(message) {
+            if (confirm(message)) {
+                window.location.href = "";
+            }
+        }
 
 
 

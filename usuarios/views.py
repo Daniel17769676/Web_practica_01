@@ -2,7 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from reservas.models import Reserva
+from reservas.models import Reserva, ReservaCancelada
 from servicios.models import Disponibilidad
 from usuarios.models import Administrador
 from django.contrib.auth.decorators import login_required
@@ -145,7 +145,7 @@ def generar_reportes(request):
         alignment = Alignment(horizontal="center", vertical="center")
         
         if tipo_reporte == 'reservas':
-            # Reporte de reservas por fecha
+            # Reporte de RESERVAS REALIZADAS
             queryset = Reserva.objects.filter(
                 fecha_reserva__range=[fecha_desde, fecha_hasta]
             )
@@ -171,7 +171,7 @@ def generar_reportes(request):
         
         elif tipo_reporte == 'servicios':
 
-            # Reporte de servicios
+            # Reporte de SERVICIOS DISPONIBLES
             queryset = Disponibilidad.objects.select_related('servicio').all()
 
             # Encabezados
@@ -193,6 +193,34 @@ def generar_reportes(request):
                 ws.cell(row=row_num, column=6).value = disponibilidad.ubicacion
                 ws.cell(row=row_num, column=7).value = disponibilidad.fecha_fin.strftime('%d/%m/%Y') if disponibilidad.fecha_fin else 'N/A'
                 ws.cell(row=row_num, column=8).value = disponibilidad.fecha_inicio.strftime('%d/%m/%Y') if disponibilidad.fecha_inicio else 'N/A'
+
+
+        elif tipo_reporte == 'cancelaciones':
+            # Reporte de RESERVAS CANCELADAS
+            queryset = ReservaCancelada.objects.filter(
+                reserva__fecha_reserva__range=[fecha_desde, fecha_hasta]
+            ).select_related('reserva')
+
+            # Encabezados
+            headers = ['ID Cancelación', 'ID Reserva', 'Cliente', 'Servicio', 'Fecha Reserva', 'Hora Reserva', 'Motivo Cancelación', 'Fecha Cancelación']
+            for col_num, header in enumerate(headers, 1):
+                cell = ws.cell(row=1, column=col_num)
+                cell.value = header
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = alignment
+
+
+            # Datos
+            for row_num, cancelacion in enumerate(queryset, 2):
+                ws.cell(row=row_num, column=1).value = cancelacion.id
+                ws.cell(row=row_num, column=2).value = cancelacion.reserva.id if cancelacion.reserva else 'N/A'
+                ws.cell(row=row_num, column=3).value = cancelacion.reserva.cliente_nombre if cancelacion.reserva else 'N/A'
+                ws.cell(row=row_num, column=4).value = cancelacion.reserva.disponibilidad.servicio.nombre if cancelacion.reserva and cancelacion.reserva.disponibilidad and cancelacion.reserva.disponibilidad.servicio else 'N/A'
+                ws.cell(row=row_num, column=5).value = cancelacion.reserva.fecha_reserva.strftime('%d/%m/%Y') if cancelacion.reserva else 'N/A'
+                ws.cell(row=row_num, column=6).value = cancelacion.reserva.horario if cancelacion.reserva else 'N/A'
+                ws.cell(row=row_num, column=7).value = cancelacion.motivo
+                ws.cell(row=row_num, column=8).value = cancelacion.fecha_cancelacion.strftime('%d/%m/%Y %H:%M') if cancelacion.fecha_cancelacion else 'N/A'
 
         # Ajustar anchos de columnas
         for column in ws.columns:

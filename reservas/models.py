@@ -24,3 +24,17 @@ class Reserva(models.Model):
         verbose_name = 'Reserva' #Este campo permite que se muestre el nombre del modelo en singular en el panel de administracion
         verbose_name_plural = 'Reservas' #Este campo permite que se muestre el nombre del modelo en plural en el panel de administracion
         ordering = ['fecha_reserva'] #esto permite que las reservas se ordenen por fecha y hora de inicio, de mas reciente a mas antiguocls
+
+
+class ReservaCancelada(models.Model):
+    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, related_name='cancelacion')
+    fecha_cancelacion = models.DateTimeField(auto_now_add=True)
+    motivo = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Cancelación de Reserva #{self.reserva.id} - {self.reserva.cliente_nombre}"
+    
+    class Meta:
+        verbose_name = 'Reserva Cancelada'
+        verbose_name_plural = 'Reservas Canceladas'
+        ordering = ['-fecha_cancelacion']

@@ -75,7 +75,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': '127.0.0.1:1521/XE', #Datos XE cambiado a XEPDB1
         'USER': 'proyecto_web01',
-        'PASSWORD': 'proyecto_web01',
+        'PASSWORD': 'NuevaPass2024!', #NUEVA PASS Ordenador CASA
         'TEST': {
             'USER': 'default_test',
             'TBLSPACE': 'default_test_tbls',
