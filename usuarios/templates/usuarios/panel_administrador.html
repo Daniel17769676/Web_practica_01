@@ -650,6 +650,34 @@
         </div>
     </div>
 
+        <!-- Modal de exito para Eliminacion -->
+    <div id="successModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <span class="close close-success">&times;</span>
+                <h3 class="modal-title">¡Éxito!</h3>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage">Reserva eliminada correctamente.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-confirm close-success">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de rechazo cancelacion(Confirmar Reserva) -->
+    <div id="modalCancelar" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Rechazar Solicitud de Cancelación</h3>
+            <p>¿Estás seguro de que deseas rechazar la solicitud de cancelación y confirmar esta reserva?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cerrar-modal">Cerrar</button>
+                <button class="modal-btn confirm" id="rechazarReservaBtn">Rechazar Solicitud</button>
+            </div>
+        </div>
+
     <!-- Footer -->
     <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
         <div class="footer-container" style="max-width: 1200px; margin: 0 auto;">
@@ -810,8 +838,30 @@
             }
         }
 
+
         // Variables globales para el manejo de reservas
         window.reservaIdParaEliminar = null;
+        window.reservaIdParaRechazar = null;// Se declara la variable global para el ID de la reserva a rechazar que se usara en la funcion rechazarCancelacion
+
+
+
+        //Modal exito eliminacion reserva
+        function ModalExitoEliminacion(mensaje) {
+            const successModal = document.getElementById("successModal");
+            const successMessage = document.getElementById("successMessage");
+            const closeButtons = document.querySelectorAll(".close-success");
+            
+            successMessage.textContent = mensaje;
+            successModal.style.display = "block";
+            
+            // Cerrar modal
+            closeButtons.forEach(button => {
+                button.onclick = function() {
+                    successModal.style.display = "none";
+                }
+            });
+        }
+
 
         // Función para confirmar cancelación (eliminar reserva)
         function confirmarCancelacion(reservaId) {
@@ -837,14 +887,14 @@
                     if (row) {
                         row.remove();
                     }
-                    alert('Reserva eliminada correctamente');
+                    ModalExitoEliminacion('Reserva eliminada correctamente');
                 } else {
-                    alert('Error al eliminar la reserva');
+                    ModalExitoEliminacion('Error al eliminar la reserva');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error al eliminar la reserva');
+                ModalExitoEliminacion('Error al eliminar la reserva');
             })
             .finally(() => {
                 document.getElementById('confirmModal').style.display = 'none';
@@ -852,16 +902,35 @@
             });
         }
 
-        // Función para rechazar cancelación (confirmar reserva)
-        function rechazarCancelacion(reservaId, event) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+        
+        //Modal exito RECHAZO SOLICITUD (CONFIRMAR RESERVA)        
+        function ModalExitoRechazoSolicitud(mensaje) {
+            const modalCancelar = document.getElementById("modalCancelar");
+            const successMessage = document.getElementById("successMessage");
+            const closeButtons = document.querySelectorAll(".close-success");
             
-            if (confirm('¿Estás seguro de que deseas rechazar la cancelación y confirmar esta reserva?')) {
+            successMessage.textContent = mensaje;
+            modalCancelar.style.display = "block";
+            
+            // Cerrar modal
+            closeButtons.forEach(button => {
+                button.onclick = function() {
+                    modalCancelar.style.display = "none";
+                }
+            });
+        }
+
+
+            function rechazarCancelacion(reservaId) {
+                window.reservaIdParaRechazar = reservaId;
+                document.getElementById('modalCancelar').style.display = 'block';
+            }
+
+            
+            function rechazarCancelacion(reservaId) { // Se cambia if por function para usar la variable global e invocar la funcion en el boton del modal
                 // URL dinámica con el ID de la reserva
                 const url = `/usuarios/confirmar/${reservaId}/`;
+              
                 
                 fetch(url, {
                     method: 'POST',
@@ -892,17 +961,19 @@
                         const buttons = document.querySelectorAll(`#reserva-row-${reservaId} button`);
                         buttons.forEach(button => button.style.display = 'none');
                         
-                        alert('Reserva confirmada correctamente');
+                        ModalExitoRechazoSolicitud('Reserva confirmada correctamente');
                     } else {
-                        alert('Error: ' + data.message);
+                        ModalExitoRechazoSolicitud('Error: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al confirmar la reserva: ' + error.message);
+                    ModalExitoRechazoSolicitud('Error al confirmar la reserva: ' + error.message);
+                    window.reservaIdParaRechazar = null;
+
                 });
             }
-        }
+        //}
 
         // Función auxiliar para obtener el token CSRF
         function getCookie(name) {
@@ -944,9 +1015,6 @@
                 window.location.href = "";
             }
         }
-
-
-
 
 
 
