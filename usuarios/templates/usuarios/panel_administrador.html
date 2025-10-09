@@ -673,8 +673,8 @@
             <h3>Rechazar Solicitud de Cancelación</h3>
             <p>¿Estás seguro de que deseas rechazar la solicitud de cancelación y confirmar esta reserva?</p>
             <div class="modal-buttons">
-                <button class="modal-btn cancel" id="cerrar-modal">Cerrar</button>
-                <button class="modal-btn confirm" id="rechazarReservaBtn">Rechazar Solicitud</button>
+                <button class="modal-btn cancel" id="cerrar-modal">Cancelar</button>
+                <button class="modal-btn confirm" id="rechazarReservaBtn">Rechazar</button>
             </div>
         </div>
 
@@ -920,17 +920,15 @@
             });
         }
 
-
+            // 01. Llamar modal para rechazar cancelacion (confirmar reserva)
             function rechazarCancelacion(reservaId) {
                 window.reservaIdParaRechazar = reservaId;
                 document.getElementById('modalCancelar').style.display = 'block';
             }
-
             
-            function rechazarCancelacion(reservaId) { // Se cambia if por function para usar la variable global e invocar la funcion en el boton del modal
-                // URL dinámica con el ID de la reserva
-                const url = `/usuarios/confirmar/${reservaId}/`;
-              
+            // 02. Ejecutar rechazo cancelacion (confirmar reserva) al hacer click en el boton del modal
+            function ejecutarRechazoCancelacion(reservaId) {                 
+                const url = `/usuarios/confirmar/${reservaId}/`;              
                 
                 fetch(url, {
                     method: 'POST',
@@ -969,8 +967,6 @@
                 .catch(error => {
                     console.error('Error:', error);
                     ModalExitoRechazoSolicitud('Error al confirmar la reserva: ' + error.message);
-                    window.reservaIdParaRechazar = null;
-
                 });
             }
         //}
