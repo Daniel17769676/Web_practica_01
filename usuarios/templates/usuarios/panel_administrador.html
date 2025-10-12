@@ -637,7 +637,10 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación para eliminar reserva -->
+
+    <!-- MODALES: Eliminar reserva & Rechazo cancelacion sirven para SOLICITUDES DE CANCELACION & GESTION DE RESERVAS -->
+
+    <!-- Modal: Eliminar reserva -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -650,7 +653,7 @@
         </div>
     </div>
 
-        <!-- Modal de exito para Eliminacion -->
+    <!-- Modal Exito -> "Eliminar Reserva" -->
     <div id="successModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
@@ -665,18 +668,37 @@
             </div>
         </div>
     </div>
+               
 
-    <!-- Modal de rechazo cancelacion(Confirmar Reserva) -->
-    <div id="modalCancelar" class="modal">
+    <!-- Modal: Rechazo cancelacion -->
+     <div id="modalRechazoCancelacion" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3>Rechazar Solicitud de Cancelación</h3>
             <p>¿Estás seguro de que deseas rechazar la solicitud de cancelación y confirmar esta reserva?</p>
             <div class="modal-buttons">
-                <button class="modal-btn cancel" id="cerrar-modal">Cancelar</button>
-                <button class="modal-btn confirm" id="rechazarReservaBtn">Rechazar</button>
+                <button class="modal-btn cancel" id="cancelRechazo">Cancelar</button>
+                <button class="modal-btn confirm" id="confirmRechazo">Rechazar</button>
             </div>
         </div>
+    </div>
+
+    <!-- 
+
+    Modal de éxito: Rechazo Cancelación 
+     <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close-success">&times;</span>
+            <p id="successMessage"></p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" id="cerrar-success">Aceptar</button>
+            </div>
+        </div>
+
+    -->
+
+
+            
 
     <!-- Footer -->
     <footer style="color: #0a0101; padding: 2rem 0; text-align: center;">
@@ -723,10 +745,10 @@
             });
             
             // Modal de cancelación
-            const modal = document.getElementById('modalCancelar');
-            const closeBtn = document.querySelector('.close');
-            const closeModalBtn = document.getElementById('cerrar-modal');
-            const cancelButtons = document.querySelectorAll('.btn-delete');
+            const modal = document.getElementById('modalCancelar'); // Hace referencia al modal
+            const closeBtn = document.querySelector('.close');// Hace referencia al icono de cerrar del modal
+            const closeModalBtn = document.getElementById('cerrar-modal'); // Hace referencia al boton cancelar del modal
+            const cancelButtons = document.querySelectorAll('.btn-delete');// Hace referencia a todos los botones eliminar
             
             if (closeBtn) {
                 closeBtn.addEventListener('click', function() {
@@ -813,120 +835,128 @@
             }
         });
 
-        // Funciones para la GESTION DE SERVICIOS
-        function establecerFechaHoy() {
-            const hoy = new Date();
-            const fechaFormateada = hoy.toISOString().split('T')[0];
-            document.getElementById('fecha_inicio').value = fechaFormateada;
-            document.getElementById('fecha_fin').value = fechaFormateada;
-        }
+            // Funciones para la GESTION DE SERVICIOS
+            function establecerFechaHoy() {
+                const hoy = new Date();
+                const fechaFormateada = hoy.toISOString().split('T')[0];
+                document.getElementById('fecha_inicio').value = fechaFormateada;
+                document.getElementById('fecha_fin').value = fechaFormateada;
+            }
 
-        function validarHoras() {
-            const horaInicio = document.getElementById("hora_inicio").value;
-            const horaFin = document.getElementById("hora_fin").value;
-            const errorSpan = document.getElementById("error-horas");
-            const submitBtn = document.querySelector("button[type='submit']");
+            function validarHoras() {
+                const horaInicio = document.getElementById("hora_inicio").value;
+                const horaFin = document.getElementById("hora_fin").value;
+                const errorSpan = document.getElementById("error-horas");
+                const submitBtn = document.querySelector("button[type='submit']");
 
-            if (horaInicio && horaFin) {
-                if (horaFin <= horaInicio) {
-                    errorSpan.style.display = "block";
-                    submitBtn.disabled = true;
-                } else {
-                    errorSpan.style.display = "none";
-                    submitBtn.disabled = false;
+                if (horaInicio && horaFin) {
+                    if (horaFin <= horaInicio) {
+                        errorSpan.style.display = "block";
+                        submitBtn.disabled = true;
+                    } else {
+                        errorSpan.style.display = "none";
+                        submitBtn.disabled = false;
+                    }
                 }
             }
-        }
 
 
-        // Variables globales para el manejo de reservas
-        window.reservaIdParaEliminar = null;
-        window.reservaIdParaRechazar = null;// Se declara la variable global para el ID de la reserva a rechazar que se usara en la funcion rechazarCancelacion
+            // Variables globales para el manejo de reservas
+            window.reservaIdParaEliminar = null;
+            window.reservaIdParaRechazar = null;// Se declara la variable global para el ID de la reserva a rechazar que se usara en la funcion rechazarCancelacion
 
+            //Configuracion modal EXITO reserva eliminada
+            function ModalExitoEliminacion(mensaje) {
+                const successModal = document.getElementById("successModal");
+                const successMessage = document.getElementById("successMessage");
+                const closeButtons = document.querySelectorAll(".close-success");
+                
+                successMessage.textContent = mensaje;
+                successModal.style.display = "block";
 
-
-        //Modal exito eliminacion reserva
-        function ModalExitoEliminacion(mensaje) {
-            const successModal = document.getElementById("successModal");
-            const successMessage = document.getElementById("successMessage");
-            const closeButtons = document.querySelectorAll(".close-success");
-            
-            successMessage.textContent = mensaje;
-            successModal.style.display = "block";
-            
-            // Cerrar modal
-            closeButtons.forEach(button => {
-                button.onclick = function() {
-                    successModal.style.display = "none";
-                }
-            });
-        }
-
-
-        // Función para confirmar cancelación (eliminar reserva)
-        function confirmarCancelacion(reservaId) {
-            window.reservaIdParaEliminar = reservaId;
-            document.getElementById('confirmModal').style.display = 'block';
-        }
-
-        // Función para eliminar reserva (AJAX)
-        function eliminarReserva(reservaId) {
-            const url = `/usuarios/cancelar/${reservaId}/`;
-
-            fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminar la fila de la tabla
-                    const row = document.getElementById(`reserva-row-${reservaId}`);
-                    if (row) {
-                        row.remove();
+                // Cerrar modal EXITO reserva eliminada
+                closeButtons.forEach(button => {
+                    button.onclick = function() {
+                        successModal.style.display = "none";
                     }
-                    ModalExitoEliminacion('Reserva eliminada correctamente');
-                } else {
+                });
+            }
+
+
+            // Función para confirmar cancelación (eliminar reserva)
+            function confirmarCancelacion(reservaId) {
+                window.reservaIdParaEliminar = reservaId;
+                document.getElementById('confirmModal').style.display = 'block';
+            }
+
+            // Función para eliminar reserva
+            function eliminarReserva(reservaId) {
+                const url = `/usuarios/cancelar/${reservaId}/`;
+
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Eliminar la fila de la tabla
+                        const row = document.getElementById(`reserva-row-${reservaId}`);
+                        if (row) {
+                            row.remove();
+                        }
+                        ModalExitoEliminacion('Reserva eliminada correctamente');
+                    } else {
+                        ModalExitoEliminacion('Error al eliminar la reserva');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     ModalExitoEliminacion('Error al eliminar la reserva');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                ModalExitoEliminacion('Error al eliminar la reserva');
-            })
-            .finally(() => {
-                document.getElementById('confirmModal').style.display = 'none';
-                window.reservaIdParaEliminar = null;
-            });
-        }
+                })
+                .finally(() => {
+                    document.getElementById('confirmModal').style.display = 'none';
+                    window.reservaIdParaEliminar = null;
+                });
+            }
 
-        
-        //Modal exito RECHAZO SOLICITUD (CONFIRMAR RESERVA)        
-        function ModalExitoRechazoSolicitud(mensaje) {
-            const modalCancelar = document.getElementById("modalCancelar");
-            const successMessage = document.getElementById("successMessage");
-            const closeButtons = document.querySelectorAll(".close-success");
-            
-            successMessage.textContent = mensaje;
-            modalCancelar.style.display = "block";
-            
-            // Cerrar modal
-            closeButtons.forEach(button => {
-                button.onclick = function() {
-                    modalCancelar.style.display = "none";
-                }
-            });
-        }
 
+            // Configuracion modal rechazo cancelacion (confirmar reserva)
+            const modalRechazoCancelacion = document.getElementById('modalRechazoCancelacion'); //Se declara la variable modalRechazoCancelacion que hace referencia al modal
+            const cancelRechazo = document.getElementById ('cancelRechazo'); //Se declara la variable cancelRechazo que hace referencia al boton cancelar del modal
+            const confirmRechazo = document.getElementById ('confirmRechazo'); //Se declara la variable confirmRechazo que hace referencia al boton rechazar del modal
+            const closeRechazo = document.querySelector('#modalRechazoCancelacion .close'); //Se declara la variable closeRechazo que hace referencia al icono de cerrar del modal
+
+            if (closeRechazo) {
+                closeRechazo.addEventListener('click', function() {
+                    modalRechazoCancelacion.style.display = 'none';
+                });
+            }
+
+            if (cancelRechazo) {
+                cancelRechazo.addEventListener('click', function() {
+                    modalRechazoCancelacion.style.display = 'none';
+                });
+            }
+
+            if (confirmRechazo) {
+                confirmRechazo.addEventListener('click', function() {
+                    if (window.reservaIdParaRechazar) {
+                        ejecutarRechazoCancelacion(window.reservaIdParaRechazar);
+                    }
+                });
+            }     
+
+              
             // 01. Llamar modal para rechazar cancelacion (confirmar reserva)
             function rechazarCancelacion(reservaId) {
                 window.reservaIdParaRechazar = reservaId;
-                document.getElementById('modalCancelar').style.display = 'block';
+                document.getElementById('modalRechazoCancelacion').style.display = 'block';
             }
             
-            // 02. Ejecutar rechazo cancelacion (confirmar reserva) al hacer click en el boton del modal
+            // 02. Ejecutar rechazo cancelacion (confirmar reserva)
             function ejecutarRechazoCancelacion(reservaId) {                 
                 const url = `/usuarios/confirmar/${reservaId}/`;              
                 
@@ -959,17 +989,20 @@
                         const buttons = document.querySelectorAll(`#reserva-row-${reservaId} button`);
                         buttons.forEach(button => button.style.display = 'none');
                         
-                        ModalExitoRechazoSolicitud('Reserva confirmada correctamente');
+                        modalRechazoCancelacion('Reserva confirmada correctamente');
                     } else {
-                        ModalExitoRechazoSolicitud('Error: ' + data.message);
+                        modalRechazoCancelacion('Error: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    ModalExitoRechazoSolicitud('Error al confirmar la reserva: ' + error.message);
+                    modalRechazoCancelacion('Error al confirmar la reserva: ' + error.message);
+                }).finally(() => {
+                    document.getElementById('modalRechazoCancelacion').style.display = 'none';
+                    window.reservaIdParaRechazar = null;
                 });
             }
-        //}
+      
 
         // Función auxiliar para obtener el token CSRF
         function getCookie(name) {
