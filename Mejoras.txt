@@ -2,6 +2,8 @@ Al reservar:
 	Cuadro de carga.
 	Al reservar Bloqueo de btn para reservar, apretar muchas veces
 
-Adminitracion:
+Administración:
 	Cerrar sesión.
-	
+
+Portada:
+	Arreglar BTN reloj

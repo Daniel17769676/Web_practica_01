@@ -119,24 +119,32 @@ body {
   transform-origin: left;
 }
 
+/* Estilos para la visualización de la hora & fecha */
 .time-display {
-  text-align: right;
+  text-align: right; /* Alinea el texto a la derecha */
   background: rgba(0, 0, 0, 0.2);
-  padding: 0.8rem 1.5rem;
-  border-radius: 12px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  flex-shrink: 0;
+  padding: 0.8rem 1.5rem;/* Ajusta el padding para un mejor espaciado */
+  border-radius: 12px;/* Bordes más redondeados */
+  backdrop-filter: blur(5px); /* Añade un efecto de desenfoque de fondo */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);/* Sombra suave */
+  transition: all 0.3s ease;/* Transición suave para hover */
+  flex-shrink: 0;/* Evita que el contenedor se reduzca demasiado */
+ 
+  
+  
 
+  
+  
 }
 
+/* Efecto hover para la visualización de la hora */
 .time-display:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Estilos para la visualización de la hora */
 .time {
   font-size: 2.2rem;
   font-weight: 700;
@@ -145,6 +153,7 @@ body {
   font-feature-settings: "tnum";
 }
 
+/* Estilos para la visualización de la fecha */
 .date {
   color: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
