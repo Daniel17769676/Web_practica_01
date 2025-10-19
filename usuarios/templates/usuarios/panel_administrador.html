@@ -204,7 +204,8 @@
 
             <button class="confirmation-btn confirmation-btn-primary" onclick="location.reload()" title="Refrescar">
                 <i class="fas fa-sync"></i> Refrescar
-            </button>                      
+            </button> 
+                                 
             <button class="confirmation-btn confirmation-btn-danger" onclick="confirmAction('¿Estás seguro de que deseas cerrar sesión?')">
                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </button> 
@@ -218,9 +219,7 @@
             <button class="nav-btn active" data-section="dashboard">Dashboard</button>
             <button class="nav-btn" data-section="servicios">Gestión de Servicios</button>
             <button class="nav-btn" data-section="reservas">Gestión de Reservas</button>
-            <button class="nav-btn" data-section="reportes">Reportes</button>
-            <button class="nav-btn" data-section="usuarios">Gestión de Usuarios</button>
-            <button class="nav-btn" data-section="configuracion">Configuración</button>
+            <button class="nav-btn" data-section="reportes">Reportes</button>                           
         </div>
 
         <!-- Sección Dashboard -->
@@ -560,83 +559,7 @@
                 </form>
             </div>
         </div>
-
-        <!-- Sección Gestión de Usuarios -->
-        <div id="usuarios" class="admin-section">
-            <h2>Gestión de Usuarios</h2>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="buscar-usuario">Buscar Usuario</label>
-                    <input type="text" id="buscar-usuario" placeholder="Nombre or email...">
-                </div>
-                <div class="filter-group">
-                    <button class="btn-filter"><i class="fas fa-search"></i> Buscar</button>
-                </div>
-                <div class="filter-group">
-                    <button class="confirmation-btn confirmation-btn-primary" id="nuevo-usuario">
-                        <i class="fas fa-plus"></i> Nuevo Usuario
-                    </button>
-                </div>
-            </div>
-            
-            <ul class="user-list">
-                <li class="user-item">
-                    <div class="user-info">
-                        <div class="user-name">Juan Pérez</div>
-                        <div class="user-email">juan.perez@email.com</div>
-                    </div>
-                    <div class="admin-actions">
-                        <button class="admin-action-btn btn-edit"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="admin-action-btn btn-delete"><i class="fas fa-trash"></i> Eliminar</button>
-                    </div>
-                </li>
-                <li class="user-item">
-                    <div class="user-info">
-                        <div class="user-name">María García</div>
-                        <div class="user-email">maria.garcia@email.com</div>
-                    </div>
-                    <div class="admin-actions">
-                        <button class="admin-action-btn btn-edit"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="admin-action-btn btn-delete"><i class="fas fa-trash"></i> Eliminar</button>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Sección Configuración -->
-        <div id="configuracion" class="admin-section">
-            <h2>Configuración del Sistema</h2>
-            
-            <div class="form-section">
-                <h3>Configuración de Servicios</h3>
-                <div class="form-group">
-                    <label for="duracion-default">Duración Default de Citas (minutos)</label>
-                    <input type="number" id="duracion-default" value="30">
-                </div>
-                <div class="form-group">
-                    <label for="max-reservas">Máximo de Reservas Simultáneas</label>
-                    <input type="number" id="max-reservas" value="5">
-                </div>
-                <button class="confirmation-btn confirmation-btn-primary">Guardar Configuración</button>
-            </div>
-            
-            <div class="form-section">
-                <h3>Notificaciones</h3>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" checked> Enviar recordatorios por email
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label for="tiempo-recordatorio">Tiempo de recordatorio (horas antes)</label>
-                    <input type="number" id="tiempo-recordatorio" value="24">
-                </div>
-                <button class="confirmation-btn confirmation-btn-primary">Guardar Configuración</button>
-            </div>
-        </div>
-    </div>
-
+        
 
     <!-- MODALES: Eliminar reserva & Rechazo cancelacion sirven para SOLICITUDES DE CANCELACION & GESTION DE RESERVAS -->
 
@@ -661,7 +584,7 @@
                 <h3 class="modal-title">¡Éxito!</h3>
             </div>
             <div class="modal-body">
-                <p id="successMessage">Reserva eliminada correctamente.</p>
+                <p id="successMessage"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-confirm close-success">Aceptar</button>
@@ -724,9 +647,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Navegación entre secciones
-            const navButtons = document.querySelectorAll('.nav-btn');
+            const navButtons = document.querySelectorAll('.nav-btn');// Hace referencia a todos los botones de navegacion
             const sections = document.querySelectorAll('.admin-section');
             
+            //
             navButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const targetSection = this.getAttribute('data-section');
@@ -742,6 +666,7 @@
                             section.classList.add('active');
                         }
                     });
+
                 });
             });
             

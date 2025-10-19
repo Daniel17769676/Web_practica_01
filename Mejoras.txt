@@ -1,0 +1,7 @@
+Al reservar:
+	Cuadro de carga.
+	Al reservar Bloqueo de btn para reservar, apretar muchas veces
+
+Adminitracion:
+	Cerrar sesión.
+	
